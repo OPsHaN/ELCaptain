@@ -1,0 +1,22 @@
+/* You can add global styles to this file, and also import other style files */
+@import 'bootstrap/scss/functions';
+@import 'bootstrap/scss/variables';
+@import 'bootstrap/scss/mixins';
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+
+/* 📝 تعيين الخط الأساسي */
+* {
+  font-family: "Beiruti", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 600;  /* يمكنك تغييره إلى أي وزن بين 200 و 900 */
+  font-style: normal;
+  font-size: 20px;
+}
+
+body {
+  font-family: "Beiruti", sans-serif;
+  font-weight: 600;
+  margin: 0;
+  padding: 0;
+}
