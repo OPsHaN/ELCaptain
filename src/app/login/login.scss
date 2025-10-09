@@ -55,6 +55,8 @@
   transition: all 0.3s ease;
   border: 1px solid white;
   color: white;
+    backdrop-filter: blur(10px);
+
 }
 
 .button-item button:hover {
@@ -97,10 +99,33 @@ input::placeholder {
 .user-name {
   font-weight: 600;
   color: #fff;
-  margin-top: 5px;
+  // margin-top: 5px;
 }
 
 .user-title {
   font-weight: 300;
   color: #ddd;
+}
+.login-box img {
+  width: 350px;   /* 💻 على الشاشات الكبيرة */
+  max-width: 100%;
+  height: auto;
+}
+
+@media (max-width: 992px) {
+  .login-box img {
+    width: 280px;  /* 🖥️ تابلت */
+  }
+}
+
+@media (max-width: 768px) {
+  .login-box img {
+    width: 230px;  /* 📱 موبايل متوسط */
+  }
+}
+
+@media (max-width: 480px) {
+  .login-box img {
+    width: 180px;  /* 📲 موبايل صغير */
+  }
 }

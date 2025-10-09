@@ -10,9 +10,13 @@
         class="left-box text-center p-4 w-100 login-box"
         style="max-width: 520px"
       >
-        <img src="/photos/logo.png" alt="Logo" width="350" class="m-0" />
+        <img
+          src="/photos/logo.png"
+          alt="Logo"
+          class="img-fluid m-0 w-50 w-md-75 w-lg-100"
+        />
 
-        <h2 class="mb-1">تسجيل دخول</h2>
+        <!-- <h2 class="mb-1">تسجيل دخول</h2> -->
 
         <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
           <div class="mb-3 text-end">
@@ -95,22 +99,21 @@
     <div
       class="col-12 col-md-3 d-flex flex-column bg-side text-white p-3 justify-content-start align-content-start"
     >
-      <h4 class="text-center mb-2">الكابتن لتجارة السيارات</h4>
+      <h4 class="text-center mb-2 p-1 opacity-75 bg-dark  rounded">الكابتن لتجارة السيارات</h4>
       <!-- 🧍‍♂️ معلومات المستخدم -->
       <div class="user-box text-center mb-3 w-50 mx-auto">
         <i class="bi bi-person-circle user-icon me-0"></i>
-        <h5 class="user-name mb-0">محمد أحمد</h5>
-        <small class="user-title text-light">مدير الشركة</small>
-
+        <h5 class="user-name mb-0">مصطفى رمضان</h5>
+        <small class="user-title text-dark fw-bold ">مدير الشركة</small>
       </div>
-            <!-- 🧍‍♂️ معلومات المستخدم -->
+      <!-- 🧍‍♂️ معلومات المستخدم -->
       <!-- 🟦 أزرار التنقل -->
       <div
         class="buttons-grid d-flex flex-wrap justify-content-start"
         style="direction: rtl; gap: 12px"
       >
         <div
-          *ngFor="let b of buttons"
+          *ngFor="let b of buttons" (click)="b.action ? b.action() : router.navigate([b.route])"
           class="button-item d-flex justify-content-center align-items-center"
         >
           <button
@@ -124,7 +127,7 @@
           </button>
         </div>
       </div>
-      <div class="mt-auto text-center pt-3 small opacity-75">
+      <div class="mt-auto text-center small opacity-75 bg-dark  rounded">
         جميع الحقوق محفوظة © 2025 IT-Whale
       </div>
     </div>
