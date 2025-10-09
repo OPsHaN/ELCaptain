@@ -1,13 +1,13 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { Login } from './login/login';
-import { Portfolio } from './portfolio/portfolio';
-import { Cars } from './cars/cars';
-import { Employees } from './employees/employees';
-import { Deals } from './deals/deals';
-import { Messages } from './messages/messages';
-import { Clients } from './clients/clients';
-import { Home } from './home/home';
+import { Login } from './components/login/login';
+import { Portfolio } from './components/portfolio/portfolio';
+import { Cars } from './components/cars/cars';
+import { Employees } from './components/employees/employees';
+import { Deals } from './components/deals/deals';
+import { Messages } from './components/messages/messages';
+import { Clients } from './components/clients/clients';
+import { Home } from './components/home/home';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },

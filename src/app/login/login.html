@@ -1,135 +1,0 @@
-<div class="container-fluid vh-100 landing position-relative">
-  <!-- ✅ قبل تسجيل الدخول -->
-  <div *ngIf="!isLoggedIn" class="row h-100 full-bg">
-    <div class="col-12 col-md-6 p-0 d-none d-md-block"></div>
-
-    <div
-      class="col-12 col-md-6 d-flex align-items-center justify-content-center"
-    >
-      <div
-        class="left-box text-center p-4 w-100 login-box"
-        style="max-width: 520px"
-      >
-        <img
-          src="/photos/logo.png"
-          alt="Logo"
-          class="img-fluid m-0 w-50 w-md-75 w-lg-100"
-        />
-
-        <!-- <h2 class="mb-1">تسجيل دخول</h2> -->
-
-        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-          <div class="mb-3 text-end">
-            <label class="form-label">اسم المستخدم</label>
-            <input
-              type="text"
-              formControlName="username"
-              class="form-control"
-              placeholder="اسم المستخدم"
-            />
-            <div
-              *ngIf="
-                loginForm.get('username')?.touched &&
-                loginForm.get('username')?.invalid
-              "
-              class="text-danger small mt-1"
-            >
-              اسم المستخدم مطلوب
-            </div>
-          </div>
-
-          <div class="mb-3 text-end position-relative">
-            <label class="form-label">كلمة المرور</label>
-            <input
-              [type]="showPassword ? 'text' : 'password'"
-              formControlName="password"
-              class="form-control pe-5"
-              placeholder="كلمة المرور"
-            />
-            <button
-              type="button"
-              class="btn btn-link p-0 position-absolute top-50 end-0 translate-middle-x mx-auto"
-              (click)="togglePassword()"
-              tabindex="-1"
-            >
-              <i
-                class="bi"
-                [ngClass]="showPassword ? 'bi-eye-slash' : 'bi-eye'"
-              ></i>
-            </button>
-            <div
-              *ngIf="
-                loginForm.get('password')?.touched &&
-                loginForm.get('password')?.invalid
-              "
-              class="text-danger small mt-1"
-            >
-              كلمة المرور مطلوبة
-            </div>
-          </div>
-
-          <div class="d-grid">
-            <button
-              class="btn btn-warning btn-lg m-0 w-25 mx-auto py-1"
-              type="submit"
-            >
-              دخول
-            </button>
-          </div>
-        </form>
-        <div class="mt-auto text-center pt-3 small opacity-75">
-          جميع الحقوق محفوظة © 2025 IT-Whale
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ✅ بعد تسجيل الدخول -->
-  <div *ngIf="isLoggedIn" class="row h-100">
-    <!-- 🟦 الشمال -->
-    <div
-      class="col-12 col-md-9 d-flex align-items-center justify-content-left bg-white"
-    >
-      <div class="content text-center p-5 w-100">
-        <router-outlet></router-outlet>
-      </div>
-    </div>
-
-    <!-- 🟧 اليمين -->
-    <div
-      class="col-12 col-md-3 d-flex flex-column bg-side text-white p-3 justify-content-start align-content-start"
-    >
-      <h4 class="text-center mb-2 p-1 opacity-75 bg-dark  rounded">الكابتن لتجارة السيارات</h4>
-      <!-- 🧍‍♂️ معلومات المستخدم -->
-      <div class="user-box text-center mb-3 w-50 mx-auto">
-        <i class="bi bi-person-circle user-icon me-0"></i>
-        <h5 class="user-name mb-0">مصطفى رمضان</h5>
-        <small class="user-title text-dark fw-bold ">مدير الشركة</small>
-      </div>
-      <!-- 🧍‍♂️ معلومات المستخدم -->
-      <!-- 🟦 أزرار التنقل -->
-      <div
-        class="buttons-grid d-flex flex-wrap justify-content-start"
-        style="direction: rtl; gap: 12px"
-      >
-        <div
-          *ngFor="let b of buttons" (click)="b.action ? b.action() : router.navigate([b.route])"
-          class="button-item d-flex justify-content-center align-items-center"
-        >
-          <button
-            class="btn d-flex flex-column align-items-center justify-content-center text-nowrap"
-            [routerLink]="b.route"
-            routerLinkActive="btn-light text-dark"
-            [routerLinkActiveOptions]="{ exact: true }"
-          >
-            <i class="{{ b.icon }} mb-1 fs-5"></i>
-            <span>{{ b.label }}</span>
-          </button>
-        </div>
-      </div>
-      <div class="mt-auto text-center small opacity-75 bg-dark  rounded">
-        جميع الحقوق محفوظة © 2025 IT-Whale
-      </div>
-    </div>
-  </div>
-</div>
