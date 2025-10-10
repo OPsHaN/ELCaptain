@@ -5,6 +5,8 @@
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
 
+@import 'primeicons/primeicons.css';
+
 /* 📝 تعيين الخط الأساسي */
 * {
   font-family: "Beiruti", sans-serif;
@@ -19,4 +21,30 @@ body {
   font-weight: 600;
   margin: 0;
   padding: 0;
+}
+
+input {
+  direction: rtl;
+  text-align: right;
+}
+
+.p-toast {
+  font-size: 16px;
+}
+
+.p-toast-message {
+  border-radius: 8px;
+}
+
+.p-toast-message-success {
+  background: #4caf50;
+  color: #fff;
+    text-align: right;
+
+}
+
+.p-toast-message-error {
+  background: #f44336;
+  color: #fff;
+  text-align: right;
 }

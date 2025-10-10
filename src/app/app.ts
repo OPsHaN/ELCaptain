@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
 import { Login } from "./components/login/login";
+import { Toast } from "primeng/toast";
 
 @Component({
   selector: 'app-root',
-  imports: [ Login],
+  imports: [Login, Toast],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

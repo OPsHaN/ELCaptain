@@ -78,8 +78,6 @@
               دخول
             </button>
           </div>
-            <div *ngIf="errorMessage" class="text-danger">{{ errorMessage }}</div>
-
         </form>
         <div class="mt-auto text-center pt-3 small opacity-75">
           جميع الحقوق محفوظة © 2025 IT-Whale
@@ -94,7 +92,7 @@
     <div
       class="col-12 col-md-9 d-flex align-items-center justify-content-left bg-white"
     >
-      <div class="content text-center p-5 w-100">
+      <div class="content text-center p-0 w-100">
         <router-outlet></router-outlet>
       </div>
     </div>
@@ -103,14 +101,25 @@
     <div
       class="col-12 col-md-3 d-flex flex-column bg-side text-white p-3 justify-content-start align-content-start"
     >
-      <h4 class="text-center mb-2 p-1 opacity-75 bg-dark rounded">
+      <h4 class="text-center mb-2 p-1 opacity-75 bg-dark rounded-pill">
         الكابتن لتجارة السيارات
       </h4>
       <!-- 🧍‍♂️ معلومات المستخدم -->
-      <div class="user-box text-center mb-3 w-50 mx-auto">
-        <i class="bi bi-person-circle user-icon me-0"></i>
-        <h5 class="user-name mb-0">مصطفى رمضان</h5>
-        <small class="user-title text-dark fw-bold">مدير الشركة</small>
+      <div class="user-box text-center mb-3 w-50 mx-auto ">
+        <!-- ✅ لو في صورة -->
+        <img
+          *ngIf="userImg; else defaultIcon"
+          [src]="userImg"
+          alt="User Image"
+          class="user-img rounded-circle my-1 w-50"
+        />
+
+        <!-- 🧍 لو مفيش صورة -->
+        <ng-template #defaultIcon>
+          <i class="bi bi-person-circle user-icon me-0"></i>
+        </ng-template>
+        <h6 class="user-name mb-0">{{ userFullName }}</h6>
+        <small class="user-title text-warning fw-bold">مدير الشركة</small>
       </div>
       <!-- 🧍‍♂️ معلومات المستخدم -->
       <!-- 🟦 أزرار التنقل -->

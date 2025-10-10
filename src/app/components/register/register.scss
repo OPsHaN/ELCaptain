@@ -1,0 +1,15 @@
+.card {
+  background: #ffffffcc;
+  backdrop-filter: blur(10px);
+  border-radius: 16px;
+}
+
+.form-label{
+    text-align: right;
+}
+
+@media (max-width: 576px) {
+  .card {
+    padding: 1rem !important;
+  }
+}
