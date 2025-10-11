@@ -1,84 +1,282 @@
-<div class="container py-0">
+<div class="container py-4">
   <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
-      <div class="card shadow border-0 p-4 rounded-4">
+    <div class="col-12 col-lg-10 col-md-12 col-sm-12">
+      <div class="card p-4 rounded-4">
         <h3 class="text-center mb-4 fw-bold text-dark">📝 تسجيل موظف</h3>
 
-        <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
-          <div class="row g-3">
+        <form
+          [formGroup]="registerForm"
+          (ngSubmit)="onSubmit()"
+          novalidate
+          dir="rtl"
+        >
+          <div class="row g-3 text-end">
             <!-- الاسم الأول -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label">الاسم الأول</label>
-              <input type="text" class="form-control" formControlName="FirstName" />
-              <small class="text-danger" *ngIf="registerForm.get('FirstName')?.touched && registerForm.get('FirstName')?.invalid">
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="FirstName"
+              />
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('FirstName')?.touched &&
+                  registerForm.get('FirstName')?.invalid
+                "
+              >
                 مطلوب
               </small>
             </div>
 
             <!-- الاسم الثاني -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label">الاسم الثاني</label>
-              <input type="text" class="form-control" formControlName="SecondName" />
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="SecondName"
+              />
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('SecondName')?.touched &&
+                  registerForm.get('SecondName')?.invalid
+                "
+              >
+                مطلوب
+              </small>
             </div>
 
-            <!-- الاسم الثالث -->
-            <div class="col-md-6">
-              <label class="form-label">الاسم الثالث</label>
-              <input type="text" class="form-control" formControlName="ThirdName" />
+            <div class="col-md-4">
+              <label class="form-label">الإسم الثالت</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="ThirdName"
+              />
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('ThirdName')?.touched &&
+                  registerForm.get('ThirdName')?.invalid
+                "
+              >
+                مطلوب
+              </small>
             </div>
 
-            <!-- اسم العائلة -->
-            <div class="col-md-6">
-              <label class="form-label">اسم العائلة</label>
-              <input type="text" class="form-control" formControlName="FamilyName" />
+            <!-- التصنيف -->
+            <div class="col-md-4">
+              <label class="form-label">الرتبة</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="Rank">
+                  <mat-option *ngFor="let rank of ranks" [value]="rank.code">
+                    {{ rank.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
             </div>
 
             <!-- الرقم القومي -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label">الرقم القومي</label>
-              <input type="text" class="form-control" formControlName="NationalId" />
-              <small class="text-danger" *ngIf="registerForm.get('NationalId')?.touched && registerForm.get('NationalId')?.invalid">
+              <input
+                type="number"
+                class="form-control custom-input"
+                formControlName="NationalId"
+              />
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('NationalId')?.touched &&
+                  registerForm.get('NationalId')?.invalid
+                "
+              >
                 يجب أن يكون 14 رقم
               </small>
             </div>
 
             <!-- اسم المستخدم -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label">اسم المستخدم</label>
-              <input type="text" class="form-control" formControlName="UserName" />
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="UserName"
+              />
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('UserName')?.touched &&
+                  registerForm.get('UserName')?.invalid
+                "
+              >
+                مطلوب
+              </small>
             </div>
 
             <!-- كلمة المرور -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label">كلمة المرور</label>
-              <input type="password" class="form-control" formControlName="Password" />
-              <small class="text-danger" *ngIf="registerForm.get('Password')?.touched && registerForm.get('Password')?.invalid">
+              <input
+                type="password"
+                class="form-control custom-input"
+                formControlName="Password"
+              />
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('Password')?.touched &&
+                  registerForm.get('Password')?.invalid
+                "
+              >
                 الحد الأدنى 6 أحرف
               </small>
             </div>
 
             <!-- البريد -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label">البريد الإلكتروني</label>
-              <input type="email" class="form-control" formControlName="Email" />
+              <div class="input-group">
+                <input
+                  type="email"
+                  class="form-control border-start-0 custom-input"
+                  formControlName="Email"
+                  placeholder="example@domain.com"
+                />
+              </div>
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('Email')?.touched &&
+                  registerForm.get('Email')?.invalid
+                "
+              >
+                الرجاء إدخال بريد إلكتروني صحيح
+              </small>
             </div>
 
             <!-- رقم الهاتف -->
-            <div class="col-md-6">
+            <div class="col-md-4">
               <label class="form-label">رقم الهاتف</label>
-              <input type="text" class="form-control" formControlName="Phone" />
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="Phone"
+              />
             </div>
 
-            <!-- رقم هاتف آخر -->
-            <div class="col-md-6">
+            <!-- رقم هاتف إضافي -->
+            <div class="col-md-4">
               <label class="form-label">رقم هاتف إضافي</label>
-              <input type="text" class="form-control" formControlName="Phone2" />
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="Phone2"
+              />
             </div>
 
-            <!-- الزر -->
+            <!-- الفرع -->
+            <div class="col-md-4">
+              <label class="form-label">الفرع</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="BranchId">
+                  <mat-option
+                    *ngFor="let branch of branches"
+                    [value]="branch.code"
+                  >
+                    {{ branch.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- التصنيف -->
+            <div class="col-md-4">
+              <label class="form-label">تصنيف الموظف</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="Classification">
+                  <mat-option
+                    *ngFor="let class of classification"
+                    [value]="class.code"
+                  >
+                    {{ class.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- من - إلى -->
+            <div class="col-md-4">
+              <label class="form-label">من</label>
+              <input
+                type="time"
+                class="form-control custom-input"
+                formControlName="FromTime"
+              />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">إلى</label>
+              <input
+                type="time"
+                class="form-control custom-input"
+                formControlName="ToTime"
+              />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">📸 صورة الموظف</label>
+              <input
+                type="file"
+                accept="image/*"
+                class="form-control"
+                (change)="onFileSelected($event)"
+              />
+
+              <div class="mt-2 text-center" *ngIf="selectedImage">
+                <img
+                  [src]="selectedImage"
+                  alt="صورة الموظف"
+                  class="img-thumbnail rounded-circle"
+                  style="width: 120px; height: 120px; object-fit: cover"
+                />
+              </div>
+            </div>
+
+            <!-- Checkbox لأيام الأسبوع -->
+            <div class="col-12 mt-3">
+              <label class="form-label d-block mb-2 fw-bold">الأيام</label>
+              <div class="d-flex flex-wrap gap-1">
+                <div
+                  *ngFor="let day of daysOfWeek; let i = index"
+                  class="form-check form-check-inline d-flex align-items-center gap-1"
+                >
+                  <!-- ✅ الـ Checkbox الأول -->
+                  <input
+                    type="checkbox"
+                    class="form-check-input"
+                    [formControl]="dayControls[i]"
+                    [id]="day"
+                  />
+
+                  <!-- 🏷️ اسم اليوم بعده -->
+                  <label class="form-check-label mb-0 me-4" [for]="day">
+                    {{ day }}
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- زر التسجيل -->
             <div class="col-12 text-center mt-3">
-              <button class="btn btn-warning btn-lg m-0 w-25 mx-auto py-0" [disabled]="isSubmitting">
-                {{ isSubmitting ? 'جاري التسجيل...' : 'تسجيل' }}
+              <button
+                class="btn btn-warning btn-lg w-25 py-1"
+                [disabled]="isSubmitting"
+              >
+                {{ isSubmitting ? "جاري التسجيل..." : "تسجيل" }}
               </button>
             </div>
           </div>

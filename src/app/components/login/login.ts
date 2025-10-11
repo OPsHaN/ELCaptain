@@ -81,9 +81,10 @@ export class Login implements OnInit {
     //   this.img = userInfo.Img ;
     // }
     // console.log("User Info from token:", userInfo);
-  const userInfo = this.getUserInfoFromLocalStorage();
-  this.userFullName = userInfo.FullName;
-  this.userImg = userInfo.Img;  }
+    const userInfo = this.getUserInfoFromLocalStorage();
+    this.userFullName = userInfo.FullName;
+    this.userImg = userInfo.Img;
+  }
 
   togglePassword() {
     this.showPassword = !this.showPassword;
@@ -107,6 +108,10 @@ export class Login implements OnInit {
           localStorage.setItem("token", res.Token);
           localStorage.setItem("fullName", res.FullName || "");
           localStorage.setItem("img", res.Img || "");
+
+          this.userFullName = res.FullName || "";
+          this.userImg = res.Img || "assets/images/user.png";
+
           this.isLoggedIn = true;
           this.showSuccess("تم تسجيل الدخول بنجاح");
           this.router.navigate(["/home"]);
