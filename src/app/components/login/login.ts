@@ -49,7 +49,7 @@ export class Login implements OnInit {
     { label: "العملاء ", route: "./clients", icon: "bi bi-person-lines-fill" },
     { label: "الصفقات", route: "/deals", icon: "bi bi-briefcase" },
     { label: "الرسائل", route: "/messages", icon: "bi bi-envelope" },
-    { label: "تسجيل موظف", route: "/register", icon: "bi bi-person-plus" },
+    { label: "الإضافات", route: "/adds", icon: "bi bi-bookmark-plus" },
 
     {
       label: "خروج",
@@ -84,6 +84,10 @@ export class Login implements OnInit {
     const userInfo = this.getUserInfoFromLocalStorage();
     this.userFullName = userInfo.FullName;
     this.userImg = userInfo.Img;
+
+    this.authService.isLoggedIn$.subscribe((status) => {
+      this.isLoggedIn = status;
+    });
   }
 
   togglePassword() {
@@ -108,18 +112,15 @@ export class Login implements OnInit {
           localStorage.setItem("token", res.Token);
           localStorage.setItem("fullName", res.FullName || "");
           localStorage.setItem("img", res.Img || "");
-
           this.userFullName = res.FullName || "";
           this.userImg = res.Img || "assets/images/user.png";
 
-          this.isLoggedIn = true;
+          this.authService.onLoginSuccess(res.Token);
           this.showSuccess("تم تسجيل الدخول بنجاح");
           this.router.navigate(["/home"]);
           this.activePage = "home";
         },
         error: (err) => {
-          console.error("Login error:", err);
-
           if (err.status === 401) {
             this.showError("هذا الموظف غير موجود");
           } else if (err.status === 500) {
@@ -131,13 +132,19 @@ export class Login implements OnInit {
       });
   }
 
+  // logout() {
+  //   this.isLoggedIn = false;
+  //   this.loginForm.reset();
+  //   this.router.navigate(["/login"]);
+  //   localStorage.removeItem("token");
+  //   this.showSuccess("تم تسجيل الخروج بنجاح");
+  //   this.activePage = "home";
+  // }
+
   logout() {
-    this.isLoggedIn = false;
+    this.authService.logout();
     this.loginForm.reset();
-    this.router.navigate(["/login"]);
-    localStorage.removeItem("token");
     this.showSuccess("تم تسجيل الخروج بنجاح");
-    this.activePage = "home";
   }
 
   showError(msg: string) {

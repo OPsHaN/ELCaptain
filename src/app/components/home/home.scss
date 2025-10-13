@@ -1,0 +1,129 @@
+.arrow-icon {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.5rem;
+  color: #000;
+  margin-top: 5px;
+}
+
+.form-check-input {
+  width: 20px;
+  height: 20px;
+}
+
+.form-check-label {
+  font-size: 1rem;
+}
+
+.d-flex.flex-column {
+  max-width: 100px; // تقدر تغير العرض حسب التصميم
+}
+
+
+.button-container {
+  position: relative;
+}
+
+.arrow-between {
+  position: relative;
+  width: 30%;             /* طول السهم */
+  height: 20px;             /* سمك الخط */
+  background-color: #000;  /* لون الخط */
+}
+
+.arrow-between::before,
+.arrow-between::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border-top: 25px solid transparent;
+  border-bottom: 25px solid transparent;
+}
+
+/* السهم من اليمين */
+.arrow-between::after {
+  right: -15px;
+  border-left: 30px solid #000;
+}
+
+/* السهم من الشمال */
+.arrow-between::before {
+  left: -15px;
+  border-right: 30px solid #000;
+}
+
+.stock-btn {
+  position: relative;
+  overflow: hidden;           /* علشان الصورة المموهة متطلعش بره الزرار */
+  color: white;
+  width: 250px;
+  height: 250px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 5px 20px  rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.stock-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/photos/storage.jpg');
+  background-size: cover;
+  background-position: center;
+  filter: blur(3px);                /* 💥 هنا الضبابية */
+  transform: scale(1.1);            /* علشان الحواف متبانش */
+  z-index: -1;                      /* تحت النص */
+}
+
+/* لو عايز تأثير عند مرور الماوس */
+.stock-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+  transition: 0.3s;
+}
+
+
+.export-btn {
+  position: relative;
+  overflow: hidden;           /* علشان الصورة المموهة متطلعش بره الزرار */
+  color: white;
+  width: 250px;
+  height: 250px;
+  font-size: 2.5rem;
+  font-weight: bold;
+  border: none;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.export-btn::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/photos/export.webp'); /* مسار الصورة */
+  background-size: cover;
+  background-position: center;
+  filter: blur(3px);                /* 💥 هنا الضبابية */
+  transform: scale(1.1);            /* علشان الحواف متبانش */
+  z-index: -1;                      /* تحت النص */
+}
+
+/* لو عايز تأثير عند مرور الماوس */
+.export-btn:hover {
+  opacity: 0.9;
+  transform: scale(1.02);
+  transition: 0.3s;
+}
+
+

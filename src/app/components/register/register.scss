@@ -72,7 +72,24 @@ height: 33px !important;
 }
 
 
+.time-fieldset {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 10px 15px;
+  background-color: #fff;
+  margin-top: 10px;
+}
 
+.time-fieldset legend {
+  font-size: 15px;
+  font-weight: bold;
+  padding: 0 8px;
+  color: #333;
+}
 
-
-
+.time-fieldset .form-label {
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  display: block;
+}

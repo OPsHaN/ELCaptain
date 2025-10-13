@@ -1,1 +1,60 @@
-الرئيسية
+<div class="content text-center p-0 w-100 mb-auto">
+<!-- ✅ الأزرار الرئيسية -->
+<div class="d-flex justify-content-center align-items-center gap-3 mt-2">
+  <!-- زرار الإستيراد -->
+  <div class="text-center position-relative">
+    <button class="btn export-btn px-5 py-5 rounded-pill" (click)="showContainer('import')">
+   الإستيراد 
+    </button>
+    <i
+      class="bi bi-caret-down-fill arrow-icon"
+      *ngIf="activeContainer === 'import'"
+    >
+    </i>
+  </div>
+
+  <div class="arrow-between"></div>
+
+  <!-- زرار المخزون -->
+  <div class="text-center position-relative">
+<button class="btn stock-btn px-5 py-5 rounded-pill" (click)="showContainer('stock')">
+ المخزون
+</button>
+<i
+  class="bi bi-caret-down-fill arrow-icon"
+  *ngIf="activeContainer === 'stock'">
+</i>
+
+  </div>
+</div>
+
+<!-- 📦 Container للمخزون -->
+<div
+  class="container mt-4 p-4 border rounded shadow text-end "
+  dir="rtl"
+  *ngIf="activeContainer === 'stock'"
+>
+  <h4 class="mb-3">📦 قسم المخزون</h4>
+
+ 
+
+  <hr />
+
+ 
+</div>
+
+<!-- 🚢 Container للإستيراد -->
+
+<div
+  class="container mt-4 p-4 border rounded shadow text-end "
+  dir="rtl"
+  *ngIf="activeContainer === 'import'"
+>
+  <h4 class="mb-3">🚢 قسم الإستيراد</h4>
+
+
+  <hr />
+
+ 
+</div>
+      </div>

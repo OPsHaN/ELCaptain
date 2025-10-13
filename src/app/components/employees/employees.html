@@ -1,1 +1,18 @@
-الموظفيين
+<!-- ✅ شريط الأزرار -->
+<div
+  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
+>
+  <div class="position-relative" >
+    <button class="btn btn-outline-warning" (click)="toggleTable('empolyee')">
+      ➕ تسجيل موظف جديد
+    </button>
+    <div class="arrow-wrapper" *ngIf="activeTable === 'empolyee'">
+      <i class="bi bi-caret-down-fill arrow-icon"></i>
+    </div>
+  </div>
+</div>
+
+<div class="table-container mt-0" *ngIf="activeTable === 'empolyee'" dir="rtl">
+    <app-register></app-register>
+
+</div>

@@ -1,9 +1,8 @@
-<div class="container py-4">
+<div class="container py-1">
   <div class="row justify-content-center">
-    <div class="col-12 col-lg-10 col-md-12 col-sm-12">
-      <div class="card p-4 rounded-4">
+    <div class="col-12 col-lg-12 col-md-12 col-sm-12">
+      <div class="card p-2 rounded-4">
         <h3 class="text-center mb-4 fw-bold text-dark">📝 تسجيل موظف</h3>
-
         <form
           [formGroup]="registerForm"
           (ngSubmit)="onSubmit()"
@@ -38,15 +37,6 @@
                 class="form-control custom-input"
                 formControlName="SecondName"
               />
-              <small
-                class="text-danger"
-                *ngIf="
-                  registerForm.get('SecondName')?.touched &&
-                  registerForm.get('SecondName')?.invalid
-                "
-              >
-                مطلوب
-              </small>
             </div>
 
             <div class="col-md-4">
@@ -71,7 +61,7 @@
             <div class="col-md-4">
               <label class="form-label">الرتبة</label>
               <mat-form-field appearance="outline" class="w-100 custom-outline">
-                <mat-select formControlName="Rank">
+                <mat-select formControlName="UserType">
                   <mat-option *ngFor="let rank of ranks" [value]="rank.code">
                     {{ rank.name }}
                   </mat-option>
@@ -147,15 +137,7 @@
                   placeholder="example@domain.com"
                 />
               </div>
-              <small
-                class="text-danger"
-                *ngIf="
-                  registerForm.get('Email')?.touched &&
-                  registerForm.get('Email')?.invalid
-                "
-              >
-                الرجاء إدخال بريد إلكتروني صحيح
-              </small>
+
             </div>
 
             <!-- رقم الهاتف -->
@@ -166,6 +148,12 @@
                 class="form-control custom-input"
                 formControlName="Phone"
               />
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('Phone')?.touched &&
+                  registerForm.get('Phone')?.invalid
+                "> </small>
             </div>
 
             <!-- رقم هاتف إضافي -->
@@ -185,12 +173,18 @@
                 <mat-select formControlName="BranchId">
                   <mat-option
                     *ngFor="let branch of branches"
-                    [value]="branch.code"
+                    [value]="branch.Id"
                   >
-                    {{ branch.name }}
+                    {{ branch.BranchName }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('BranchId')?.touched &&
+                  registerForm.get('BranchId')?.invalid
+                "> </small>
             </div>
 
             <!-- التصنيف -->
@@ -206,6 +200,12 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+              <small
+                class="text-danger"
+                *ngIf="
+                  registerForm.get('Classification')?.touched &&
+                  registerForm.get('Classification')?.invalid
+                "> </small>
             </div>
 
             <!-- من - إلى -->
@@ -273,7 +273,7 @@
             <!-- زر التسجيل -->
             <div class="col-12 text-center mt-3">
               <button
-                class="btn btn-warning btn-lg w-25 py-1"
+                class="btn btn-warning btn-lg py-0"
                 [disabled]="isSubmitting"
               >
                 {{ isSubmitting ? "جاري التسجيل..." : "تسجيل" }}

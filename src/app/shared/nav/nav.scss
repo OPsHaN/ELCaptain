@@ -1,0 +1,33 @@
+.toolbar {
+  padding: 10px;
+  position: fixed;    /* ✅ ثابت في الأعلى */
+  top: 0;
+  right: 0;
+  left: 0;
+  z-index: 1000;
+}
+
+.arrow-wrapper {
+  margin-top: 4px;   /* مسافة صغيرة بين الزر والسهم */
+}
+
+.arrow-icon {
+  font-size: 18px;
+  color: #0d6efd;
+}
+
+.table-container {
+  margin-top: 80px; /* علشان يظهر الجدول تحت التولبار */
+  padding: 0 20px;
+}
+
+.arrow {
+  position: absolute;
+  top: 100%; /* أسفل الزر */
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 1.2rem;
+  color: #0d6efd; /* لون السهم */
+  margin-top: 2px;
+}
+

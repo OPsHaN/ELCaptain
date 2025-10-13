@@ -1,0 +1,318 @@
+<!-- ✅ شريط الأزرار -->
+<div
+  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative"
+>
+  <div class="position-relative">
+    <button class="btn btn-outline-warning" (click)="toggleTable('car')">
+      ➕ إضافة سيارة
+    </button>
+    <div class="arrow-wrapper" *ngIf="activeTable === 'car'">
+      <i class="bi bi-caret-down-fill arrow-icon"></i>
+    </div>
+  </div>
+
+  <div class="position-relative">
+    <button class="btn btn-outline-success" (click)="toggleTable('brand')">
+      ➕ إضافة براند
+    </button>
+    <!-- ⬇️ السهم تحت الزر -->
+    <div class="arrow-wrapper" *ngIf="activeTable === 'brand'">
+      <i class="bi bi-caret-down-fill arrow-icon"></i>
+    </div>
+  </div>
+
+  <div class="position-relative">
+    <button class="btn btn-outline-primary" (click)="toggleTable('country')">
+      ➕ إضافة بلد
+    </button>
+
+    <div class="arrow-wrapper" *ngIf="activeTable === 'country'">
+      <i class="bi bi-caret-down-fill arrow-icon"></i>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ جدول الدول -->
+<div class="table-container mt-3" *ngIf="activeTable === 'country'" dir="rtl">
+  <table class="table table-bordered text-center align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>اسم البلد</th>
+        <th>الإجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- ✅ الصفوف العادية مع تعديل inline -->
+      <tr *ngFor="let country of countries; let i = index">
+        <td>{{ i + 1 }}</td>
+
+        <!-- الاسم أو input للتعديل -->
+        <td *ngIf="editingCountryIndex !== i">{{ country.name }}</td>
+        <td *ngIf="editingCountryIndex === i">
+          <input
+            type="text"
+            class="form-control text-center"
+            [(ngModel)]="newCountry"
+          />
+        </td>
+
+        <!-- الإجراءات -->
+        <td>
+          <!-- أزرار تعديل وحذف عادية -->
+          <ng-container *ngIf="editingCountryIndex !== i">
+            <button
+              class="btn btn-sm btn-success mx-1"
+              (click)="editCountry(i)"
+            >
+              ✔️ تعديل
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="deleteCountry(i)">
+              🗑 حذف
+            </button>
+            <!-- <button
+              class="btn btn-sm btn-primary mx-1"
+              (click)="chooseCountry(country.id)"
+            >
+              ✅ اختر الدولة
+            </button> -->
+          </ng-container>
+
+          <!-- أزرار حفظ/إلغاء للتعديل -->
+          <ng-container *ngIf="editingCountryIndex === i">
+            <button class="btn btn-sm btn-success mx-1" (click)="saveCountry()">
+              ✔️ حفظ
+            </button>
+            <button class="btn btn-sm btn-secondary mx-1" (click)="cancelAdd()">
+              ❌ إلغاء
+            </button>
+            <!-- <button
+              class="btn btn-sm btn-primary mx-1"
+              (click)="chooseCountry(country.id!)"
+            >
+              ✅ اختر الدولة
+            </button> -->
+          </ng-container>
+        </td>
+      </tr>
+
+      <!-- ✍️ صف الإدخال لإضافة بلد جديد -->
+      <tr *ngIf="addingCountry && editingCountryIndex === null">
+        <td>+</td>
+        <td>
+          <input
+            type="text"
+            class="form-control text-center"
+            placeholder="اكتب اسم البلد"
+            [(ngModel)]="newCountry"
+          />
+        </td>
+        <td>
+          <button class="btn btn-sm btn-success mx-1" (click)="saveCountry()">
+            ✔️ حفظ
+          </button>
+          <button class="btn btn-sm btn-secondary mx-1" (click)="cancelAdd()">
+            ❌ إلغاء
+          </button>
+        </td>
+      </tr>
+
+      <!-- 🆕 زر إضافة بلد جديد -->
+      <tr *ngIf="!addingCountry && editingCountryIndex === null">
+        <td colspan="3" class="text-center">
+          <button class="btn btn-sm btn-primary" (click)="startAdd()">
+            ➕ إضافة بلد جديدة
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ جدول السيارات -->
+<div class="table-container mt-3" *ngIf="activeTable === 'car'" dir="rtl">
+  <table class="table table-bordered text-center align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>اسم السيارة</th>
+        <th>الإجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let car of cars; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td *ngIf="editingCarIndex !== i">{{ car.name }}</td>
+        <td *ngIf="editingCarIndex === i">
+          <input
+            type="text"
+            class="form-control text-center"
+            [(ngModel)]="newCar"
+          />
+        </td>
+        <td>
+          <ng-container *ngIf="editingCarIndex !== i">
+            <button class="btn btn-sm btn-success mx-1" (click)="editCar(i)">
+              ✔️ تعديل
+            </button>
+            <button class="btn btn-sm btn-danger" (click)="deleteCar(i)">
+              🗑 حذف
+            </button>
+          </ng-container>
+          <ng-container *ngIf="editingCarIndex === i">
+            <button class="btn btn-sm btn-success mx-1" (click)="saveCar()">
+              ✔️ حفظ
+            </button>
+            <button class="btn btn-sm btn-secondary mx-1" (click)="cancelCar()">
+              ❌ إلغاء
+            </button>
+          </ng-container>
+        </td>
+      </tr>
+      <tr *ngIf="addingCar && editingCarIndex === null">
+        <td>+</td>
+        <td>
+          <input
+            type="text"
+            class="form-control text-center"
+            [(ngModel)]="newCar"
+            placeholder="اكتب اسم السيارة"
+          />
+        </td>
+        <td>
+          <button class="btn btn-sm btn-success mx-1" (click)="saveCar()">
+            ✔️ حفظ
+          </button>
+          <button class="btn btn-sm btn-secondary mx-1" (click)="cancelCar()">
+            ❌ إلغاء
+          </button>
+        </td>
+      </tr>
+      <tr *ngIf="!addingCar && editingCarIndex === null">
+        <td colspan="3" class="text-center">
+          <button class="btn btn-sm btn-primary" (click)="startAddCar()">
+            ➕ إضافة سيارة جديدة
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ✅ جدول البراند -->
+<div class="table-container mt-3" *ngIf="activeTable === 'brand'" dir="rtl">
+  <table class="table table-bordered text-center align-middle">
+    <thead class="table-light">
+      <tr>
+        <th>#</th>
+        <th>اسم البراند</th>
+        <th>اسم الدولة التابع لها</th>
+        <th>الإجراءات</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let brand of brands; let i = index">
+        <td>{{ i + 1 }}</td>
+
+        <!-- 📝 لو في تعديل يظهر input -->
+        <td *ngIf="editingBrandIndex === i">
+          <input
+            type="text"
+            class="form-control text-center"
+            [(ngModel)]="newBrand"
+          />
+        </td>
+        <td *ngIf="editingBrandIndex !== i">
+          {{ brand?.BrandName || "-" }}
+        </td>
+
+        <!-- 🌍 الدولة -->
+        <td *ngIf="editingBrandIndex !== i">
+          {{ countryMap[brand.CountryId] || "-" }}
+        </td>
+
+        <td *ngIf="editingBrandIndex === i">
+          <select class="form-select text-center" [(ngModel)]="brand.CountryId">
+            <option [ngValue]="null" disabled>اختر الدولة</option>
+            <option *ngFor="let country of countries" [ngValue]="country.id">
+              {{ country.name }}
+            </option>
+          </select>
+        </td>
+
+        <!-- 🧰 الإجراءات -->
+        <td>
+          <ng-container *ngIf="editingBrandIndex !== i">
+            <button class="btn btn-sm btn-success mx-1" (click)="editBrand(i)">
+              ✏️ تعديل
+            </button>
+            <button class="btn btn-sm btn-danger mx-1" (click)="deleteBrand(i)">
+              🗑 حذف
+            </button>
+            <!-- <button
+              class="btn btn-sm btn-primary mx-1"
+              (click)="chooseBrand(brand.Id)"
+            >
+              ✅ اختر البراند
+            </button> -->
+          </ng-container>
+
+          <ng-container *ngIf="editingBrandIndex === i">
+            <button class="btn btn-sm btn-success mx-1" (click)="saveBrand()">
+              💾 حفظ
+            </button>
+            <button
+              class="btn btn-sm btn-secondary mx-1"
+              (click)="cancelBrand()"
+            >
+              ❌ إلغاء
+            </button>
+          </ng-container>
+        </td>
+      </tr>
+
+      <!-- ➕ صف الإضافة -->
+      <tr *ngIf="addingBrand && editingBrandIndex === null">
+        <td>+</td>
+        <td>
+          <input
+            type="text"
+            class="form-control text-center"
+            [(ngModel)]="newBrand"
+            placeholder="اكتب اسم البراند"
+          />
+        </td>
+        <!-- 🌍 الدولة -->
+        <td>
+          <select
+            class="form-select text-center"
+            [(ngModel)]="newBrandCountryId"
+          >
+            <option [ngValue]="null" disabled>اختر الدولة</option>
+            <option *ngFor="let country of countries" [ngValue]="country.id">
+              {{ country.name }}
+            </option>
+          </select>
+        </td>
+
+        <td>
+          <button class="btn btn-sm btn-success mx-1" (click)="saveBrand()">
+            ✔️ حفظ
+          </button>
+          <button class="btn btn-sm btn-secondary mx-1" (click)="cancelBrand()">
+            ❌ إلغاء
+          </button>
+        </td>
+      </tr>
+
+      <!-- 🔹 زرار الإضافة -->
+      <tr *ngIf="!addingBrand && editingBrandIndex === null">
+        <td colspan="4" class="text-center">
+          <button class="btn btn-sm btn-primary" (click)="startAddBrand()">
+            ➕ إضافة براند جديدة
+          </button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>

@@ -10,6 +10,7 @@ import { Clients } from "./components/clients/clients";
 import { Home } from "./components/home/home";
 import { AuthGuard } from "./shared/authguard";
 import { Register } from "./components/register/register";
+import { Adds } from "./components/adds/adds";
 
 export const routes: Routes = [
   {
@@ -26,6 +27,8 @@ export const routes: Routes = [
   { path: "clients", component: Clients },
   { path: "home", component: Home },
   { path: "register", component: Register },
+    { path: "adds", component: Adds },
+
 ];
 
 @NgModule({
