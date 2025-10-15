@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { Apiservice, Brand, Country } from "../../services/apiservice";
 import { MessageService } from "primeng/api";
+import { finalize } from "rxjs";
 
 @Component({
   selector: "app-nav",
@@ -16,18 +17,27 @@ export class Nav {
   editingCountryIndex: number | null = null; // لتحديد الصف اللي هنعدله
   countries: Country[] = [];
   activeTable: string | null = null;
-  addingCar = false;
-  cars: { id?: number; name: string }[] = [];
-  newCar = "";
-  editingCarIndex: number | null = null;
+  addingBranch = false;
+  newBranch = "";
+  editingBranchIndex: number | null = null;
   idsCountry: number | null = null;
   idBrand: number | null = null;
   brands: Brand[] = [];
+  branchs: any[] = [];
   selectedCountryId: number | null = null;
   selectedBrandId: number | null = null;
   selectedCountry: any;
   newBrandCountryId: number | null = null;
   countryMap: { [id: number]: string } = {}; // خريطة id -> name
+  countryImageFile: File | null = null;
+  brandImageFile: File | null = null;
+  countryPreview: string | null = null;
+  brandPreview: string | null = null;
+  newBrand = "";
+  addingBrand = false;
+  editingBrandIndex: number | null = null;
+  isLoading: boolean = false;
+  editingBranchId: number | null = null;
 
   constructor(
     private api: Apiservice,
@@ -38,6 +48,7 @@ export class Nav {
   ngOnInit() {
     this.loadCountries(); // جلب البيانات عند بداية الكمبوننت
     this.loadBrands();
+    this.loadBranchs();
     // setTimeout(() => {
     //   this.loadBrand();
     // }, 50);
@@ -47,7 +58,6 @@ export class Nav {
     this.api.getAllCountry().subscribe({
       next: (res: Country[]) => {
         this.countries = res;
-        // ابني الماب
         this.countryMap = {};
         for (const c of this.countries) {
           if (c.id != null) this.countryMap[c.id] = c.name;
@@ -55,37 +65,6 @@ export class Nav {
       },
       error: (err) => {
         console.error("خطأ جلب الدول:", err);
-      },
-    });
-  }
-  onBrandCountryChange(brand: Brand) {
-    const selectedCountry = this.countries.find(
-      (c) => c.id === brand.CountryId
-    );
-    if (!selectedCountry) return;
-
-    const body = {
-      Id: brand.Id,
-      BrandName: brand.BrandName,
-      CountryId: selectedCountry.id,
-      Message: "",
-      AddedBy: brand.AddedBy,
-      AddedAt: brand.AddedAt,
-    };
-
-    this.api.updateBrand(body).subscribe({
-      next: (res) => {
-        console.log("✅ تم تحديث البراند:", res);
-
-        // تحديث البيانات في الجدول بدون إعادة تحميل
-        brand.CountryId = selectedCountry.id!;
-        brand.Country = {
-          Id: selectedCountry.id!,
-          CountryName: selectedCountry.name,
-        };
-      },
-      error: (err) => {
-        console.error("❌ خطأ أثناء تحديث البراند:", err);
       },
     });
   }
@@ -122,6 +101,21 @@ export class Nav {
     }
   }
 
+  loadBranchs() {
+    this.isLoading = true;
+    this.api
+      .getBranchs()
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (res: any) => {
+          this.branchs = res;
+        },
+        error: (err) => {
+          console.error("خطأ في تحميل الفروع:", err);
+        },
+      });
+  }
+
   toggleTable(type: string) {
     if (this.activeTable === type) {
       this.activeTable = null;
@@ -139,9 +133,9 @@ export class Nav {
         this.loadCountries(); // لو عايز تحدث الدول برضه
       }
 
-      // ✅ لو الزرار بتاع السيارة
-      if (type === "car") {
-        // لو عايز تضيف loadCars() هنا بعد ما تعملها
+      // ✅ لو الزرار بتاع الفرع
+      if (type === "branch") {
+        this.loadBranchs(); // لو عايز تحدث الفرع برضه
       }
     }
   }
@@ -155,33 +149,38 @@ export class Nav {
     const country = this.countries[index];
     this.editingCountryIndex = index; // لتحديد الصف اللي بيتعدل
     this.newCountry = country.name;
-    this.idsCountry = this.countries[index].id ?? null;
+    this.idsCountry = country.id ?? null;
+    this.countryPreview = country.img || ""; // ✅ لو في صورة قديمة نعرضها كـ preview
   }
+
   saveCountry() {
     if (!this.newCountry.trim()) return;
 
     if (this.editingCountryIndex !== null) {
-      // تعديل بلد موجود
+      // ✅ تعديل بلد موجود
+      const existingCountry = this.countries[this.editingCountryIndex!];
+
       const body = {
         Id: this.idsCountry, // نرسل الـ id الفعلي
         CountryName: this.newCountry.trim(),
+        Img: this.countryPreview || existingCountry.img || "", // ✅ صورة جديدة أو قديمة
         AddedBy: 1,
         AddedAt: new Date().toISOString(),
       };
 
       this.api.updateCountry(body).subscribe({
         next: (updated) => {
-          console.log(updated);
           // نحدث الـ array باستخدام index
           this.countries[this.editingCountryIndex!] = updated;
           this.editingCountryIndex = null;
           this.idsCountry = null;
           this.newCountry = "";
+          this.countryPreview = ""; // 🧹 نفضي الـ preview
           this.showSuccess("تم تعديل البلد");
         },
         error: (err) => {
           if (err.status === 401) {
-            this.showError("هذ’ البلد غير موجود");
+            this.showError("هذه البلد غير موجودة");
           } else if (err.status === 500) {
             this.showError("لا يمكن الاتصال بالخادم. تحقق من الاتصال.");
           } else {
@@ -190,24 +189,26 @@ export class Nav {
         },
       });
     } else {
-      // إضافة بلد جديد
+      // ✅ إضافة بلد جديد
       const body = {
         Id: 0,
         CountryName: this.newCountry.trim(),
+        Img: this.countryPreview || "", // ✅ لو في صورة جديدة نضيفها
         AddedBy: 1,
         AddedAt: new Date().toISOString(),
       };
 
       this.api.addCountry(body).subscribe({
         next: (newC: Country) => {
-          this.countries.push(newC); // نضيفه في آخر الـ array
+          this.countries.push(newC);
           this.addingCountry = false;
           this.newCountry = "";
+          this.countryPreview = ""; // 🧹 نفضي الـ preview
           this.showSuccess("تم إضافة البلد");
         },
         error: (err) => {
           if (err.status === 401) {
-            this.showError("هذ’ البلد غير موجود");
+            this.showError("هذه البلد غير موجودة");
           } else if (err.status === 500) {
             this.showError("لا يمكن الاتصال بالخادم. تحقق من الاتصال.");
           } else {
@@ -216,12 +217,6 @@ export class Nav {
         },
       });
     }
-  }
-
-  cancelAdd() {
-    this.newCountry = "";
-    this.addingCountry = false;
-    this.editingCountryIndex = null;
   }
 
   deleteCountry(index: number) {
@@ -244,43 +239,122 @@ export class Nav {
     });
   }
 
-  startAddCar() {
-    this.addingCar = true;
-    this.newCar = "";
-    this.editingCarIndex = null;
+  cancelAdd() {
+    this.newCountry = "";
+    this.addingCountry = false;
+    this.editingCountryIndex = null;
   }
 
-  editCar(i: number) {
-    this.editingCarIndex = i;
-    this.newCar = this.cars[i].name;
-    this.addingCar = false;
+  startAddBranch() {
+    this.addingBranch = true;
+    this.newBranch = "";
+    this.editingBranchIndex = null;
   }
 
-  saveCar() {
-    if (!this.newCar.trim()) return;
-    if (this.editingCarIndex !== null) {
-      this.cars[this.editingCarIndex].name = this.newCar.trim();
-      this.editingCarIndex = null;
-    } else {
-      this.cars.push({ name: this.newCar.trim() });
-      this.addingCar = false;
-    }
-    this.newCar = "";
+  // 🟠 بدء تعديل فرع موجود
+  editBranch(index: number) {
+    this.editingBranchIndex = index;
+    this.newBranch = this.branchs[index].BranchName;
+    this.editingBranchId = this.branchs[index].Id;
+    this.addingBranch = false;
   }
 
-  cancelCar() {
-    this.newCar = "";
-    this.addingCar = false;
-    this.editingCarIndex = null;
+// 🟣 حفظ فرع (إضافة أو تعديل)
+saveBranch() {
+  if (!this.newBranch.trim()) return;
+
+  // ✏️ حالة تعديل فرع موجود
+  if (this.editingBranchIndex !== null && this.editingBranchId !== null) {
+    const existingBranch = this.branchs[this.editingBranchIndex];
+
+    const body = {
+      Id: this.editingBranchId,
+      BranchName: this.newBranch.trim(),
+      Message: existingBranch.Message || "",
+      AddedBy: existingBranch.AddedBy || 1,
+      AddedAt: existingBranch.AddedAt || new Date().toISOString(),
+    };
+
+    this.api.updateBranch(body).subscribe({
+      next: (res: any) => {
+        // ✅ تحديث الصف محلياً بعد نجاح التعديل
+        this.branchs[this.editingBranchIndex!] = {
+          ...existingBranch,
+          BranchName: res.BranchName,
+        };
+
+        this.editingBranchIndex = null;
+        this.newBranch = "";
+        this.showSuccess("✅ تم تعديل الفرع بنجاح");
+
+        // 🆙 إعادة تحميل البيانات من السيرفر
+        this.loadBranchs();
+      },
+      error: (err) => {
+        this.showError("حدث خطأ أثناء تعديل الفرع");
+      },
+    });
+  } 
+  
+  // ➕ حالة إضافة فرع جديد
+  else {
+    const body = {
+      Id: 0,
+      BranchName: this.newBranch.trim(),
+      Message: "",
+      AddedBy: 1,
+      AddedAt: new Date().toISOString(),
+    };
+
+    this.api.addBranch(body).subscribe({
+      next: (res: any) => {
+        this.branchs.push(res);
+        this.addingBranch = false;
+        this.newBranch = "";
+
+        this.showSuccess("✅ تم إضافة الفرع بنجاح");
+        this.loadBranchs(); // ⬅️ تحديث القائمة بعد الإضافة
+      },
+      error: (err) => {
+        this.showError("حدث خطأ أثناء إضافة الفرع");
+      },
+    });
+  }
+}
+
+  // ❌ إلغاء الإضافة أو التعديل
+  cancelBranch() {
+    this.addingBranch = false;
+    this.editingBranchIndex = null;
+    this.editingBranchId = null;
+    this.newBranch = "";
   }
 
-  deleteCar(i: number) {
-    this.cars.splice(i, 1);
+  // 🗑 حذف فرع
+// 🗑 حذف فرع
+deleteBranch(index: number) {
+  const branch = this.branchs[index];
+  console.log("Deleting branch:", branch);
+
+  // ✅ تأكد إن الفرع له ID صالح
+  if (!branch?.Id) {
+    this.showError("هذا الفرع غير صالح للحذف");
+    return;
   }
 
-  newBrand = "";
-  addingBrand = false;
-  editingBrandIndex: number | null = null;
+  this.api.deleteBranch(branch.Id).subscribe({
+    next: () => {
+      // 🆗 نحذف من المصفوفة بعد نجاح الحذف
+      this.branchs.splice(index, 1);
+      this.showSuccess("✅ تم حذف الفرع بنجاح");
+    },
+    error: (err) => {
+      console.error("❌ خطأ أثناء حذف الفرع:", err);
+      this.showError("حدث خطأ أثناء حذف الفرع");
+    },
+  });
+}
+
 
   startAddBrand() {
     this.addingBrand = true;
@@ -296,87 +370,90 @@ export class Nav {
     this.idBrand = this.brands[i].Id || null;
   }
 
- saveBrand() {
-  if (!this.newBrand.trim()) return;
+  saveBrand() {
+    if (!this.newBrand.trim()) return;
 
-  if (this.editingBrandIndex !== null) {
-    // تعديل براند موجود
-    const existingBrand = this.brands[this.editingBrandIndex];
+    if (this.editingBrandIndex !== null) {
+      // تعديل براند موجود
+      const existingBrand = this.brands[this.editingBrandIndex];
 
-    // ✅ ناخد الدولة الجديدة اللي اختارها من الجدول
-    const updatedCountryId = existingBrand.CountryId;
-    const updatedCountryName = this.countryMap[updatedCountryId] || "";
+      // ✅ ناخد الدولة الجديدة اللي اختارها من الجدول
+      const updatedCountryId = existingBrand.CountryId;
+      const updatedCountryName = this.countryMap[updatedCountryId] || "";
 
-    const body: Brand = {
-      Id: existingBrand.Id,
-      BrandName: this.newBrand.trim(),
-      CountryId: updatedCountryId,
-      Message: existingBrand.Message || "",
-      AddedBy: existingBrand.AddedBy || 1,
-      AddedAt: existingBrand.AddedAt || new Date().toISOString(),
-      Country: {
-        Id: updatedCountryId,
-        CountryName: updatedCountryName,
-      },
-    };
+      const body: Brand = {
+        Id: existingBrand.Id,
+        BrandName: this.newBrand.trim(),
+        CountryId: updatedCountryId,
+        Message: existingBrand.Message || "",
+        Img: this.brandPreview || existingBrand.Img || "", // ✅ لو الصورة جديدة خذها، لو لا استخدم القديمة
+        AddedBy: existingBrand.AddedBy || 1,
+        AddedAt: existingBrand.AddedAt || new Date().toISOString(),
+        Country: {
+          Id: updatedCountryId,
+          CountryName: updatedCountryName,
+          Img: this.countryPreview || existingBrand.Country?.Img || "", // ✅ نفس الفكرة للدولة
+        },
+      };
 
-    this.api.updateBrand(body).subscribe({
-      next: (res: Brand) => {
-        // ✅ تحديث الصف محليًا بعد نجاح التعديل
-        this.brands[this.editingBrandIndex!] = {
-          ...existingBrand,
-          BrandName: res.BrandName,
-          CountryId: updatedCountryId,
-          Country: {
-            Id: updatedCountryId,
-            CountryName: updatedCountryName,
-          },
-        };
+      this.api.updateBrand(body).subscribe({
+        next: (res: Brand) => {
+          // ✅ تحديث الصف محليًا بعد نجاح التعديل
+          this.brands[this.editingBrandIndex!] = {
+            ...existingBrand,
+            BrandName: res.BrandName,
+            CountryId: updatedCountryId,
+            Country: {
+              Id: updatedCountryId,
+              CountryName: updatedCountryName,
+              Img: this.countryPreview || "",
+            },
+          };
 
-        this.editingBrandIndex = null;
-        this.newBrand = "";
-        this.showSuccess("✅ تم تعديل البراند بنجاح");
+          this.editingBrandIndex = null;
+          this.newBrand = "";
+          this.showSuccess("✅ تم تعديل البراند بنجاح");
 
-        // 🆙 تحديث القائمة من السيرفر بعد التعديل
-        this.loadBrand();
-      },
-      error: (err) => {
-        console.error("❌ خطأ أثناء تعديل البراند", err);
-        this.showError("حدث خطأ أثناء تعديل البراند");
-      },
-    });
-  } else {
-    // ➕ إضافة براند جديد
-    const body: Brand = {
-      Id: 0,
-      BrandName: this.newBrand.trim(),
-      CountryId: this.newBrandCountryId!,
-      Message: "",
-      AddedBy: 1,
-      AddedAt: new Date().toISOString(),
-      Country: {
-        Id: this.newBrandCountryId!,
-        CountryName: this.countryMap[this.newBrandCountryId!],
-      },
-    };
+          // 🆙 تحديث القائمة من السيرفر بعد التعديل
+          this.loadBrand();
+        },
+        error: (err) => {
+          this.showError("حدث خطأ أثناء تعديل البراند");
+        },
+      });
+    } else {
+      // ➕ إضافة براند جديد
+      const body: Brand = {
+        Id: 0,
+        BrandName: this.newBrand.trim(),
+        CountryId: this.newBrandCountryId!,
+        Message: "",
+        Img: this.brandPreview || "", // ✅ رابط صورة البراند بعد الرفع
+        AddedBy: 1,
+        AddedAt: new Date().toISOString(),
+        Country: {
+          Id: this.newBrandCountryId!,
+          CountryName: this.countryMap[this.newBrandCountryId!],
+          Img: this.countryPreview || "", // ✅ رابط صورة الدولة بعد الرفع
+        },
+      };
 
-    this.api.addBrand(body).subscribe({
-      next: (res: Brand) => {
-        this.brands.push(res);
-        this.addingBrand = false;
-        this.newBrand = "";
-        this.newBrandCountryId = null;
+      this.api.addBrand(body).subscribe({
+        next: (res: Brand) => {
+          this.brands.push(res);
+          this.addingBrand = false;
+          this.newBrand = "";
+          this.newBrandCountryId = null;
 
-        this.showSuccess("✅ تم إضافة البراند بنجاح");
-        this.loadBrand(); // ⬅️ تحديث القائمة
-      },
-      error: (err) => {
-        console.error("❌ خطأ أثناء إضافة البراند", err);
-        this.showError("حدث خطأ أثناء إضافة البراند");
-      },
-    });
+          this.showSuccess("✅ تم إضافة البراند بنجاح");
+          this.loadBrand(); // ⬅️ تحديث القائمة
+        },
+        error: (err) => {
+          this.showError("حدث خطأ أثناء إضافة البراند");
+        },
+      });
+    }
   }
-}
 
   cancelBrand() {
     this.newBrand = "";
@@ -421,46 +498,57 @@ export class Nav {
     });
   }
 
-  // عند اختيار الدولة
-  // chooseCountry(id?: number) {
-  //   if (!id) return;
-  //   const country = this.countries.find((c) => c.id === id);
-  //   console.log(country);
-  //   if (!country) return;
-  //   this.selectedCountry = {
-  //     Id: country.id,
-  //     CountryName: country.name,
-  //     // Message: "",
-  //     // AddedBy: 1,
-  //     AddedAt: new Date().toISOString(),
-  //   };
+  /////الصور الخاصة بالدول و البراندات//////
+  onCountryImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.countryImageFile = input.files[0];
+      // ✅ رفع الصورة مباشرة
+      this.api.uploadImage(this.countryImageFile).subscribe({
+        next: (res: any) => {
+          const imageUrl = res.fileUrl;
 
-  //   this.selectedCountryId = country.id!;
-  //   this.selectedCountryName = country.name;
-  //   // إظهار جدول البراند وزر إضافة براند
-  //   this.activeTable = "brand";
-  //   this.addingBrand = true;
-  //   this.showAddBrandButton = true;
-  //   this.showAddCarButton = false; // زر السيارة مخفي لحد اختيار براند
-  //   this.brands = [];
+          this.countryPreview = imageUrl;
+          this.cdr.detectChanges();
 
-  //   setTimeout(() => {
-  //     this.loadBrand();
-  //   }, 50);
-  // }
+          this.showSuccess("تم رفع الصورة بنجاح");
 
-  // // عند اختيار البراند
-  // chooseBrand(id?: number) {
-  //   if (!id) return;
-  //   const brand = this.brands.find((b) => b.Id === id);
-  //   if (!brand) return;
+          // 🟡 لو كنا بنعدل دولة موجودة
+          if (this.editingCountryIndex !== null) {
+            this.countries[this.editingCountryIndex].img = imageUrl;
+          }
+        },
 
-  //   this.selectedBrandId = brand.Id;
+        error: (err) => {
+          console.error("❌ خطأ في الرفع", err);
+        },
+      });
+    }
+  }
 
-  //   // إظهار زر إضافة سيارة
-  //   this.showAddCarButton = true;
-  //   this.activeTable = "car";
-  //   this.addingCar = true;
-  // }
+  onBrandImageSelected(event: Event) {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.brandImageFile = input.files[0];
+
+      // ✅ رفع الصورة مباشرة
+      this.api.uploadImage(this.brandImageFile).subscribe({
+        next: (res: any) => {
+          const imageUrl = res.fileUrl;
+          this.brandPreview = imageUrl;
+          this.cdr.detectChanges();
+
+          this.showSuccess("تم رفع الصورة بنجاح");
+
+          // 🟡 لو كنا بنعدل براند موجود
+          if (this.editingBrandIndex !== null) {
+            this.brands[this.editingBrandIndex].Img = imageUrl;
+          }
+        },
+        error: (err) => {
+          console.error("❌ خطأ في الرفع", err);
+        },
+      });
+    }
+  }
 }
-  

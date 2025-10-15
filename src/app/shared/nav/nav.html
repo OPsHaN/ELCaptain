@@ -3,10 +3,10 @@
   class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative"
 >
   <div class="position-relative">
-    <button class="btn btn-outline-warning" (click)="toggleTable('car')">
-      ➕ إضافة سيارة
+    <button class="btn btn-outline-warning" (click)="toggleTable('branch')">
+      ➕ إضافة فرع
     </button>
-    <div class="arrow-wrapper" *ngIf="activeTable === 'car'">
+    <div class="arrow-wrapper" *ngIf="activeTable === 'branch'">
       <i class="bi bi-caret-down-fill arrow-icon"></i>
     </div>
   </div>
@@ -39,6 +39,7 @@
       <tr>
         <th>#</th>
         <th>اسم البلد</th>
+        <th>صورة البلد</th>
         <th>الإجراءات</th>
       </tr>
     </thead>
@@ -55,6 +56,27 @@
             class="form-control text-center"
             [(ngModel)]="newCountry"
           />
+        </td>
+        <!-- 🖼️ الصورة -->
+        <td *ngIf="editingCountryIndex !== i">
+          <!-- لو مفيش صورة جديدة، يظهر القديمة أو الأيقونة -->
+          <ng-container *ngIf="country.img; else noImage">
+            <img
+              [src]="country.img"
+              alt="صورة"
+              width="50"
+              height="50"
+              class="rounded border border-dark"
+              style="object-fit: cover"
+            />
+          </ng-container>
+          <ng-template #noImage>
+            <i class="bi bi-image fs-3 text-secondary"></i>
+          </ng-template>
+        </td>
+
+        <td *ngIf="editingCountryIndex === i">
+          <input type="file" (change)="onCountryImageSelected($event)" />
         </td>
 
         <!-- الإجراءات -->
@@ -108,6 +130,20 @@
           />
         </td>
         <td>
+          <input type="file" (change)="onCountryImageSelected($event)" />
+          <div class="mt-2" *ngIf="countryPreview">
+            <img
+              [src]="countryPreview"
+              alt="صورة البلد"
+              width="50"
+              height="50"
+              class="rounded border border-dark"
+              style="object-fit: cover"
+            />
+          </div>
+        </td>
+
+        <td>
           <button class="btn btn-sm btn-success mx-1" (click)="saveCountry()">
             ✔️ حفظ
           </button>
@@ -119,7 +155,7 @@
 
       <!-- 🆕 زر إضافة بلد جديد -->
       <tr *ngIf="!addingCountry && editingCountryIndex === null">
-        <td colspan="3" class="text-center">
+        <td colspan="4" class="text-center">
           <button class="btn btn-sm btn-primary" (click)="startAdd()">
             ➕ إضافة بلد جديدة
           </button>
@@ -129,69 +165,69 @@
   </table>
 </div>
 
-<!-- ✅ جدول السيارات -->
-<div class="table-container mt-3" *ngIf="activeTable === 'car'" dir="rtl">
+<!-- ✅ جدول الفروع -->
+<div class="table-container mt-3" *ngIf="activeTable === 'branch'" dir="rtl">
   <table class="table table-bordered text-center align-middle">
     <thead class="table-light">
       <tr>
         <th>#</th>
-        <th>اسم السيارة</th>
+        <th>اسم الفرع</th>
         <th>الإجراءات</th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let car of cars; let i = index">
+      <tr *ngFor="let branch of branchs; let i = index">
         <td>{{ i + 1 }}</td>
-        <td *ngIf="editingCarIndex !== i">{{ car.name }}</td>
-        <td *ngIf="editingCarIndex === i">
+        <td *ngIf="editingBranchIndex !== i">{{ branch.BranchName }}</td>
+        <td *ngIf="editingBranchIndex === i">
           <input
             type="text"
             class="form-control text-center"
-            [(ngModel)]="newCar"
+            [(ngModel)]="newBranch"
           />
         </td>
         <td>
-          <ng-container *ngIf="editingCarIndex !== i">
-            <button class="btn btn-sm btn-success mx-1" (click)="editCar(i)">
+          <ng-container *ngIf="editingBranchIndex !== i">
+            <button class="btn btn-sm btn-success mx-1" (click)="editBranch(i)">
               ✔️ تعديل
             </button>
-            <button class="btn btn-sm btn-danger" (click)="deleteCar(i)">
+            <button class="btn btn-sm btn-danger" (click)="deleteBranch(i)">
               🗑 حذف
             </button>
           </ng-container>
-          <ng-container *ngIf="editingCarIndex === i">
-            <button class="btn btn-sm btn-success mx-1" (click)="saveCar()">
+          <ng-container *ngIf="editingBranchIndex === i">
+            <button class="btn btn-sm btn-success mx-1" (click)="saveBranch()">
               ✔️ حفظ
             </button>
-            <button class="btn btn-sm btn-secondary mx-1" (click)="cancelCar()">
+            <button class="btn btn-sm btn-secondary mx-1" (click)="cancelBranch()">
               ❌ إلغاء
             </button>
           </ng-container>
         </td>
       </tr>
-      <tr *ngIf="addingCar && editingCarIndex === null">
+      <tr *ngIf="addingBranch && editingBranchIndex === null">
         <td>+</td>
         <td>
           <input
             type="text"
             class="form-control text-center"
-            [(ngModel)]="newCar"
-            placeholder="اكتب اسم السيارة"
+            [(ngModel)]="newBranch"
+            placeholder="اكتب اسم الفرع"
           />
         </td>
         <td>
-          <button class="btn btn-sm btn-success mx-1" (click)="saveCar()">
+          <button class="btn btn-sm btn-success mx-1" (click)="saveBranch()">
             ✔️ حفظ
           </button>
-          <button class="btn btn-sm btn-secondary mx-1" (click)="cancelCar()">
+          <button class="btn btn-sm btn-secondary mx-1" (click)="cancelBranch()">
             ❌ إلغاء
           </button>
         </td>
       </tr>
-      <tr *ngIf="!addingCar && editingCarIndex === null">
+      <tr *ngIf="!addingBranch && editingBranchIndex === null">
         <td colspan="3" class="text-center">
-          <button class="btn btn-sm btn-primary" (click)="startAddCar()">
-            ➕ إضافة سيارة جديدة
+          <button class="btn btn-sm btn-primary" (click)="startAddBranch()">
+            ➕ إضافة فرع جديد
           </button>
         </td>
       </tr>
@@ -206,15 +242,17 @@
       <tr>
         <th>#</th>
         <th>اسم البراند</th>
+        <th>صورة البراند</th>
         <th>اسم الدولة التابع لها</th>
         <th>الإجراءات</th>
       </tr>
     </thead>
     <tbody>
       <tr *ngFor="let brand of brands; let i = index">
+        <!-- # -->
         <td>{{ i + 1 }}</td>
 
-        <!-- 📝 لو في تعديل يظهر input -->
+        <!-- 📝 اسم البراند -->
         <td *ngIf="editingBrandIndex === i">
           <input
             type="text"
@@ -226,11 +264,40 @@
           {{ brand?.BrandName || "-" }}
         </td>
 
+        <!-- 🖼️ صورة البراند -->
+        <td *ngIf="editingBrandIndex !== i">
+          <ng-container *ngIf="brand.Img; else noImage">
+            <img
+              [src]="brand.Img"
+              alt="صورة"
+              width="50"
+              height="50"
+              class="rounded border border-dark"
+              style="object-fit: cover"
+            />
+          </ng-container>
+          <ng-template #noImage>
+            <i class="bi bi-image fs-3 text-secondary"></i>
+          </ng-template>
+        </td>
+        <td *ngIf="editingBrandIndex === i">
+          <input type="file" (change)="onBrandImageSelected($event)" />
+          <!-- لو في صورة جديدة -->
+          <div *ngIf="brandPreview" class="mt-2">
+            <img
+              [src]="brandPreview"
+              width="50"
+              height="50"
+              class="rounded border border-dark"
+              style="object-fit: cover"
+            />
+          </div>
+        </td>
+
         <!-- 🌍 الدولة -->
         <td *ngIf="editingBrandIndex !== i">
           {{ countryMap[brand.CountryId] || "-" }}
         </td>
-
         <td *ngIf="editingBrandIndex === i">
           <select class="form-select text-center" [(ngModel)]="brand.CountryId">
             <option [ngValue]="null" disabled>اختر الدولة</option>
@@ -249,12 +316,6 @@
             <button class="btn btn-sm btn-danger mx-1" (click)="deleteBrand(i)">
               🗑 حذف
             </button>
-            <!-- <button
-              class="btn btn-sm btn-primary mx-1"
-              (click)="chooseBrand(brand.Id)"
-            >
-              ✅ اختر البراند
-            </button> -->
           </ng-container>
 
           <ng-container *ngIf="editingBrandIndex === i">
@@ -282,7 +343,18 @@
             placeholder="اكتب اسم البراند"
           />
         </td>
-        <!-- 🌍 الدولة -->
+        <td>
+          <input type="file" (change)="onBrandImageSelected($event)" />
+          <div *ngIf="brandPreview" class="mt-2">
+            <img
+              [src]="brandPreview"
+              width="50"
+              height="50"
+              class="rounded border border-dark"
+              style="object-fit: cover"
+            />
+          </div>
+        </td>
         <td>
           <select
             class="form-select text-center"
@@ -294,7 +366,6 @@
             </option>
           </select>
         </td>
-
         <td>
           <button class="btn btn-sm btn-success mx-1" (click)="saveBrand()">
             ✔️ حفظ
@@ -307,9 +378,9 @@
 
       <!-- 🔹 زرار الإضافة -->
       <tr *ngIf="!addingBrand && editingBrandIndex === null">
-        <td colspan="4" class="text-center">
+        <td colspan="5" class="text-center">
           <button class="btn btn-sm btn-primary" (click)="startAddBrand()">
-            ➕ إضافة براند جديدة
+            ➕ إضافة براند جديد
           </button>
         </td>
       </tr>
