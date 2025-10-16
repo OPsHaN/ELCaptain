@@ -1,7 +1,9 @@
-/* employees.component.css (أو .scss) */
-.employees-wrap {
+/* cars.component.css (أو .scss) */
+.car-wrap {
   padding: 1rem;
 }
+
+
 
 /* Grid: default 4 columns */
 .cards-grid {
@@ -9,10 +11,11 @@
   grid-template-columns: repeat(4, 1fr);
   gap: 1rem;
   align-items: stretch;
+  position: relative;
 }
 
 /* Card */
-.employee-card {
+.car-card {
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
@@ -21,18 +24,19 @@
   display: flex;
   flex-direction: column;
   transition: transform 180ms ease, box-shadow 180ms ease;
-  min-height: 220px;
+  min-height: 250px;
   border: 1px solid rgba(0,0,0,0.04);
+  position: relative;
 }
 
-.employee-card:hover {
+.car-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 30px rgba(16,24,40,0.12);
 }
 
-/* media / avatar */
+/* media / image */
 .card-media {
-  height: 110px;
+  height: 200px;
   width: 100%;
   overflow: hidden;
   display: flex;
@@ -43,7 +47,7 @@
 
 .card-media img {
   width: 100%;
-  height: 100%;
+  height: 200px;
   object-fit: cover;
   display: block;
 }
@@ -55,9 +59,10 @@
   flex-direction: column;
   gap: 0.5rem;
   flex: 1;
+  text-align: center;
 }
 
-.emp-name {
+.car-name {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 600;
@@ -67,7 +72,7 @@
   text-overflow: ellipsis;
 }
 
-.emp-role {
+.car-role {
   margin: 0;
   font-size: 0.9rem;
   color: #6b7280;
@@ -79,23 +84,85 @@
   display: flex;
   gap: 0.6rem;
   margin-top: auto;
+  justify-content: center;
 }
-
-// .btn {
-//   padding: 0.4rem 0.6rem;
-//   border-radius: 8px;
-//   border: none;
-//   font-size: 0.85rem;
-//   cursor: pointer;
-//   background: #ffd000;
-//   color: white;
-// }
 
 .btn-outline {
   background: transparent;
   border: 1px solid rgba(11,95,255,0.12);
   color: #0b5fff;
 }
+
+/* ✅ Status badge */
+.status-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.status-badge.online {
+  background-color: #28a745; /* أخضر */
+}
+
+.status-badge.offline {
+  background-color: #dc3545; /* أحمر */
+}
+
+/* ✅ Week days list (لو هتستخدمها في الفورم) */
+.week-days-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.week-days-list li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #f1f1f1;
+  transition: all 0.2s ease;
+}
+
+.week-days-list li.active-day {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.week-days-list li.inactive-day {
+  background-color: #e0e0e0;
+  color: #777;
+}
+
+.week-days-list li i {
+  font-size: 1rem;
+}
+
+/* Optional: small circular buttons for edit/delete */
+.card-actions .btn {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
+
 
 /* RESPONSIVE BREAKPOINTS */
 /* 1200px -> 3 columns */

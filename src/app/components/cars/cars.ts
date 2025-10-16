@@ -1,66 +1,111 @@
-import { Component, NgModule } from "@angular/core";
+import { ChangeDetectorRef, Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
-
+import { CarouselModule } from "primeng/carousel";
 
 import { OnInit } from "@angular/core";
 import { CarRegister } from "../car-register/car-register";
+import { MessageService } from "primeng/api";
+import { Apiservice } from "../../services/apiservice";
+import { DialogModule } from "primeng/dialog";
 
 @Component({
   selector: "app-cars",
-  imports: [CommonModule, CardModule, CarRegister],
+  imports: [CommonModule, CardModule, CarRegister, DialogModule , CarouselModule],
   templateUrl: "./cars.html",
   styleUrl: "./cars.scss",
 })
-
 export class Cars implements OnInit {
   activeTable: string | null = null;
-  selectedCar: any | null = null;
+  selectedCar: any = null;
+  showCarDialog: boolean = false;
   showRegisterForm = false;
   cars: any[] = [];
+  isCarEditMode: boolean = false;
+  selectedCarToEdit: any = null;
+  showCarForm: boolean = false;
+  isEditMode = false; // ⬅️ لو true معناها بنعدل موظف
+  defaultCarImage = "./photos/default-car.jpg";
+  car: any[] = [];
+  constructor(
+    private api: Apiservice,
+    private cdr: ChangeDetectorRef,
+    private messageService: MessageService
+  ) {}
 
-
-
-  constructor() {}
   ngOnInit() {
-
-
+    this.loadCars();
   }
 
-    toggleTable(type: string) {
-    if (this.activeTable === type) {
-      this.activeTable = null;
-    } else {
-      this.activeTable = type;
-    }
+  loadCars() {
+    this.api.getAllCars().subscribe({
+      next: (data) => {
+        this.cars = data as any[];
+        console.log("✅ Cars loaded:", this.cars);
+        this.cdr.detectChanges();
+      },
+    });
   }
-
 
   trackById(index: number, item: any) {
     return item.id;
   }
 
-
-  viewEmployee(e: any) {
-    // مثال: فتح نافذة تفاصيل
-    console.log("View", e);
+  viewCar(car: any) {
+    this.selectedCar = car;
+    this.showCarDialog = true;
   }
 
-  editEmployee(e: any) {
-    // مثال: توجيه لصفحة التعديل
-    console.log("Edit", e);
-  }
-    deleteEmployee(e: any) {
-    // تأكيد ثم حذف
-    if (!confirm(`حذف ${e.name}؟`)) return;
-    this.cars = this.cars.filter((x) => x.id !== e.id);
-    console.log("Deleted", e);
+  editCar(car: any) {
+    this.selectedCarToEdit = car;
+    this.isCarEditMode = true;
+    this.showCarForm = true;
+
+    // if (this.carForm) {
+    //   this.patchCarForm(car);
+    // }
   }
 
-    toggleRegisterForm() {
+  deleteCar(car: any) {
+    if (
+      !confirm(
+        `هل أنت متأكد من حذف السيارة: ${car.Brand.BrandName} - ${car.Model}?`
+      )
+    )
+      return;
+
+    this.api.deleteCar(car.Id).subscribe({
+      next: () => {
+        this.cars = this.cars.filter((c) => c.Id !== car.Id);
+        this.showSuccess("تم حذف السيارة بنجاح ✅");
+      },
+      error: (err) => {
+        console.error("❌ Delete error:", err);
+        this.showError("حدث خطأ أثناء حذف السيارة");
+      },
+    });
+  }
+
+  toggleRegisterForm() {
     this.selectedCar = null; // ✨ عشان الفورم يفتح فاضي
     this.showRegisterForm = !this.showRegisterForm;
   }
 
-  
+  showError(msg: string) {
+    this.messageService.add({
+      severity: "error",
+      // summary: "خطأ",
+      detail: msg,
+      life: 2000,
+    });
+  }
+
+  showSuccess(msg: string) {
+    this.messageService.add({
+      severity: "success",
+      // summary: "تم بنجاح",
+      detail: msg,
+      life: 3000,
+    });
+  }
 }

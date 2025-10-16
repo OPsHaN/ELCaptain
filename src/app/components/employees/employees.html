@@ -22,7 +22,6 @@
 </div>
 
 <!-- ✅ جدول الموظفين -->
-<!-- employees.component.html -->
 <div class="employees-wrap" *ngIf="!showRegisterForm">
   <div class="cards-grid" dir="rtl">
     <div
@@ -60,13 +59,13 @@
             class="btn btn-sm btn-success rounded-circle btn-sm"
             (click)="editEmployee(e); $event.stopPropagation()"
           >
-             تعديل
+            ✏️
           </button>
           <button
             class="btn btn-danger rounded-circle btn-sm"
             (click)="deleteEmployee(e); $event.stopPropagation()"
           >
-             حذف
+            🗑
           </button>
         </div>
       </div>
