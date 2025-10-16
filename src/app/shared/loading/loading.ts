@@ -6,7 +6,7 @@ import { LoadingService } from '../../services/loadingservice';
 @Component({
   selector: "app-loading",
   imports: [CommonModule],
-  template: "./loading.html",
+  templateUrl: "./loading.html",
   styleUrl: "./loading.scss",
 })
 export class Loading {
