@@ -1,1 +1,55 @@
-السيارات
+<!-- ✅ شريط الأزرار -->
+<div
+  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
+>
+  <div class="position-relative">
+    <button class="btn btn-outline-warning" (click)="toggleTable('cars')">
+      ➕ تسجيل عربية جديدة
+    </button>
+    <div class="arrow-wrapper" *ngIf="activeTable === 'cars'">
+      <i class="bi bi-caret-down-fill arrow-icon"></i>
+    </div>
+  </div>
+</div>
+
+<div class="table-container mt-0" *ngIf="activeTable === 'cars'" dir="rtl">
+  <app-car-register (closeForm)="toggleRegisterForm()"></app-car-register>
+</div>
+
+<!-- ✅ جدول الموظفين -->
+<!-- employees.component.html -->
+<div class="employees-wrap" *ngIf="activeTable !== 'cars'">
+  <div class="cards-grid">
+    <div
+      class="card employee-card"
+      *ngFor="let e of cars; trackBy: trackById"
+      (click)="viewEmployee(e)"
+      role="button"
+      aria-label="Open employee {{ e.name }}"
+    >
+      <div class="card-media">
+        <img [src]="e.avatar" alt="{{ e.name }}" loading="lazy" />
+      </div>
+
+      <div class="card-body">
+        <h3 class="emp-name">{{ e.name }}</h3>
+        <p class="emp-role">{{ e.role }}</p>
+
+        <div class="card-actions">
+          <button
+            class="btn btn-sm"
+            (click)="editEmployee(e); $event.stopPropagation()"
+          >
+            ✏️ تعديل
+          </button>
+          <button
+            class="btn btn-sm btn-outline"
+            (click)="deleteEmployee(e); $event.stopPropagation()"
+          >
+            🗑 حذف
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

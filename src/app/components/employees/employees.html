@@ -2,17 +2,132 @@
 <div
   class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
 >
-  <div class="position-relative" >
-    <button class="btn btn-outline-warning" (click)="toggleTable('empolyee')">
+  <div class="position-relative">
+    <button class="btn btn-outline-warning" (click)="toggleRegisterForm()">
       ➕ تسجيل موظف جديد
     </button>
-    <div class="arrow-wrapper" *ngIf="activeTable === 'empolyee'">
+    <div class="arrow-wrapper" *ngIf="showRegisterForm">
       <i class="bi bi-caret-down-fill arrow-icon"></i>
     </div>
   </div>
 </div>
 
-<div class="table-container mt-0" *ngIf="activeTable === 'empolyee'" dir="rtl">
-    <app-register></app-register>
-
+<div class="table-container mt-0" *ngIf="showRegisterForm" dir="rtl">
+  <app-register
+    *ngIf="showRegisterForm"
+    [employee]="selectedEmployee"
+    (closeForm)="toggleRegisterForm()"
+    [isEditMode]="isEditMode"
+  ></app-register>
 </div>
+
+<!-- ✅ جدول الموظفين -->
+<!-- employees.component.html -->
+<div class="employees-wrap" *ngIf="!showRegisterForm">
+  <div class="cards-grid" dir="rtl">
+    <div
+      class="card employee-card"
+      *ngFor="let e of employees; trackBy: trackById"
+      (click)="viewEmployee(e)"
+      role="button"
+      aria-label="Open employee {{ e.displayName }}"
+    >
+      <div class="card-media">
+        <img
+          [src]="e.avatar || defaultAvatar"
+          alt="{{ e.displayName }}"
+          loading="lazy"
+        />
+      </div>
+
+              <!-- ✅ الحالة (متصل / غير متصل) -->
+        <span
+          class="status-badge"
+          [ngClass]="{
+            'online': e.loggedIn === 'متصل',
+            'offline': e.loggedIn === 'غير متصل'
+          }"
+        >
+          {{ e.loggedIn }}
+        </span>
+
+      <div class="card-body">
+        <h3 class="emp-name">{{ e?.displayName }}</h3>
+        <p class="emp-role">{{ e?.roleText }}</p>
+
+        <div class="card-actions">
+          <button
+            class="btn btn-sm btn-success rounded-circle btn-sm"
+            (click)="editEmployee(e); $event.stopPropagation()"
+          >
+             تعديل
+          </button>
+          <button
+            class="btn btn-danger rounded-circle btn-sm"
+            (click)="deleteEmployee(e); $event.stopPropagation()"
+          >
+             حذف
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Dialog عرض بيانات الموظف -->
+<p-dialog
+  header="👤 بيانات الموظف"
+  [(visible)]="showEmployeeDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '400px' }"
+  [baseZIndex]="10000"
+  dir="rtl"
+>
+  <ng-container *ngIf="selectedEmployee">
+    <div class="text-center p-1">
+      <img
+        [src]="selectedEmployee.avatar"
+        alt="Avatar"
+        class="rounded-circle mb-3"
+        width="120"
+        height="120"
+      />
+      <h4>{{ selectedEmployee.displayName }}</h4>
+      <p>{{ selectedEmployee.roleText }}</p>
+      <hr />
+      <p><strong>📞 الهاتف:</strong> {{ selectedEmployee.Phone }}</p>
+      <p><strong>📧 البريد:</strong> {{ selectedEmployee.Email }}</p>
+      <p>
+        <strong>🕒 من:</strong> {{ selectedEmployee.ShiftFrom }}
+        -
+        <strong>إلى:</strong> {{ selectedEmployee.ShiftTo }}
+      </p>
+      <p><strong>📡 الحالة:</strong> {{ selectedEmployee.loggedIn }}</p>
+      <p><strong>🏢 الفرع:</strong> {{ selectedEmployee.Branch?.BranchName }}</p>
+
+      <hr />
+      <p><strong>📅 أيام العمل:</strong></p>
+<ul class="list-unstyled m-0 week-days-list">
+  <li
+    *ngFor="let day of daysOfWeek"
+    [class.active-day]="selectedEmployee[day.key]"
+    [class.inactive-day]="!selectedEmployee[day.key]"
+  >
+    <i
+      class="pi me-1"
+      [ngClass]="
+        selectedEmployee[day.key] ? 'pi-check-circle' : 'pi-times-circle'
+      "
+    ></i>
+    {{ day.label }}
+  </li>
+</ul>
+
+    </div>
+  </ng-container>
+</p-dialog>
+
+
+
+

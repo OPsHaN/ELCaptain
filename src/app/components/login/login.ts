@@ -40,8 +40,13 @@ export class Login implements OnInit {
   errorMessage = "";
   activePage: string = "home";
   userFullName: string = "";
+  rankProfile: string = "غير معروف";
   userImg: string = "assets/images/user.png";
-
+  ranks = [
+    { name: "عضو مجلس إدارة", code: 1 },
+    { name: "مدير فرع", code: 2 },
+    { name: "موظف", code: 3 },
+  ];
   buttons = [
     { label: "الرئيسية", route: "home", icon: "bi bi-house" },
     { label: "السيارات ", route: "./cars", icon: "bi bi-car-front" },
@@ -71,9 +76,19 @@ export class Login implements OnInit {
 
   ngOnInit(): void {
     const token = localStorage.getItem("token");
+    const lastRoute = localStorage.getItem("lastRoute");
+     this.rankProfile = localStorage.getItem("rank") || "غير معروف";
+
+
+
     if (token) {
       this.isLoggedIn = true;
-      this.router.navigate(["/home"]);
+
+      if (lastRoute && lastRoute !== "/login") {
+        this.router.navigateByUrl(lastRoute);
+      } else {
+        this.router.navigate([localStorage.getItem("lastRoute") || "/home"]);
+      }
     }
     // const userInfo = this.getUserInfoFromToken();
     // if (userInfo) {
@@ -112,8 +127,16 @@ export class Login implements OnInit {
           localStorage.setItem("token", res.Token);
           localStorage.setItem("fullName", res.FullName || "");
           localStorage.setItem("img", res.Img || "");
+          localStorage.setItem("userType", res.UserType.toString());
+
+          // localStorage.setItem("rank", res.UserId?.toString() || "");
           this.userFullName = res.FullName || "";
           this.userImg = res.Img || "assets/images/user.png";
+          const rank =
+            this.ranks.find((r) => r.code === res.UserType)?.name ||
+            "غير معروف";
+          localStorage.setItem("rank", rank);
+          this.rankProfile = rank;
 
           this.authService.onLoginSuccess(res.Token);
           this.showSuccess("تم تسجيل الدخول بنجاح");

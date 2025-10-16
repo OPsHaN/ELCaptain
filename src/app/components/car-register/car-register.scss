@@ -1,20 +1,35 @@
+/* ==========================
+   Card الرئيسي للفورم
+=========================== */
 .card {
   background: #ffffffcc;
   backdrop-filter: blur(10px);
-//   border-radius: 16px;
   border: 0px;
+  border-radius: 16px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
 }
 
-.form-label{
-    text-align: right;
+/* ==========================
+   تنسيق الليبلز
+=========================== */
+.form-label {
+  text-align: right;
+  font-weight: 600;
 }
 
+/* ==========================
+   Responsive للهواتف
+=========================== */
 @media (max-width: 576px) {
   .card {
     padding: 1rem !important;
   }
 }
 
+/* ==========================
+   mat-select & form-field
+=========================== */
 .custom-outline {
   // عرض الفورم
   width: 100%;
@@ -72,6 +87,9 @@ height: 33px !important;
 }
 
 
+/* ==========================
+   Time inputs
+=========================== */
 .time-fieldset {
   border: 1px solid #ccc;
   border-radius: 8px;
@@ -94,7 +112,9 @@ height: 33px !important;
   display: block;
 }
 
-
+/* ==========================
+   Avatar / صورة السيارة
+=========================== */
 .avatar-upload {
   position: relative;
   display: inline-block;
@@ -116,7 +136,7 @@ height: 33px !important;
   position: absolute;
   bottom: 0;
   right: 0;
-  background: #000000;
+  background: #000;
   color: white;
   padding: 5px 8px;
   border-radius: 50%;
@@ -129,7 +149,9 @@ height: 33px !important;
   background: #0b5ed7;
 }
 
-
+/* ==========================
+   Dropzone للصور
+=========================== */
 .dropzone {
   border: 2px dashed #bbb;
   border-radius: 100px;
@@ -137,19 +159,20 @@ height: 33px !important;
   padding: 20px;
   cursor: pointer;
   transition: 0.3s;
-  width:160px;
+  width: 160px;
 }
 
 .dropzone:hover {
   background: #f8f9fa;
 }
 
+/* ==========================
+   Preview صورة
+=========================== */
 .preview-img {
   width: 120px;
   height: 120px;
   object-fit: cover;
-  border:2px solid #ccc;
-    border-radius: 100px;
-
-  // border-radius: 10px;
+  border: 2px solid #ccc;
+  border-radius: 100px;
 }

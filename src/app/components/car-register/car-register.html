@@ -1,0 +1,197 @@
+<div class="container py-1">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-12 col-md-12 col-sm-12">
+      <div class="card p-2 rounded-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h3 class="text-center mb-2 fw-bold text-dark">
+              {{ isEditMode ? "✏️ تعديل سيارة" : "🚗 تسجيل سيارة" }}
+            </h3>
+          </div>
+          <div>
+            <button class="btn" (click)="closeForm.emit()">⬅️ غلق</button>
+          </div>
+        </div>
+
+        <form [formGroup]="carForm" (ngSubmit)="onSubmit()" novalidate dir="rtl">
+          <!-- صورة السيارة -->
+          <div class="col-md-4 text-center my-2" style="width: 100px">
+            <div class="avatar-upload">
+              <img
+                [src]="carImagePreview || defaultCarImage"
+                alt="صورة السيارة"
+                class="avatar-img"
+              />
+              <label for="carImageInput" class="edit-icon">✏️</label>
+              <input
+                type="file"
+                id="carImageInput"
+                accept="image/*"
+                (change)="onFileSelected($event)"
+              />
+            </div>
+          </div>
+
+          <div class="row g-3 text-end">
+            <!-- نوع السيارة -->
+            <div class="col-md-4">
+              <label class="form-label">نوع السيارة</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="Type"
+              />
+            </div>
+
+            <!-- الموديل -->
+            <div class="col-md-4">
+              <label class="form-label">الموديل</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="Model"
+              />
+            </div>
+
+            <!-- الماركة -->
+            <div class="col-md-4">
+              <label class="form-label">الماركة</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="BrandId">
+                  <mat-option *ngFor="let brand of brands" [value]="brand.Id">
+                    {{ brand.BrandName }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- اللون -->
+            <div class="col-md-4">
+              <label class="form-label">اللون</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="Color"
+              />
+            </div>
+
+            <!-- عدد الكيلومترات -->
+            <div class="col-md-4">
+              <label class="form-label">عدد الكيلومترات</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="Kilometers"
+              />
+            </div>
+
+            <!-- ناقل الحركة -->
+            <div class="col-md-4">
+              <label class="form-label">ناقل الحركة</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="Transmission">
+                  <mat-option value="Manual">يدوي</mat-option>
+                  <mat-option value="Automatic">أوتوماتيك</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- السعر -->
+            <div class="col-md-4">
+              <label class="form-label">السعر</label>
+              <input
+                type="number"
+                class="form-control custom-input"
+                formControlName="Price"
+              />
+            </div>
+
+            <!-- سنة الصنع -->
+            <div class="col-md-4">
+              <label class="form-label">سنة الصنع</label>
+              <input
+                type="number"
+                class="form-control custom-input"
+                formControlName="YearOfManufacture"
+              />
+            </div>
+
+            <!-- نوع المحرك -->
+            <div class="col-md-4">
+              <label class="form-label">نوع المحرك</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="EngineType"
+              />
+            </div>
+
+            <!-- قوة الحصان -->
+            <div class="col-md-4">
+              <label class="form-label">قوة الحصان</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="HorsePower"
+              />
+            </div>
+
+            <!-- عدد الوسائد الهوائية -->
+            <div class="col-md-4">
+              <label class="form-label">عدد الوسائد الهوائية</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="AirBagCount"
+              />
+            </div>
+
+            <!-- سعة الشنطة -->
+            <div class="col-md-4">
+              <label class="form-label">سعة الشنطة</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="BagCapacity"
+              />
+            </div>
+
+            <!-- الحالة -->
+            <div class="col-md-4">
+              <label class="form-label">الحالة</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="Condition">
+                  <mat-option value="New">جديدة</mat-option>
+                  <mat-option value="Used">مستعملة</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- ✅ المميزات -->
+            <div class="col-12 mt-3">
+              <label class="form-label d-block mb-2 fw-bold">المميزات</label>
+              <div class="d-flex flex-wrap gap-3">
+                <div *ngFor="let feature of features">
+                  <input
+                    type="checkbox"
+                    class="form-check-input ms-1"
+                    [formControlName]="feature.key"
+                    [id]="feature.key"
+                  />
+                  <label [for]="feature.key">{{ feature.label }}</label>
+                </div>
+              </div>
+            </div>
+
+            <!-- زر الحفظ -->
+            <div class="col-12 text-center mt-3">
+              <button class="btn btn-warning btn-lg py-0" [disabled]="isSubmitting">
+                {{ isEditMode ? "📝 تعديل" : "➕ تسجيل" }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

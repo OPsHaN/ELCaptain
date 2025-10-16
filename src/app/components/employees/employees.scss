@@ -1,4 +1,176 @@
-.arrow-icon {
-  font-size: 18px;
-  color: #0d6efd;
+/* employees.component.css (أو .scss) */
+.employees-wrap {
+  padding: 1rem;
+}
+
+/* Grid: default 4 columns */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+/* Card */
+.employee-card {
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  min-height: 220px;
+  border: 1px solid rgba(0,0,0,0.04);
+}
+
+.employee-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 30px rgba(16,24,40,0.12);
+}
+
+/* media / avatar */
+.card-media {
+  height: 200px;
+  width: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // background: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
+}
+
+.card-media img {
+  width: 100%;
+  height:200px;
+  // object-fit: cover;
+  display: block;
+}
+
+/* body */
+.card-body {
+  padding: 0.9rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+}
+
+.emp-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emp-role {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+  flex-grow: 1;
+}
+
+/* actions aligned bottom */
+.card-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: auto;
+  justify-content: center;
+}
+
+// .btn {
+//   padding: 0.4rem 0.6rem;
+//   border-radius: 8px;
+//   border: none;
+//   font-size: 0.85rem;
+//   cursor: pointer;
+//   background: #ffd000;
+//   color: white;
+// }
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(11,95,255,0.12);
+  color: #0b5fff;
+}
+
+.status-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.status-badge.online {
+  background-color: #28a745; // أخضر
+}
+
+.status-badge.offline {
+  background-color: #dc3545; // أحمر
+}
+
+.week-days-list {
+  display: flex;
+  flex-wrap: wrap;       /* أو nowrap لو عايزها سطر واحد فقط */
+  justify-content: center;
+  gap: 10px;
+  padding: 0;
+}
+
+.week-days-list li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  background-color: #f1f1f1;
+  transition: all 0.2s ease;
+}
+
+.week-days-list li.active-day {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.week-days-list li.inactive-day {
+  background-color: #e0e0e0;
+  color: #777;
+}
+
+.week-days-list li i {
+  font-size: 1rem;
+}
+
+
+
+/* RESPONSIVE BREAKPOINTS */
+/* 1200px -> 3 columns */
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* 900px -> 2 columns */
+@media (max-width: 900px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 576px -> 1 column (mobile) */
+@media (max-width: 576px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
 }
