@@ -11,7 +11,13 @@ import { DialogModule } from "primeng/dialog";
 
 @Component({
   selector: "app-cars",
-  imports: [CommonModule, CardModule, CarRegister, DialogModule , CarouselModule],
+  imports: [
+    CommonModule,
+    CardModule,
+    CarRegister,
+    DialogModule,
+    CarouselModule,
+  ],
   templateUrl: "./cars.html",
   styleUrl: "./cars.scss",
 })
@@ -29,44 +35,43 @@ export class Cars implements OnInit {
   car: any[] = [];
 
   getColorCode(colorName: string): string {
-  if (!colorName) return '#000'; // افتراضي أسود
+    if (!colorName) return "#000"; // افتراضي أسود
 
-  const normalized = colorName.trim().toLowerCase();
+    const normalized = colorName.trim().toLowerCase();
 
-  switch (normalized) {
-    case 'أحمر':
-    case 'red':
-      return 'red';
-    case 'أزرق':
-    case 'blue':
-      return 'blue';
-    case 'أسود':
-    case 'black':
-      return 'black';
-    case 'أبيض':
-    case 'white':
-      return '#fff';
-    case 'رمادي':
-    case 'رمادى':
-    case 'gray':
-    case 'grey':
-      return 'gray';
-    case 'أخضر':
-    case 'green':
-      return 'green';
-    case 'فضي':
-    case 'فضى':
-    case 'silver':
-      return 'silver';
-    case 'ذهبي':
-    case 'ذهبى':
-    case 'gold':
-      return 'gold';
-    default:
-      return '#000'; // لو اللون مش معروف
+    switch (normalized) {
+      case "أحمر":
+      case "red":
+        return "red";
+      case "أزرق":
+      case "blue":
+        return "blue";
+      case "أسود":
+      case "black":
+        return "black";
+      case "أبيض":
+      case "white":
+        return "#fff";
+      case "رمادي":
+      case "رمادى":
+      case "gray":
+      case "grey":
+        return "gray";
+      case "أخضر":
+      case "green":
+        return "green";
+      case "فضي":
+      case "فضى":
+      case "silver":
+        return "silver";
+      case "ذهبي":
+      case "ذهبى":
+      case "gold":
+        return "gold";
+      default:
+        return "#000"; // لو اللون مش معروف
+    }
   }
-}
-
 
   constructor(
     private api: Apiservice,

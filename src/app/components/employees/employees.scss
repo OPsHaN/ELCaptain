@@ -32,21 +32,24 @@
 
 /* media / avatar */
 .card-media {
-  height: 200px;
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  // background: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
+     width: 100px;
+    height: 100px;
+    overflow: hidden;
+    border-radius: 10%;
+    margin: 10px auto 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .card-media img {
   width: 100%;
-  height:200px;
-  // object-fit: cover;
+  height: 100%;
+  object-fit: cover;     /* يحافظ على التناسق ويملأ الإطار */
+  object-position: center;
   display: block;
 }
+
 
 /* body */
 .card-body {
@@ -173,4 +176,20 @@
   .cards-grid {
     grid-template-columns: 1fr;
   }
+}
+
+
+.avatar-container {
+  width: 200px;        /* حجم الإطار */
+  height: 200px;
+  overflow: hidden;    /* يخفي أي جزء خارج الإطار */
+  border-radius: 20px;  /* ممكن تعدله حسب التصميم */
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;   /* يحافظ على التناسق ويملأ الإطار */
+  object-position: center;
+  display: block;
 }

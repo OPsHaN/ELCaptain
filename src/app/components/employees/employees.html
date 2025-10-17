@@ -56,13 +56,13 @@
 
         <div class="card-actions">
           <button
-            class="btn btn-sm btn-success rounded-circle btn-sm"
+          class="btn btn-sm btn-success rounded-circle px-1"
             (click)="editEmployee(e); $event.stopPropagation()"
           >
             ✏️
           </button>
           <button
-            class="btn btn-danger rounded-circle btn-sm"
+            class="btn btn-sm btn-danger rounded-circle"
             (click)="deleteEmployee(e); $event.stopPropagation()"
           >
             🗑
@@ -88,9 +88,8 @@
       <img
         [src]="selectedEmployee.avatar"
         alt="Avatar"
-        class="rounded-circle mb-3"
-        width="120"
-        height="120"
+    class="avatar-image rounded-5 mb-3"
+  
       />
       <h4>{{ selectedEmployee.displayName }}</h4>
       <p>{{ selectedEmployee.roleText }}</p>

@@ -16,7 +16,7 @@ export interface LoginResponse extends UserResponse {}
   providedIn: "root",
 })
 export class AuthService {
-  private baseUrl = "http://20.19.89.91/api/auth";
+  private baseUrl = "https://elcaptainauto.com:2083/api/auth/";
 
   private _isLoggedIn = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this._isLoggedIn.asObservable();
@@ -34,12 +34,12 @@ export class AuthService {
   }
 
   login(data: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.baseUrl}/login`, data);
+    return this.http.post<LoginResponse>(`${this.baseUrl}login`, data);
   }
 
   register(data: UserResponse): Observable<UserResponse> {
     return this.http.post<UserResponse>(
-      `${this.baseUrl}/Regsiter
+      `${this.baseUrl}Regsiter
 `,
       data
     );
