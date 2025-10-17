@@ -14,42 +14,41 @@
 /* Card */
 .employee-card {
   background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
+  // border-radius: 12px;
+  box-shadow: 0px 0px 10px black;
   overflow: hidden;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   transition: transform 180ms ease, box-shadow 180ms ease;
   min-height: 220px;
-  border: 1px solid rgba(0,0,0,0.04);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 .employee-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(16,24,40,0.12);
+  box-shadow: 0px 0px 10px orange;
 }
 
 /* media / avatar */
 .card-media {
-     width: 100px;
-    height: 100px;
-    overflow: hidden;
-    border-radius: 10%;
-    margin: 10px auto 1px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  width: 250px;
+  height: 250px;
+  overflow: hidden;
+  border-radius: 10%;
+  margin: 10px auto 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .card-media img {
   width: 100%;
   height: 100%;
-  object-fit: cover;     /* يحافظ على التناسق ويملأ الإطار */
+  object-fit: cover; /* يحافظ على التناسق ويملأ الإطار */
   object-position: center;
   display: block;
 }
-
 
 /* body */
 .card-body {
@@ -97,7 +96,7 @@
 
 .btn-outline {
   background: transparent;
-  border: 1px solid rgba(11,95,255,0.12);
+  border: 1px solid rgba(11, 95, 255, 0.12);
   color: #0b5fff;
 }
 
@@ -122,7 +121,7 @@
 
 .week-days-list {
   display: flex;
-  flex-wrap: wrap;       /* أو nowrap لو عايزها سطر واحد فقط */
+  flex-wrap: wrap; /* أو nowrap لو عايزها سطر واحد فقط */
   justify-content: center;
   gap: 10px;
   padding: 0;
@@ -154,8 +153,6 @@
   font-size: 1rem;
 }
 
-
-
 /* RESPONSIVE BREAKPOINTS */
 /* 1200px -> 3 columns */
 @media (max-width: 1200px) {
@@ -178,18 +175,17 @@
   }
 }
 
-
 .avatar-container {
-  width: 200px;        /* حجم الإطار */
+  width: 200px; /* حجم الإطار */
   height: 200px;
-  overflow: hidden;    /* يخفي أي جزء خارج الإطار */
-  border-radius: 20px;  /* ممكن تعدله حسب التصميم */
+  overflow: hidden; /* يخفي أي جزء خارج الإطار */
+  border-radius: 20px; /* ممكن تعدله حسب التصميم */
 }
 
 .avatar-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;   /* يحافظ على التناسق ويملأ الإطار */
+  width: 80%;
+  height: 80%;
+  object-fit: cover; /* يحافظ على التناسق ويملأ الإطار */
   object-position: center;
   display: block;
 }

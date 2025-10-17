@@ -3,8 +3,9 @@ import { CommonModule } from "@angular/common";
 import { Register } from "../register/register";
 import { Apiservice } from "../../services/apiservice";
 import { finalize } from "rxjs";
-import { MessageService } from "primeng/api";
+import { ConfirmationService, MessageService } from "primeng/api";
 import { DialogModule } from "primeng/dialog";
+import { ConfirmDialog } from "primeng/confirmdialog";
 
 // interface Employee {
 //   id: number;
@@ -16,9 +17,11 @@ import { DialogModule } from "primeng/dialog";
 @Component({
   selector: "app-employees",
   standalone: true,
-  imports: [CommonModule, Register, DialogModule],
+  imports: [CommonModule, Register, DialogModule, ConfirmDialog],
   templateUrl: "./employees.html",
   styleUrl: "./employees.scss",
+      providers: [ConfirmationService],
+
 })
 export class Employees implements OnInit {
   employees: any[] = [];
@@ -49,10 +52,16 @@ export class Employees implements OnInit {
   constructor(
     private api: Apiservice,
     private cdr: ChangeDetectorRef,
-    private messageService: MessageService
+    private messageService: MessageService,
+        private confirmationService: ConfirmationService
+
   ) {}
 
   ngOnInit() {
+    this.loadEmployees();
+  }
+  ////ريفريش من كمبونت تانى
+  getAllEmployees() {
     this.loadEmployees();
   }
 
@@ -108,23 +117,32 @@ export class Employees implements OnInit {
   }
 
   /** 🗑 حذف الموظف */
-  deleteEmployee(e: any) {
-    if (!e?.id) {
-      this.showError("هذا الموظف غير صالح للحذف");
-      return;
-    }
+deleteEmployee(e: any) {
 
-    this.api.deleteEmployee(e.id).subscribe({
-      next: () => {
-        this.employees = this.employees.filter((emp) => emp.id !== e.id);
-        this.showSuccess("✅ تم حذف الموظف بنجاح");
-      },
-      error: (err) => {
-        console.error("Error deleting employee:", err);
-        this.showError("حدث خطأ أثناء حذف الموظف");
-      },
-    });
-  }
+  this.confirmationService.confirm({
+    message: `هل أنت متأكد أنك تريد حذف الموظف <strong>${e.fullName || ""}</strong>؟`,
+    header: "تأكيد الحذف",
+    icon: "pi pi-exclamation-triangle",
+    acceptLabel: "نعم",
+    rejectLabel: "لا",
+    accept: () => {
+      this.api.deleteEmployee(e.id).subscribe({
+        next: () => {
+          this.employees = this.employees.filter((emp) => emp.id !== e.id);
+          this.showSuccess("✅ تم حذف الموظف بنجاح");
+        },
+        error: (err) => {
+          console.error("❌ Error deleting employee:", err);
+          this.showError("حدث خطأ أثناء حذف الموظف");
+        },
+      });
+    },
+    reject: () => {
+      // 👌 لا تفعل شيء لو ضغط "لا"
+    },
+  });
+}
+
 
   /** 🔁 تحسين الأداء */
   trackById(index: number, item: any) {

@@ -5,13 +5,12 @@
 
 /* ✅ شكل الكارت */
 
-
 /* ✅ الكارت */
 .card {
   text-align: center;
-  border-radius: 1.5em 1.5em 8em 8em;  /* 👈 تحت بيضاوي أكثر */
+  border-radius: 1.5em 1.5em 8em 8em; /* 👈 تحت بيضاوي أكثر */
   border: none;
-  box-shadow: 0px 0px 10px orange;
+  box-shadow: 0px 0px 10px rgb(0, 0, 0);
   overflow: hidden;
   transition: transform 0.3s ease;
   position: relative;
@@ -44,7 +43,7 @@
   width: 100%;
   height: 220px;
   object-fit: cover;
-  border-radius: 1.5em 1.5em 0 0;
+  border-radius: 0.5em 0.5em 0 0;
 }
 
 /* ✅ جدول المواصفات */
@@ -62,18 +61,17 @@
   width: 25px;
   height: 25px;
   object-fit: cover;
-  border:1px solid #ccc;
+  border: 1px solid #ccc;
   border-radius: 5px;
 }
 
-
 .card-title {
-    background-color: black;
+  background-color: black;
   color: white;
   font-size: 1.2rem;
   font-weight: bold;
   padding: 10px 0;
-  // border-radius: 0 0 8em 8em; 
+  // border-radius: 0 0 8em 8em;
 }
 
 /* ✅ السعر */
@@ -85,13 +83,12 @@
   padding: 10px 0;
   border-radius: 0 0 8em 8em;
   // margin-bottom: 1px;  /* 👈 تأكيد شكل بيضاوي من الأسفل */
-
 }
 
 /* ✅ تأثير hover */
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  box-shadow: 0px 0px 10px orange;
 }
 
 /* ✅ أزرار الإجراءات */
@@ -142,7 +139,7 @@
 
 .btn-outline {
   background: transparent;
-  border: 1px solid rgba(11,95,255,0.12);
+  border: 1px solid rgba(11, 95, 255, 0.12);
   color: #0b5fff;
 }
 
@@ -223,9 +220,6 @@
   margin-left: 9px;
 }
 
-
-
-
 /* RESPONSIVE BREAKPOINTS */
 /* 1200px -> 3 columns */
 @media (max-width: 1200px) {
@@ -248,13 +242,12 @@
   }
 }
 
-
 .car-image-wrapper {
-  width: 100%;           /* عرض الكاروسيل بالكامل */
-  max-width: 400px;      /* أقصى عرض للصورة داخل الديالوج */
-  height: 250px;         /* ارتفاع ثابت */
-  margin: 0 auto;        /* توسيط الصورة */
-  overflow: hidden;      /* قص الزوايد */
+  width: 100%; /* عرض الكاروسيل بالكامل */
+  max-width: 400px; /* أقصى عرض للصورة داخل الديالوج */
+  height: 250px; /* ارتفاع ثابت */
+  margin: 0 auto; /* توسيط الصورة */
+  overflow: hidden; /* قص الزوايد */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -263,9 +256,8 @@
 .car-image {
   width: 100%;
   height: 100%;
-  object-fit: cover;      /* يحافظ على النسب ويملأ الإطار */
+  object-fit: cover; /* يحافظ على النسب ويملأ الإطار */
   object-position: center;
   display: block;
   border-radius: 8px;
 }
-

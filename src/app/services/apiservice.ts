@@ -29,7 +29,7 @@ export interface Brand {
   providedIn: "root",
 })
 export class Apiservice {
-  private baseUrl = "https://elcaptainauto.com/api/";
+  private baseUrl = "https://elcaptainauto.com:2083/api/";
 
   constructor(private http: HttpClient) {}
 
@@ -132,7 +132,7 @@ export class Apiservice {
     return this.http.put(`${this.baseUrl}Car/Update`, body);
   }
 
-  uploadImagesforCar(body: any) {
+  AddImagesforCar(body: any) {
     return this.http.post(`${this.baseUrl}Car/AddImage`, body);
   }
 

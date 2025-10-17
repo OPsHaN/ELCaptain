@@ -54,6 +54,7 @@ export class Register implements OnInit {
   employeeIdToUpdate: number | null = null;
 
   @Output() closeForm = new EventEmitter<void>();
+  @Output() refreshEmployees = new EventEmitter<void>(); 
 
   classification = [
     { name: "A", code: "A" },
@@ -194,16 +195,16 @@ export class Register implements OnInit {
     this.profilePreview = emp.Img ? emp.Img : this.defaultAvatar;
   }
 
-private formatTime(timeString: string | null): string | null {
-  if (!timeString) return null;
+  private formatTime(timeString: string | null): string | null {
+    if (!timeString) return null;
 
-  // نفصل الساعة والدقيقة
-  const [hourStr, minuteStr] = timeString.split(':');
-  const hour = hourStr.padStart(2, '0'); // تضيف صفر بادئ لو الساعة رقم واحد
-  const minute = (minuteStr || '00').padStart(2, '0'); // تضيف صفر لو ناقص دقيقة
+    // نفصل الساعة والدقيقة
+    const [hourStr, minuteStr] = timeString.split(":");
+    const hour = hourStr.padStart(2, "0"); // تضيف صفر بادئ لو الساعة رقم واحد
+    const minute = (minuteStr || "00").padStart(2, "0"); // تضيف صفر لو ناقص دقيقة
 
-  return `${hour}:${minute}`;
-}
+    return `${hour}:${minute}`;
+  }
 
   get dayControls(): FormControl[] {
     return (this.registerForm.get("Days") as FormArray)
@@ -249,7 +250,7 @@ private formatTime(timeString: string | null): string | null {
     );
     const token = localStorage.getItem("token") || "";
     const payload: UserResponse = {
-  Id: this.isEditMode && this.employee ? this.employee.Id : 0, // ✅ هنا التعديل
+      Id: this.isEditMode && this.employee ? this.employee.Id : 0, // ✅ هنا التعديل
       Classification: formValue.Classification || "",
       FirstName: formValue.FirstName,
       SecondName: formValue.SecondName,
@@ -304,6 +305,8 @@ private formatTime(timeString: string | null): string | null {
           this.isEditMode = false;
           this.registerForm.reset();
           this.employeeIdToUpdate = null;
+          this.closeForm.emit();
+          this.refreshEmployees.emit(); // 🆕 بعد التعديل
         },
         error: (err) => {
           console.error("❌ Update error:", err);
@@ -317,6 +320,8 @@ private formatTime(timeString: string | null): string | null {
           this.isSubmitting = false;
           this.registerForm.reset();
           this.showSuccess("تم تسجيل الموظف بنجاح");
+          this.closeForm.emit();
+          this.refreshEmployees.emit(); // 🆕 بعد التعديل
         },
         error: (err) => {
           console.error("❌ Register error:", err);

@@ -5,9 +5,10 @@ import { CarouselModule } from "primeng/carousel";
 
 import { OnInit } from "@angular/core";
 import { CarRegister } from "../car-register/car-register";
-import { MessageService } from "primeng/api";
 import { Apiservice } from "../../services/apiservice";
 import { DialogModule } from "primeng/dialog";
+import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { ConfirmationService, MessageService } from "primeng/api";
 
 @Component({
   selector: "app-cars",
@@ -17,9 +18,12 @@ import { DialogModule } from "primeng/dialog";
     CarRegister,
     DialogModule,
     CarouselModule,
+    ConfirmDialogModule
   ],
   templateUrl: "./cars.html",
   styleUrl: "./cars.scss",
+    providers: [ConfirmationService],
+
 })
 export class Cars implements OnInit {
   activeTable: string | null = null;
@@ -34,54 +38,52 @@ export class Cars implements OnInit {
   defaultCarImage = "./photos/default-car.jpg";
   car: any[] = [];
 
-  getColorCode(colorName: string): string {
-    if (!colorName) return "#000"; // افتراضي أسود
+  colorsList = [
+  { name: 'أحمر', code: '#FF0000' },
+  { name: 'أزرق', code: '#0000FF' },
+  { name: 'أسود', code: '#000000' },
+  { name: 'أبيض', code: '#FFFFFF' },
+  { name: 'رمادي', code: '#808080' },
+  { name: 'أخضر', code: '#008000' },
+  { name: 'فضي', code: '#C0C0C0' },
+  { name: 'ذهبي', code: '#FFD700' },
+  { name: 'برتقالي', code: '#FFA500' },
+  { name: 'وردي', code: '#FFC0CB' },
+  { name: 'بني', code: '#8B4513' },
+  { name: 'بنفسجي', code: '#800080' },
+  { name: 'كحلي', code: '#000080' },
+  { name: 'زيتي', code: '#808000' },
+  { name: 'سماوي', code: '#87CEEB' },
+  { name: 'عنابي', code: '#800000' },
+  { name: 'بيج', code: '#F5F5DC' },
+  { name: 'تركواز', code: '#40E0D0' },
+];
 
-    const normalized = colorName.trim().toLowerCase();
 
-    switch (normalized) {
-      case "أحمر":
-      case "red":
-        return "red";
-      case "أزرق":
-      case "blue":
-        return "blue";
-      case "أسود":
-      case "black":
-        return "black";
-      case "أبيض":
-      case "white":
-        return "#fff";
-      case "رمادي":
-      case "رمادى":
-      case "gray":
-      case "grey":
-        return "gray";
-      case "أخضر":
-      case "green":
-        return "green";
-      case "فضي":
-      case "فضى":
-      case "silver":
-        return "silver";
-      case "ذهبي":
-      case "ذهبى":
-      case "gold":
-        return "gold";
-      default:
-        return "#000"; // لو اللون مش معروف
-    }
-  }
+getColorCode(colorName: string): string {
+  const color = this.colorsList.find(
+    c => c.name.trim().toLowerCase() === colorName?.trim().toLowerCase()
+  );
+  return color ? color.code : '#000000';
+}
+
+
 
   constructor(
     private api: Apiservice,
     private cdr: ChangeDetectorRef,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private confirmationService: ConfirmationService
   ) {}
 
   ngOnInit() {
     this.loadCars();
   }
+
+  //ريفريش بعد الاضافة او التعديل
+  getAllCars() {
+    this.loadCars();
+  } 
 
   loadCars() {
     this.api.getAllCars().subscribe({
@@ -112,25 +114,31 @@ export class Cars implements OnInit {
     // }
   }
 
-  deleteCar(car: any) {
-    if (
-      !confirm(
-        `هل أنت متأكد من حذف السيارة: ${car.Brand.BrandName} - ${car.Model}?`
-      )
-    )
-      return;
+deleteCar(car: any) {
+  this.confirmationService.confirm({
+    message: `هل أنت متأكد من حذف السيارة: ${car.Model}؟`,
+    header: 'تأكيد الحذف',
+    icon: 'pi pi-exclamation-triangle',
+    acceptLabel: 'نعم',
+    rejectLabel: 'لا',
+    accept: () => {
+      this.api.deleteCar(car.Id).subscribe({
+        next: () => {
+          this.cars = this.cars.filter((c) => c.Id !== car.Id);
+          this.showSuccess('✅ تم حذف السيارة بنجاح');
+        },
+        error: (err) => {
+          console.error('❌ Delete error:', err);
+          this.showError('حدث خطأ أثناء حذف السيارة');
+        },
+      });
+    },
+    reject: () => {
+      // لا تفعل شيء عند الرفض
+    }
+  });
+}
 
-    this.api.deleteCar(car.Id).subscribe({
-      next: () => {
-        this.cars = this.cars.filter((c) => c.Id !== car.Id);
-        this.showSuccess("تم حذف السيارة بنجاح ✅");
-      },
-      error: (err) => {
-        console.error("❌ Delete error:", err);
-        this.showError("حدث خطأ أثناء حذف السيارة");
-      },
-    });
-  }
 
   toggleRegisterForm() {
     this.selectedCar = null; // ✨ عشان الفورم يفتح فاضي

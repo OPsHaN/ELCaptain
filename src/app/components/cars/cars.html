@@ -19,6 +19,7 @@
     [car]="selectedCar"
     (closeForm)="toggleRegisterForm()"
     [isEditMode]="isEditMode"
+    (refreshCars)="getAllCars()"
   ></app-car-register>
 </div>
 
@@ -107,7 +108,7 @@
 
       <!-- السعر -->
       <div class="car-price-box">
-        {{ car.Price | currency : "EGP" }}
+        {{ car.Price | currency : ' EGP ' }}
       </div>
 
       <!-- أزرار الإجراءات -->
@@ -234,3 +235,4 @@
   </ng-container>
 </p-dialog>
 
+<p-confirmDialog></p-confirmDialog>

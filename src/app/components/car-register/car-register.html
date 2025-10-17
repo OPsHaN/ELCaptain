@@ -18,73 +18,8 @@
           (ngSubmit)="onSubmit()"
           novalidate
           dir="rtl"
+          *ngIf="!showImageUploadSection"
         >
-          <!-- صورة السيارة -->
-          <!-- <div class="col-md-4 text-center my-2" style="width: 100px">
-            <div class="avatar-upload">
-              <img
-                [src]="carImagesPreview || defaultCarImage"
-                alt="صورة السيارة"
-                class="avatar-img"
-              />
-              <label for="carImageInput" class="edit-icon">✏️</label>
-              <input
-                type="file"
-                id="carImageInput"
-                accept="image/*"
-                (change)="onFilesSelected($event)"
-              />
-              
-            </div>
-          </div> -->
-
-          <!-- صور السيارة -->
-          <div class="col-12 text-center my-2">
-            <label class="form-label d-block">📸 صور السيارة</label>
-
-            <!-- رفع الصور -->
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              (change)="onFileSelected($event)"
-              class="form-control mb-2"
-            />
-
-            <!-- عرض الصور -->
-            <div class="d-flex gap-2 flex-wrap mt-2">
-              <div
-                *ngFor="let img of carImagesPreview; let i = index"
-                class="position-relative"
-              >
-                <img
-                  [src]="img || defaultCarImage"
-                  [ngStyle]="{
-                    width: i === 0 ? '150px' : '100px',
-                    height: i === 0 ? '150px' : '100px',
-                    border: i === 0 ? '3px solid green' : '2px solid #ccc',
-                    objectFit: 'cover'
-                  }"
-                  class="rounded"
-                />
-                <span
-                  class="position-absolute top-0 end-0 bg-danger text-white rounded-circle px-1"
-                  style="cursor: pointer"
-                  (click)="removeImage(i)"
-                >
-                  ✖
-                </span>
-                <span
-                  *ngIf="i === 0"
-                  class="position-absolute bottom-0 start-0 bg-success text-white px-1 rounded-pill"
-                  style="font-size: 10px"
-                >
-                  رئيسية
-                </span>
-              </div>
-            </div>
-          </div>
-
           <div class="row g-3 text-end">
             <!-- الموديل -->
             <div class="col-md-4">
@@ -94,6 +29,9 @@
                 class="form-control custom-input"
                 formControlName="Model"
               />
+              <small class="text-danger" *ngIf="carForm.get('Model')?.touched && carForm.get('Model')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- نوع السيارة -->
@@ -101,14 +39,14 @@
               <label class="form-label">نوع السيارة</label>
               <mat-form-field appearance="outline" class="w-100 custom-outline">
                 <mat-select formControlName="Type">
-                  <mat-option
-                    *ngFor="let carType of carTypes"
-                    [value]="carType"
-                  >
+                  <mat-option *ngFor="let carType of carTypes" [value]="carType">
                     {{ carType }}
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+              <small class="text-danger" *ngIf="carForm.get('Type')?.touched && carForm.get('Type')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- الماركة -->
@@ -124,16 +62,34 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+              <small class="text-danger" *ngIf="carForm.get('BrandId')?.touched && carForm.get('BrandId')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- اللون -->
             <div class="col-md-4">
               <label class="form-label">اللون</label>
-              <input
-                type="text"
-                class="form-control custom-input"
-                formControlName="Color"
-              />
+              <div class="d-flex align-items-center gap-2">
+                <select
+                  class="form-select custom-input"
+                  formControlName="Color"
+                >
+                  <option value="" disabled selected>اختر اللون</option>
+                  <option *ngFor="let color of colorsList" [value]="color.name">
+                    {{ color.name }}
+                  </option>
+                </select>
+                <span
+                  class="color-box"
+                  [ngStyle]="{
+                    backgroundColor: getColorCode(carForm.get('Color')?.value)
+                  }"
+                ></span>
+              </div>
+              <small class="text-danger" *ngIf="carForm.get('Color')?.touched && carForm.get('Color')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- عدد الكيلومترات -->
@@ -144,6 +100,9 @@
                 class="form-control custom-input"
                 formControlName="Kilometers"
               />
+              <small class="text-danger" *ngIf="carForm.get('Kilometers')?.touched && carForm.get('Kilometers')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- ناقل الحركة -->
@@ -159,6 +118,9 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+              <small class="text-danger" *ngIf="carForm.get('Transmission')?.touched && carForm.get('Transmission')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- السعر -->
@@ -169,6 +131,9 @@
                 class="form-control custom-input"
                 formControlName="Price"
               />
+              <small class="text-danger" *ngIf="carForm.get('Price')?.touched && carForm.get('Price')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- سنة الصنع -->
@@ -179,6 +144,9 @@
                 class="form-control custom-input"
                 formControlName="YearOfManufacture"
               />
+              <small class="text-danger" *ngIf="carForm.get('YearOfManufacture')?.touched && carForm.get('YearOfManufacture')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- نوع المحرك -->
@@ -194,6 +162,9 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+              <small class="text-danger" *ngIf="carForm.get('EngineType')?.touched && carForm.get('EngineType')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- قوة الحصان -->
@@ -204,6 +175,9 @@
                 class="form-control custom-input"
                 formControlName="HorsePower"
               />
+              <small class="text-danger" *ngIf="carForm.get('HorsePower')?.touched && carForm.get('HorsePower')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- عدد الوسائد الهوائية -->
@@ -214,6 +188,9 @@
                 class="form-control custom-input"
                 formControlName="AirBagCount"
               />
+              <small class="text-danger" *ngIf="carForm.get('AirBagCount')?.touched && carForm.get('AirBagCount')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- سعة الشنطة -->
@@ -224,6 +201,9 @@
                 class="form-control custom-input"
                 formControlName="BagCapacity"
               />
+              <small class="text-danger" *ngIf="carForm.get('BagCapacity')?.touched && carForm.get('BagCapacity')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- الحالة -->
@@ -235,6 +215,9 @@
                   <mat-option value="Used">مستعملة</mat-option>
                 </mat-select>
               </mat-form-field>
+              <small class="text-danger" *ngIf="carForm.get('Condition')?.touched && carForm.get('Condition')?.hasError('required')">
+                هذا الحقل مطلوب
+              </small>
             </div>
 
             <!-- ✅ المميزات -->
@@ -242,7 +225,6 @@
               <label class="form-label d-block mb-2 fw-bold">المميزات</label>
               <div class="d-flex flex-wrap gap-3">
                 <div *ngFor="let feature of features">
-                  <!-- خاصية "إعرضها للبيع" مع Confirm وشكل مختلف -->
                   <ng-container *ngIf="feature.key === 'IsForSale'">
                     <input
                       type="checkbox"
@@ -259,7 +241,6 @@
                     </label>
                   </ng-container>
 
-                  <!-- باقي الفيتشرز عادية -->
                   <ng-container *ngIf="feature.key !== 'IsForSale'">
                     <input
                       type="checkbox"
@@ -279,11 +260,59 @@
                 class="btn btn-warning btn-lg py-0"
                 [disabled]="isSubmitting"
               >
-                {{ isEditMode ? "📝 تعديل" : "➕ تسجيل" }}
+                {{ isEditMode ? "📝 تعديل" : "متابعة التسجيل ⏪ " }}
               </button>
             </div>
           </div>
         </form>
+
+        <!-- صور السيارة -->
+        <div class="col-12 text-center my-2" *ngIf="showImageUploadSection">
+          <label class="form-label d-block">📸 صور السيارة</label>
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            (change)="onFileSelected($event)"
+            class="form-control mb-2"
+            dir="rtl"
+          />
+
+          <div class="d-flex gap-2 flex-wrap mt-2">
+            <div
+              *ngFor="let img of carImagesPreview; let i = index"
+              class="position-relative"
+            >
+              <img
+                [src]="img || defaultCarImage"
+                [ngStyle]="{
+                  width: i === 0 ? '150px' : '100px',
+                  height: i === 0 ? '150px' : '100px',
+                  border: i === 0 ? '3px solid green' : '2px solid #ccc',
+                  objectFit: 'cover'
+                }"
+                class="rounded"
+              />
+              <span
+                class="position-absolute top-0 end-0 bg-danger text-white rounded-circle px-1"
+                style="cursor: pointer"
+                (click)="removeImage(i)"
+              >
+                ✖
+              </span>
+              <span
+                *ngIf="i === 0"
+                class="position-absolute bottom-0 start-0 bg-success text-white px-1 rounded-pill"
+                style="font-size: 10px"
+              >
+                رئيسية
+              </span>
+            </div>
+          </div>
+          <button class="btn btn-success mt-3" (click)="saveCarImages()">
+            💾 حفظ الصور
+          </button>
+        </div>
       </div>
     </div>
   </div>

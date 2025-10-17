@@ -41,9 +41,10 @@ export class CarRegister {
   @Input() carData: any; // استبدل 'any' بالنوع المناسب إذا كان معروفًا
   @Output() closeForm = new EventEmitter<void>();
   @Input() car: any | null = null; // هيتعبى لما تبعت selectedCar
-
+  showImageUploadSection = false;
   isSubmitting = false;
   brands: Brand[] = [];
+  carId: number | null = null;
   carImages: {
     Id: any;
     CarId: any;
@@ -55,6 +56,36 @@ export class CarRegister {
   defaultCarImage = "photos/default-car.jpg"; // مسار الصورة الافتراضية
   // carImagesPreview: string[] = []; // للمعاينة
   selectedBrand: any = null; // البراند المحدد
+  @Output() refreshCars = new EventEmitter<void>(); 
+
+  colorsList = [
+  { name: 'أحمر', code: '#FF0000' },
+  { name: 'أزرق', code: '#0000FF' },
+  { name: 'أسود', code: '#000000' },
+  { name: 'أبيض', code: '#FFFFFF' },
+  { name: 'رمادي', code: '#808080' },
+  { name: 'أخضر', code: '#008000' },
+  { name: 'فضي', code: '#C0C0C0' },
+  { name: 'ذهبي', code: '#FFD700' },
+  { name: 'برتقالي', code: '#FFA500' },
+  { name: 'وردي', code: '#FFC0CB' },
+  { name: 'بني', code: '#8B4513' },
+  { name: 'بنفسجي', code: '#800080' },
+  { name: 'كحلي', code: '#000080' },
+  { name: 'زيتي', code: '#808000' },
+  { name: 'سماوي', code: '#87CEEB' },
+  { name: 'عنابي', code: '#800000' },
+  { name: 'بيج', code: '#F5F5DC' },
+  { name: 'تركواز', code: '#40E0D0' },
+];
+
+
+getColorCode(colorName: string): string {
+  const color = this.colorsList.find(
+    c => c.name.trim().toLowerCase() === colorName?.trim().toLowerCase()
+  );
+  return color ? color.code : '#000000';
+}
 
   features = [
     { key: "HasChairHeater", label: "تسخين المقاعد" },
@@ -116,16 +147,16 @@ export class CarRegister {
       Type: ["", Validators.required],
       Model: ["", Validators.required],
       BrandId: ["", Validators.required],
-      Color: [""],
+      Color: ["" , Validators.required],
       Kilometers: [""],
-      Transmission: [""],
+      Transmission: ["" ],
       Price: [0, Validators.required],
       YearOfManufacture: [0, Validators.required],
-      EngineType: [""],
+      EngineType: ["" ],
       HorsePower: [""],
       AirBagCount: [""],
       BagCapacity: [""],
-      Condition: [""],
+      Condition: ["" , Validators.required],
       Images: this.fb.array([]), // 🔹 هنا نربط المصفوفة
       HasChairHeater: [false],
       HasBackAC: [false],
@@ -158,30 +189,29 @@ export class CarRegister {
       .filter((img) => !!img); // ✅ تصفية القيم null/undefined
   }
 
- confirmIsForSale(event: MouseEvent) {
-  event.preventDefault(); // يمنع تغيير القيمة مباشرة
+  confirmIsForSale(event: MouseEvent) {
+    event.preventDefault(); // يمنع تغيير القيمة مباشرة
 
-  const currentValue = this.carForm.get('IsForSale')?.value;
-  const newValue = !currentValue; // القيمة اللي المفروض تتغير
+    const currentValue = this.carForm.get("IsForSale")?.value;
+    const newValue = !currentValue; // القيمة اللي المفروض تتغير
 
-  const message = newValue
-    ? "هل أنت متأكد أنك تريد عرض السيارة للبيع؟"
-    : "هل أنت متأكد أنك تريد إلغاء عرض السيارة للبيع؟";
+    const message = newValue
+      ? "هل أنت متأكد أنك تريد عرض السيارة للبيع؟"
+      : "هل أنت متأكد أنك تريد إلغاء عرض السيارة للبيع؟";
 
-  this.confirmationService.confirm({
-    message: message,
-    acceptLabel: 'نعم',
-    rejectLabel: 'لا',
-    icon: 'pi pi-exclamation-triangle',
-    accept: () => {
-      this.carForm.get('IsForSale')?.setValue(newValue);
-    },
-    reject: () => {
-      // لا تفعل شيء، يبقى checkbox زي ما هو
-    }
-  });
-}
-
+    this.confirmationService.confirm({
+      message: message,
+      acceptLabel: "نعم",
+      rejectLabel: "لا",
+      icon: "pi pi-exclamation-triangle",
+      accept: () => {
+        this.carForm.get("IsForSale")?.setValue(newValue);
+      },
+      reject: () => {
+        // لا تفعل شيء، يبقى checkbox زي ما هو
+      },
+    });
+  }
 
 onFileSelected(event: Event) {
   const input = event.target as HTMLInputElement;
@@ -189,48 +219,32 @@ onFileSelected(event: Event) {
 
   Array.from(input.files).forEach((file) => {
     const imageObj = {
-      file: file,
-      Img: URL.createObjectURL(file),
+      File: file,  // ✅ نحتفظ بالملف الأصلي هنا
+      Img: URL.createObjectURL(file), // للعرض فقط
+      Id: 0,
+      CarId: 0,
+      AddedBy: 1,
+      AddedAt: new Date().toISOString(),
+      Message: "لم يتم الرفع بعد",
       IsMain: this.imagesFormArray.length === 0,
     };
 
     this.imagesFormArray.push(this.fb.control(imageObj));
-  });
 
-  // احتفظ بحد أقصى 6 صور
-  if (this.imagesFormArray.length > 6) {
-    while (this.imagesFormArray.length > 6) {
-      this.imagesFormArray.removeAt(0);
+    // لو عايز تعرض الصور كـ preview
+    this.carImagesPreview.push(imageObj.Img);
+
+    // أقصى عدد 6 صور
+    if (this.imagesFormArray.length > 6) {
+      while (this.imagesFormArray.length > 6) {
+        this.imagesFormArray.removeAt(0);
+        this.carImagesPreview.shift();
+      }
     }
-  }
+  });
 
   this.cdr.detectChanges();
 }
-
-
-
-
-
-uploadCarImages(carId: number) {
-  if (this.imagesFormArray.length === 0) return;
-
-  this.imagesFormArray.controls.forEach((ctrl) => {
-    const imgCtrlValue = ctrl.value;
-
-    if (imgCtrlValue?.file) {
-      const formData = new FormData();
-      formData.append("file", imgCtrlValue.file);
-      formData.append("CarId", carId.toString());
-
-      this.api.uploadImagesforCar(formData).subscribe({
-        next: (res) => console.log("✅ تم رفع صورة:", res),
-        error: (err) => console.error("❌ خطأ في رفع الصورة", err),
-      });
-    }
-  });
-}
-
-
 
   showError(msg: string) {
     this.messageService.add({
@@ -250,96 +264,169 @@ uploadCarImages(carId: number) {
     });
   }
 
-removeImage(index: number) {
-  if (this.imagesFormArray.length === 0) return;
+  removeImage(index: number) {
+    if (this.imagesFormArray.length === 0) return;
 
-  const imgObj = this.imagesFormArray.at(index).value;
-
-  if (imgObj?.Id) {
-    // لو الصورة مرفوعة على السيرفر فعلاً
-    this.api.deleteImagesForCar(imgObj.Id).subscribe({
-      next: () => {
-        this.imagesFormArray.removeAt(index);
-        if (index === 0 && this.imagesFormArray.length > 0) {
-          const first = this.imagesFormArray.at(0).value;
-          if (first) {
-            first.IsMain = true;
-            this.imagesFormArray.at(0).setValue(first);
-          }
-        }
-        this.cdr.detectChanges();
-        this.showSuccess("✅ تم حذف الصورة بنجاح");
-      },
-      error: (err) => {
-        this.showError("حدث خطأ أثناء حذف الصورة");
-      },
-    });
-  } else {
-    // لو الصورة لسه محلية (لسه مرفعتش)
     this.imagesFormArray.removeAt(index);
-  }
-}
 
+    // إذا كانت الصورة الأولى أزيلت، عين الصورة التالية رئيسية تلقائيًا
+    if (index === 0 && this.imagesFormArray.length > 0) {
+      const first = this.imagesFormArray.at(0).value;
+      if (first) {
+        first.IsMain = true;
+        this.imagesFormArray.at(0).setValue(first);
+      }
+    }
 
-onSubmit(): void {
-  if (this.carForm.invalid) {
-    this.carForm.markAllAsTouched();
-    return;
-  }
-
-  if (!this.selectedBrand) {
-    this.showError("الرجاء اختيار براند للسيارة");
-    return;
+    this.cdr.detectChanges();
   }
 
-  const body = this.prepareCarBody();
+  uploadImagesForCar(carId: number, images: any[]) {
+    images.forEach((img) => {
+      const body = {
+        Id: 0,
+        CarId: carId,
+        Img: img.Img, // ✅ URL اللى رجع من uploadImage
+        AddedBy: 1,
+        AddedAt: new Date().toISOString(),
+        Message: img.Message || "تم الرفع",
+      };
 
-  // 🟡 أرسل السيارة بدون صور
-  this.api.addCar(body).subscribe({
-    next: (res: any) => {
-      const carId = res.Id || res.CarId;
-      this.uploadCarImages(carId); // 🟢 بعد الإضافة نرفع الصور
-      this.showSuccess("✅ تم إضافة السيارة بنجاح");
-      this.resetForm();
-    },
-    error: (err) => {
-      console.error(err);
-      this.showError("❌ حدث خطأ أثناء إضافة السيارة");
-    },
-  });
-}
+      this.api.AddImagesforCar(body).subscribe({
+        next: () => console.log(`✅ تم إضافة الصورة لعربية رقم ${carId}`),
+        error: (err) => console.error("❌ خطأ أثناء إضافة الصورة:", err),
+      });
+    });
+  }
 
-prepareCarBody() {
-  const formValue = this.carForm.value;
-  return {
-    Type: formValue.Type,
-    Model: formValue.Model,
-    BrandId: formValue.BrandId,
-    Color: formValue.Color,
-    Kilometers: formValue.Kilometers,
-    Transmission: formValue.Transmission,
-    Price: formValue.Price,
-    YearOfManufacture: formValue.YearOfManufacture,
-    EngineType: formValue.EngineType,
-    HorsePower: formValue.HorsePower,
-    AirBagCount: formValue.AirBagCount,
-    BagCapacity: formValue.BagCapacity,
-    Condition: formValue.Condition,
-    HasChairHeater: formValue.HasChairHeater,
-    HasBackAC: formValue.HasBackAC,
-    HasPanorama: formValue.HasPanorama,
-    HasMassageChairs: formValue.HasMassageChairs,
-    HasTirbo: formValue.HasTirbo,
-    HasExtraEngine: formValue.HasExtraEngine,
-    IsForSale: formValue.IsForSale,
-    Brand: this.selectedBrand,
-    AddedBy: 1,
-    AddedAt: new Date().toISOString(),
-    Message: "string",
-  };
-}
+  onSubmit(): void {
+    if (this.carForm.invalid) {
+      this.carForm.markAllAsTouched();
+      return;
+    }
 
+    if (!this.selectedBrand) {
+      this.showError("الرجاء اختيار براند للسيارة");
+      return;
+    }
 
+    const imagesArray = this.imagesFormArray.controls.map((ctrl) => ({
+      ...ctrl.value,
+      Id: 0,
+      CarId: 0,
+      AddedBy: 1,
+      AddedAt: new Date().toISOString(),
+      Message: "تم الرفع",
+    }));
+
+    const body = {
+      ...this.carForm.value,
+      Brand: this.selectedBrand,
+      Images: imagesArray,
+      AddedBy: 1,
+      AddedAt: new Date().toISOString(),
+      Message: "string",
+    };
+
+    console.log("🚀 Final body to send:", body);
+
+    if (this.isEditMode) {
+      this.api.updateCar(body).subscribe({
+        next: () => {
+          this.showSuccess("✅ تم تعديل السيارة بنجاح");
+          this.showImageUploadSection = true;
+        },
+        error: () => this.showError("❌ حدث خطأ أثناء تعديل السيارة"),
+      });
+    } else {
+      this.api.addCar(body).subscribe({
+        next: (res: any) => {
+          this.showSuccess("✅ تم إضافة السيارة بنجاح");
+
+          // ✅ احفظ الـ CarId المضاف عشان تربطه بالصور
+          this.carId = res.Id;
+          console.log("🚗 Car added with ID:", this.carId);
+          if (this.carId != null) {
+            localStorage.setItem("CarId", this.carId.toString());
+          }
+
+          // ✅ خلي جزء رفع الصور يظهر بعد الإضافة
+          this.showImageUploadSection = true;
+
+          // ❌ متعملش resetForm هنا
+          // this.resetForm();
+        },
+        error: () => this.showError("❌ حدث خطأ أثناء إضافة السيارة"),
+      });
+    }
+  }
+
+  saveCarImages(): void {
+
+    this.carId = this.car?.Id || this.carId;
+
+    // this.carId = localStorage.getItem("CarId");
+    // console.log("🚗 Car ID from localStorage:", this.carId);
+
+    if (this.imagesFormArray.length === 0) {
+      this.showError("لا توجد صور لرفعها");
+      return;
+    }
+
+    if (!this.carId) {
+      this.showError("لم يتم تحديد السيارة");
+      
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    // 1️⃣ تجهيز كل عمليات الرفع
+    const uploadPromises = this.imagesFormArray.controls.map((ctrl) => {
+      const file = ctrl.value.File;
+      if (!file) return Promise.reject("لا يوجد ملف"); // تأمين
+
+      return this.api.uploadImage(file).toPromise();
+    });
+
+    // 2️⃣ تنفيذ كل الرفعات معًا
+    Promise.all(uploadPromises)
+      .then((uploadResults: any[]) => {
+        // 3️⃣ تجهيز البودي للـ API
+        const imagesToAdd = uploadResults.map((res) => ({
+          Id: 0,
+          CarId: this.carId,
+          Img: res.fileUrl || res.Img || this.defaultCarImage,
+          AddedBy: 1,
+          AddedAt: new Date().toISOString(),
+          Message: res.Message || "تم الرفع",
+        }));
+
+   const payload = {
+  Images: imagesToAdd
+};
+
+this.api.AddImagesforCar(payload).subscribe({
+  next: () => {
+    this.showSuccess("✅ تم رفع الصور بنجاح");
+    this.imagesFormArray.clear();
+    this.resetForm();
+    this.refreshCars.emit();
+    this.closeForm.emit();
+  },
+  error: (err) => {
+    this.showError("حدث خطأ أثناء إضافة الصور للسيارة");
+  },
+  complete: () => {
+    this.isSubmitting = false;
+  },
+});
+      })
+      .catch((err) => {
+        this.showError("حدث خطأ أثناء رفع واحدة أو أكثر من الصور");
+        this.isSubmitting = false;
+      });
+  }
 
 
   // ✅ إعادة تهيئة الفورم بعد الإرسال
