@@ -3,7 +3,10 @@ name: 🚀 Deploy Angular App to GitHub Pages
 on:
   push:
     branches:
-      - main  # 👈 لو الفرع الأساسي عندك اسمه main
+      - main
+
+permissions:
+  contents: write   # ✅ مهم جداً
 
 jobs:
   build-deploy:
@@ -27,5 +30,5 @@ jobs:
     - name: 🚀 Deploy to GitHub Pages
       uses: JamesIves/github-pages-deploy-action@v4
       with:
-        branch: gh-pages         # 👈 الفرع اللي هيترفع عليه الموقع
-        folder: dist/elcaptain-app  # 👈 اسم فولدر build الصحيح
+        branch: gh-pages
+        folder: dist/elcaptain-app
