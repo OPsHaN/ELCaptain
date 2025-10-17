@@ -29,7 +29,7 @@ export interface Brand {
   providedIn: "root",
 })
 export class Apiservice {
-  private baseUrl = "https://elcaptainauto.com:2083/api/";
+  private baseUrl = "https://elcaptainauto.com/api/";
 
   constructor(private http: HttpClient) {}
 
