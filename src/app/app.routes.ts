@@ -13,11 +13,11 @@ import { Register } from "./components/register/register";
 import { Adds } from "./components/adds/adds";
 
 export const routes: Routes = [
-  {
-    path: "",
-    redirectTo: "home",
-    pathMatch: "full",
-  },
+  // {
+  //   path: "",
+  //   redirectTo: localStorage.getItem("lastRoute") || "home",
+  //   pathMatch: "full",
+  // },
   { path: "login", component: Login },
   { path: "cars", component: Cars },
   { path: "employees", component: Employees },
@@ -27,13 +27,12 @@ export const routes: Routes = [
   { path: "clients", component: Clients },
   { path: "home", component: Home },
   { path: "register", component: Register },
-    { path: "adds", component: Adds },
-
+  { path: "adds", component: Adds },
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppRoutingModule {}

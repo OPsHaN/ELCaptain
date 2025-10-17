@@ -1,14 +1,17 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
+import { UserResponse } from "../shared/tokenpayload";
 export interface Country {
   id?: number;
   name: string;
+  img: string;
 }
 
 export interface CountryApiResponse {
   Id: number;
   CountryName: string;
+  Img: string | null;
 }
 
 export interface Brand {
@@ -16,6 +19,7 @@ export interface Brand {
   CountryId: number;
   BrandName: string;
   Message: string;
+  Img: string;
   AddedBy: number | null;
   AddedAt: string; // أو Date لو هتعمل تحويل
   Country: CountryApiResponse;
@@ -29,6 +33,8 @@ export class Apiservice {
 
   constructor(private http: HttpClient) {}
 
+  //country
+
   addCountry(body: any): Observable<Country> {
     return this.http
       .post<CountryApiResponse>(`${this.baseUrl}Country/Add`, body)
@@ -36,6 +42,7 @@ export class Apiservice {
         map((res) => ({
           id: res.Id,
           name: res.CountryName,
+          img: "",
         }))
       );
   }
@@ -51,6 +58,7 @@ export class Apiservice {
         map((res) => ({
           id: res.Id,
           name: res.CountryName,
+          img: "",
         }))
       );
   }
@@ -63,6 +71,7 @@ export class Apiservice {
           res.map((c) => ({
             id: c.Id,
             name: c.CountryName,
+            img: c.Img || "",
           }))
         )
       );
@@ -78,21 +87,20 @@ export class Apiservice {
     return this.http.post<Brand>(`${this.baseUrl}brand/Add`, body);
   }
 
- updateBrand(body: any): Observable<Brand> {
-  return this.http
-    .put<Brand>(`${this.baseUrl}Brand/Update`, body)
-    .pipe(
+  updateBrand(body: any): Observable<Brand> {
+    return this.http.put<Brand>(`${this.baseUrl}Brand/Update`, body).pipe(
       map((res: any) => ({
         Id: res.Id,
         BrandName: res.BrandName,
         CountryId: res.CountryId,
         Message: res.Message,
+        Img: res.Img,
         AddedBy: res.AddedBy,
         AddedAt: res.AddedAt,
-        Country: res.Country
+        Country: res.Country,
       }))
     );
-}
+  }
 
   getAllBrand(): Observable<Brand[]> {
     return this.http.get<Brand[]>(`${this.baseUrl}brand/GetAll`);
@@ -106,8 +114,29 @@ export class Apiservice {
     return this.http.delete(`${this.baseUrl}brand/Delete?id=${id}`);
   }
 
-
   ///cars///
+
+  getAllCars() {
+    return this.http.get(`${this.baseUrl}Car/GetAll`);
+  }
+  getCar(id: number) {
+    return this.http.get(`${this.baseUrl}Car/GetCar?id=${id}`);
+  }
+  deleteCar(id: number) {
+    return this.http.delete(`${this.baseUrl}Car/Delete?id=${id}`);
+  }
+  addCar(body: any) {
+    return this.http.post(`${this.baseUrl}Car/Add`, body);
+  }
+  updateCar(body: any) {
+    return this.http.put(`${this.baseUrl}Car/Update`, body);
+  }
+
+  //branch
+
+  addBranch(body: any) {
+    return this.http.post(`${this.baseUrl}branch/Add`, body);
+  }
 
   getBranch(id: number) {
     return this.http.get(`${this.baseUrl}GetBranch?id=${id}`);
@@ -115,5 +144,38 @@ export class Apiservice {
 
   getBranchs() {
     return this.http.get(`${this.baseUrl}branch/GetAll`);
+  }
+
+  deleteBranch(id: number) {
+    return this.http.delete(`${this.baseUrl}branch/Delete?id=${id}`);
+  }
+  updateBranch(body: any) {
+    return this.http.put(`${this.baseUrl}branch/Update`, body);
+  }
+
+  //employee//
+
+  getAllEmployee() {
+    return this.http.get(`${this.baseUrl}auth/GetAll`);
+  }
+
+  updateEmployee(data: UserResponse): Observable<UserResponse> {
+    return this.http.put<UserResponse>(
+      `${this.baseUrl}auth/Update
+  `,
+      data
+    );
+  }
+
+  deleteEmployee(id: number) {
+    return this.http.delete(`${this.baseUrl}auth/Delete?id=${id}`);
+  }
+
+  //uploadImage
+
+  uploadImage(file: File) {
+    const formData = new FormData();
+    formData.append("file", file); // اسم الحقل حسب المطلوب من الـ API
+    return this.http.post(`${this.baseUrl}images/Upload`, formData);
   }
 }

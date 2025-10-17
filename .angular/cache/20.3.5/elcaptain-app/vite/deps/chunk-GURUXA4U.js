@@ -11,8 +11,8 @@ import {
   p,
   s,
   s2,
-  z
-} from "./chunk-6KFGXXCC.js";
+  z2 as z
+} from "./chunk-G2OBFYHL.js";
 import {
   DOCUMENT,
   Injectable,
@@ -133,6 +133,11 @@ function le(e, t) {
   }
   return e;
 }
+var rr = (e) => {
+  var a2;
+  let t = S.getTheme(), r = ue(t, e, void 0, "variable"), s3 = (a2 = r == null ? void 0 : r.match(/--[\w-]+/g)) == null ? void 0 : a2[0], i2 = ue(t, e, void 0, "value");
+  return { name: s3, variable: r, value: i2 };
+};
 var E = (...e) => ue(S.getTheme(), ...e);
 var ue = (e = {}, t, r, s3) => {
   if (t) {
@@ -886,6 +891,7 @@ function providePrimeNG(...features) {
 
 export {
   N,
+  rr,
   S,
   base,
   BaseStyle,
@@ -894,4 +900,4 @@ export {
   PRIME_NG_CONFIG,
   providePrimeNG
 };
-//# sourceMappingURL=chunk-2LVLSWNM.js.map
+//# sourceMappingURL=chunk-GURUXA4U.js.map

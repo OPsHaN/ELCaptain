@@ -23,25 +23,17 @@
 </div>
 
 <!-- ✅ جدول السيارات -->
+<!-- ✅ جدول السيارات -->
 <div class="car-wrap" *ngIf="!showRegisterForm">
   <div class="cards-grid" dir="rtl">
     <div
-      class="card car-card"
+      class="card car-card dome-card text-center position-relative"
       *ngFor="let car of cars; trackBy: trackById"
       (click)="viewCar(car)"
       role="button"
       aria-label="Open car {{ car.Brand.BrandName }} {{ car.Model }}"
     >
-      <!-- صورة السيارة -->
-      <div class="card-media">
-        <img
-          [src]="car.Images.length ? car.Images[0].Img : defaultCarImage"
-          alt="{{ car.Brand.BrandName }}"
-          loading="lazy"
-        />
-      </div>
-
-      <!-- حالة السيارة -->
+      <!-- ✅ حالة السيارة أعلى يمين الصورة -->
       <span
         class="status-badge"
         [ngClass]="{ online: car.IsForSale, offline: !car.IsForSale }"
@@ -49,66 +41,93 @@
         {{ car.IsForSale ? "معروضة للبيع" : "غير معروضة" }}
       </span>
 
-      <div class="card-body text-center">
+      <!-- ✅ صورة السيارة -->
+      <img
+        [src]="car.Images.length ? car.Images[0].Img : defaultCarImage"
+        class="card-img-top car-img"
+        alt="{{ car.Brand.BrandName }}"
+      />
 
-        <!-- شعار البراند -->
-        <div class="brand-logo-wrapper mb-2">
-          <img
-            [src]="car.Brand.Img || defaultCarImage"
-            alt="{{ car.Brand.BrandName }}"
-            class="brand-logo rounded-circle"
-            width="50"
-            height="50"
-          />
-        </div>
+      <div class="card-body p-0">
+        <!-- اسم الموديل -->
+        <h5 class="card-title fw-bold mb-2">
+          {{ car.Model }}
+        </h5>
 
-        <!-- تفاصيل السيارة -->
-        <h3 class="car-model">{{ car.Model }}</h3>
+        <!-- جدول المواصفات -->
+        <table class="table table-borderless specs-table mb-3">
+          <tbody>
+            <tr>
+              <td class="fw-bold">البراند</td>
+              <td
+                class="d-flex align-items-center gap-2 justify-content-center"
+              >
+                <img
+                  [src]="car.Brand.Img || defaultCarImage"
+                  alt="{{ car.Brand.CountryName }}"
+                  class="country-flag rounded"
+                />
+                {{ car.Brand.BrandName }}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">اللون</td>
+              <td
+                class="d-flex align-items-center justify-content-center gap-2"
+              >
+                <span
+                  class="color-box"
+                  [ngStyle]="{ backgroundColor: getColorCode(car.Color) }"
+                ></span>
+                {{ car.Color }}
+              </td>
+            </tr>
+            <tr>
+              <td class="fw-bold">الدولة</td>
+              <td
+                class="d-flex align-items-center gap-2 justify-content-center"
+              >
+                <img
+                  [src]="car.Brand.Country.Img || defaultCarImage"
+                  alt="{{ car.Brand.Country.CountryName }}"
+                  class="country-flag rounded"
+                />
+                {{ car.Brand.Country.CountryName }}
+              </td>
+            </tr>
+            <!-- <tr>
+              <td class="fw-bold">الحالة</td>
+              <td [ngClass]="{ 'text-success': car.IsForSale, 'text-danger': !car.IsForSale }">
+                {{ car.IsForSale ? 'معروضة للبيع' : 'غير معروضة' }}
+              </td>
+            </tr> -->
+          </tbody>
+        </table>
+      </div>
 
-        <p class="car-info mb-1">
-          النوع: {{ car.Type }} | اللون: {{ car.Color }}
-        </p>
+      <!-- السعر -->
+      <div class="car-price-box">
+        {{ car.Price | currency : "EGP" }}
+      </div>
 
-        <!-- عرض علم الدولة -->
-        <p class="car-country d-flex align-items-center justify-content-center gap-1 mb-1">
-          <img
-            [src]="car.Brand.Country.Img || defaultCarImage"
-            alt="{{ car.Brand.Country.CountryName }}"
-            class="country-flag rounded-circle"
-            width="50"
-            height="50"
-          />
-          {{ car.Brand.Country.CountryName }}
-        </p>
-
-        <p class="car-year mb-1">سنة الصنع: {{ car.YearOfManufacture }}</p>
-        <p class="car-km mb-1">الكيلو متر: {{ car.Kilometers }}</p>
-
-        <!-- السعر -->
-        <p class="car-price fw-bold text-primary mb-2">
-          السعر: {{ car.Price | currency : "EGP" }}
-        </p>
-
-        <!-- أزرار الإجراءات -->
-        <div class="card-actions d-flex justify-content-center gap-2 mt-2">
-          <button
-            class="btn btn-sm btn-success rounded-circle"
-            (click)="editCar(car); $event.stopPropagation()"
-          >
-            ✏️
-          </button>
-          <button
-            class="btn btn-sm btn-danger rounded-circle"
-            (click)="deleteCar(car); $event.stopPropagation()"
-          >
-            🗑
-          </button>
-        </div>
-
+      <!-- أزرار الإجراءات -->
+      <div class="card-actions d-flex justify-content-center gap-2 p-2">
+        <button
+          class="btn btn-sm btn-success rounded-circle"
+          (click)="editCar(car); $event.stopPropagation()"
+        >
+          ✏️
+        </button>
+        <button
+          class="btn btn-sm btn-danger rounded-circle"
+          (click)="deleteCar(car); $event.stopPropagation()"
+        >
+          🗑
+        </button>
       </div>
     </div>
-  
-
+  </div>
+</div>
 
 <!-- ✅ Dialog عرض بيانات السيارة مع Carousel -->
 <p-dialog
@@ -122,23 +141,24 @@
 >
   <ng-container *ngIf="selectedCar">
     <div class="text-center p-2">
-
       <!-- ✅ Carousel للصور -->
-      <p-carousel 
-        [value]="selectedCar.Images.length ? selectedCar.Images : [defaultCarImage]"
-        [numVisible]="1" 
+      <p-carousel
+        [value]="
+          selectedCar.Images.length ? selectedCar.Images : [defaultCarImage]
+        "
+        [numVisible]="1"
         [numScroll]="1"
         [circular]="true"
         [autoplayInterval]="3000"
-        [showIndicators]="true"
+        [showIndicators]="false"
         [showNavigators]="true"
       >
         <ng-template pTemplate="item" let-image>
-          <img 
-            [src]="image.Img ? image.Img : image" 
+          <img
+            [src]="image.Img ? image.Img : image"
             class="rounded mb-3"
-            width="200"
-            height="150"
+            width="250"
+            height="250"
             alt="Car image"
           />
         </ng-template>
@@ -150,13 +170,19 @@
 
       <hr />
 
-      <p><strong>🏭 الفرع / البلد:</strong> {{ selectedCar.Brand.BrandName }} - {{ selectedCar.Brand.Country.CountryName }}</p>
+      <p>
+        <strong>🏭 الفرع / البلد:</strong> {{ selectedCar.Brand.BrandName }} -
+        {{ selectedCar.Brand.Country.CountryName }}
+      </p>
       <p><strong>📅 سنة الصنع:</strong> {{ selectedCar.YearOfManufacture }}</p>
       <p><strong>🛣 الكيلو متر:</strong> {{ selectedCar.Kilometers }}</p>
-      <p><strong>💰 السعر:</strong> {{ selectedCar.Price | currency : "EGP" }}</p>
-      <p><strong>📡 الحالة:</strong> {{ selectedCar.IsForSale ? "معروضة للبيع" : "غير معروضة" }}</p>
-
+      <p>
+        <strong>💰 السعر:</strong> {{ selectedCar.Price | currency : "EGP" }}
+      </p>
+      <p>
+        <strong>📡 الحالة:</strong>
+        {{ selectedCar.IsForSale ? "معروضة للبيع" : "غير معروضة" }}
+      </p>
     </div>
   </ng-container>
 </p-dialog>
-

@@ -27,6 +27,47 @@ export class Cars implements OnInit {
   isEditMode = false; // ⬅️ لو true معناها بنعدل موظف
   defaultCarImage = "./photos/default-car.jpg";
   car: any[] = [];
+
+  getColorCode(colorName: string): string {
+  if (!colorName) return '#000'; // افتراضي أسود
+
+  const normalized = colorName.trim().toLowerCase();
+
+  switch (normalized) {
+    case 'أحمر':
+    case 'red':
+      return 'red';
+    case 'أزرق':
+    case 'blue':
+      return 'blue';
+    case 'أسود':
+    case 'black':
+      return 'black';
+    case 'أبيض':
+    case 'white':
+      return '#fff';
+    case 'رمادي':
+    case 'رمادى':
+    case 'gray':
+    case 'grey':
+      return 'gray';
+    case 'أخضر':
+    case 'green':
+      return 'green';
+    case 'فضي':
+    case 'فضى':
+    case 'silver':
+      return 'silver';
+    case 'ذهبي':
+    case 'ذهبى':
+    case 'gold':
+      return 'gold';
+    default:
+      return '#000'; // لو اللون مش معروف
+  }
+}
+
+
   constructor(
     private api: Apiservice,
     private cdr: ChangeDetectorRef,

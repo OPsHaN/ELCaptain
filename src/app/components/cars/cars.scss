@@ -3,80 +3,127 @@
   padding: 1rem;
 }
 
+/* ✅ شكل الكارت */
 
 
-/* Grid: default 4 columns */
+/* ✅ الكارت */
+.card {
+  text-align: center;
+  border-radius: 1.5em 1.5em 8em 8em;  /* 👈 تحت بيضاوي أكثر */
+  border: none;
+  box-shadow: 0px 0px 10px orange;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+  position: relative;
+}
+
+/* ✅ حالة السيارة أعلى يمين */
+.status-badge {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  padding: 5px 10px;
+  font-size: 0.8rem;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.status-badge.online {
+  background-color: #28a745; /* أخضر */
+}
+
+.status-badge.offline {
+  background-color: #dc3545; /* أحمر */
+}
+
+/* ✅ صورة السيارة */
+.card-img-top {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 1.5em 1.5em 0 0;
+}
+
+/* ✅ جدول المواصفات */
+.specs-table td {
+  padding: 4px 6px;
+  border: none;
+  color: #333;
+}
+
+.specs-table .fw-bold {
+  color: orange;
+}
+
+.country-flag {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
+  border: 1px solid #ccc;
+}
+
+.card-title {
+    background-color: black;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 10px 0;
+  // border-radius: 0 0 8em 8em; 
+}
+
+/* ✅ السعر */
+.car-price-box {
+  background-color: black;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  padding: 10px 0;
+  border-radius: 0 0 8em 8em;  /* 👈 تأكيد شكل بيضاوي من الأسفل */
+}
+
+/* ✅ تأثير hover */
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+}
+
+/* ✅ أزرار الإجراءات */
+.card-actions {
+  padding: 10px;
+}
+
+.card-actions button {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.card-actions button:hover {
+  transform: scale(1.1);
+}
+
+/* ✅ زرار عرض */
+.btn.btn-primary {
+  background-color: teal;
+  border-color: teal;
+  color: #fff;
+  padding: 0.75em 0.5em;
+  border-radius: 0;
+}
+
+.btn.btn-primary:hover {
+  background-color: rgb(128, 115, 0);
+  border-color: rgb(105, 128, 0);
+  color: #fff;
+  opacity: 0.8;
+}
+
+/* ✅ الشبكة */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1rem;
-  align-items: stretch;
-  position: relative;
-}
-
-/* Card */
-.car-card {
-  background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 6px 20px rgba(16, 24, 40, 0.06);
-  overflow: hidden;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  transition: transform 180ms ease, box-shadow 180ms ease;
-  min-height: 250px;
-  border: 1px solid rgba(0,0,0,0.04);
-  position: relative;
-}
-
-.car-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 12px 30px rgba(16,24,40,0.12);
-}
-
-/* media / image */
-.card-media {
-  height: 200px;
-  width: 100%;
-  overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(180deg, rgba(0,0,0,0.03), rgba(0,0,0,0.01));
-}
-
-.card-media img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  display: block;
-}
-
-/* body */
-.card-body {
-  padding: 0.9rem 1rem;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  flex: 1;
-  text-align: center;
-}
-
-.car-name {
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 600;
-  color: #111827;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.car-role {
-  margin: 0;
-  font-size: 0.9rem;
-  color: #6b7280;
-  flex-grow: 1;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
 }
 
 /* actions aligned bottom */
@@ -162,6 +209,12 @@
   font-size: 1rem;
 }
 
+.color-box {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
 
 
 /* RESPONSIVE BREAKPOINTS */

@@ -34,11 +34,17 @@ function state(name, styles, options) {
 function transition(stateChangeExpr, steps, options = null) {
   return { type: AnimationMetadataType.Transition, expr: stateChangeExpr, animation: steps, options };
 }
+function animation(steps, options = null) {
+  return { type: AnimationMetadataType.Reference, animation: steps, options };
+}
 function animateChild(options = null) {
   return { type: AnimationMetadataType.AnimateChild, options };
 }
-function query(selector, animation, options = null) {
-  return { type: AnimationMetadataType.Query, selector, animation, options };
+function useAnimation(animation2, options = null) {
+  return { type: AnimationMetadataType.AnimateRef, animation: animation2, options };
+}
+function query(selector, animation2, options = null) {
+  return { type: AnimationMetadataType.Query, selector, animation: animation2, options };
 }
 var NoopAnimationPlayer = class {
   _onDoneFns = [];
@@ -272,7 +278,9 @@ export {
   style,
   state,
   transition,
+  animation,
   animateChild,
+  useAnimation,
   query,
   NoopAnimationPlayer,
   AnimationGroupPlayer,
@@ -287,4 +295,4 @@ export {
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-JXMGK4TN.js.map
+//# sourceMappingURL=chunk-B3BBCXQO.js.map
