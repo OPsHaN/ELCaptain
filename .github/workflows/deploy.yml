@@ -1,0 +1,31 @@
+name: 🚀 Deploy Angular App to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # 👈 لو الفرع الأساسي عندك اسمه main
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v3
+
+    - name: 🟡 Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    - name: 📦 Install dependencies
+      run: npm install
+
+    - name: 🏗️ Build Angular App
+      run: npm run build -- --base-href "https://opshan.github.io/ELCaptain/"
+
+    - name: 🚀 Deploy to GitHub Pages
+      uses: JamesIves/github-pages-deploy-action@v4
+      with:
+        branch: gh-pages         # 👈 الفرع اللي هيترفع عليه الموقع
+        folder: dist/elcaptain-app  # 👈 اسم فولدر build الصحيح
