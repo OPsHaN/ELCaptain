@@ -1,15 +1,7 @@
 import {
   Dialog
-} from "./chunk-E7G4U3ZY.js";
-import {
-  Button
-} from "./chunk-DAPU43RW.js";
+} from "./chunk-PYGVVG2E.js";
 import "./chunk-RIYQ7XI7.js";
-import "./chunk-VXEVVWYF.js";
-import "./chunk-TXR7OBJ4.js";
-import {
-  BaseComponent
-} from "./chunk-UJ3PMSPZ.js";
 import {
   animate,
   animation,
@@ -18,6 +10,14 @@ import {
   trigger,
   useAnimation
 } from "./chunk-B3BBCXQO.js";
+import {
+  Button
+} from "./chunk-DAPU43RW.js";
+import "./chunk-VXEVVWYF.js";
+import "./chunk-TXR7OBJ4.js";
+import {
+  BaseComponent
+} from "./chunk-UJ3PMSPZ.js";
 import {
   BaseStyle
 } from "./chunk-GURUXA4U.js";

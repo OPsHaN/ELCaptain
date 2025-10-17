@@ -1,20 +1,6 @@
 import {
-  Button,
-  DomHandler,
-  blockBodyScroll,
-  unblockBodyScroll
-} from "./chunk-DAPU43RW.js";
-import {
   zindexutils
 } from "./chunk-RIYQ7XI7.js";
-import {
-  TimesIcon,
-  WindowMaximizeIcon,
-  WindowMinimizeIcon
-} from "./chunk-VXEVVWYF.js";
-import {
-  BaseComponent
-} from "./chunk-UJ3PMSPZ.js";
 import {
   animate,
   animation,
@@ -23,6 +9,20 @@ import {
   trigger,
   useAnimation
 } from "./chunk-B3BBCXQO.js";
+import {
+  Button,
+  DomHandler,
+  blockBodyScroll,
+  unblockBodyScroll
+} from "./chunk-DAPU43RW.js";
+import {
+  TimesIcon,
+  WindowMaximizeIcon,
+  WindowMinimizeIcon
+} from "./chunk-VXEVVWYF.js";
+import {
+  BaseComponent
+} from "./chunk-UJ3PMSPZ.js";
 import {
   BaseStyle
 } from "./chunk-GURUXA4U.js";
@@ -2036,4 +2036,4 @@ export {
   Dialog,
   DialogModule
 };
-//# sourceMappingURL=chunk-E7G4U3ZY.js.map
+//# sourceMappingURL=chunk-PYGVVG2E.js.map
