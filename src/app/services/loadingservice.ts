@@ -1,16 +1,45 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root',
+})
 export class LoadingService {
-  private _loading = new BehaviorSubject<boolean>(false);
-  readonly loading$ = this._loading.asObservable();
+  // الحالة العامة للتحميل (true = فى تحميل)
+  isLoading = new BehaviorSubject<boolean>(false);
 
-  show() {
-    this._loading.next(true);
+  // عدد الطلبات الجارية
+  private activeRequests = 0;
+
+  // دوال يتم استدعائها بعد انتهاء جميع الطلبات
+  private afterLoadAllRequestsFunctions: (() => void)[] = [];
+
+show() {
+  this.activeRequests++;
+  // 👇 اجعل القيمة تتغير بعد microtask
+  Promise.resolve().then(() => {
+    this.isLoading.next(true);
+  });
+}
+
+hide() {
+  if (this.activeRequests > 0) this.activeRequests--;
+
+  if (this.activeRequests === 0) {
+    Promise.resolve().then(() => {
+      this.isLoading.next(false);
+      this.handleAfterAllRequestsFunctions();
+    });
+  }
+}
+
+
+  addAfterAllRequestsHandler(fn: () => void) {
+    this.afterLoadAllRequestsFunctions.push(fn);
   }
 
-  hide() {
-    this._loading.next(false);
+   handleAfterAllRequestsFunctions() {
+    this.afterLoadAllRequestsFunctions.forEach(fn => fn());
+    this.afterLoadAllRequestsFunctions = []; // تفريغ بعد التنفيذ
   }
 }

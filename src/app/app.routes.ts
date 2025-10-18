@@ -11,6 +11,7 @@ import { Home } from "./components/home/home";
 import { AuthGuard } from "./shared/authguard";
 import { Register } from "./components/register/register";
 import { Adds } from "./components/adds/adds";
+import { SpinnerComponent } from "./shared/spinner/spinner.component";
 
 export const routes: Routes = [
   // {
@@ -31,7 +32,7 @@ export const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes), SpinnerComponent],
   exports: [RouterModule],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })

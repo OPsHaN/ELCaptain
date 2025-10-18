@@ -8,7 +8,8 @@
       </div>
     </div>
   </div>
-  <app-loading></app-loading>
+<ng-container *ngIf="loader.isLoading | async">
+  <app-spinner></app-spinner>
+</ng-container>
 
-  <!-- <router-outlet></router-outlet> -->
 </main>
