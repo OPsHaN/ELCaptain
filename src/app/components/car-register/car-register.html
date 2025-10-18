@@ -20,6 +20,38 @@
           dir="rtl"
           *ngIf="!showImageUploadSection"
         >
+
+                  <div class="d-flex gap-2 flex-wrap mt-2">
+            <div
+              *ngFor="let img of carImagesPreview; let i = index"
+              class="position-relative"
+            >
+              <img
+                [src]="img || defaultCarImage"
+                [ngStyle]="{
+                  width: i === 0 ? '150px' : '100px',
+                  height: i === 0 ? '150px' : '100px',
+                  border: i === 0 ? '3px solid green' : '2px solid #ccc',
+                  objectFit: 'cover'
+                }"
+                class="rounded"
+              />
+              <span
+                class="position-absolute top-0 end-0 bg-danger text-white rounded-circle px-1"
+                style="cursor: pointer"
+                (click)="removeImage(i)"
+              >
+                ✖
+              </span>
+              <span
+                *ngIf="i === 0"
+                class="position-absolute bottom-0 start-0 bg-success text-white px-1 rounded-pill"
+                style="font-size: 10px"
+              >
+                رئيسية
+              </span>
+            </div>
+          </div>
           <div class="row g-3 text-end">
             <!-- الموديل -->
             <div class="col-md-4">
@@ -260,7 +292,7 @@
                 class="btn btn-warning btn-lg py-0"
                 [disabled]="isSubmitting"
               >
-                {{ isEditMode ? "📝 تعديل" : "متابعة التسجيل ⏪ " }}
+                {{ isEditMode ? "متابعة التعديل ⏪"  : "متابعة التسجيل ⏪ " }}
               </button>
             </div>
           </div>

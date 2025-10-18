@@ -132,12 +132,16 @@ export class Apiservice {
     return this.http.put(`${this.baseUrl}Car/Update`, body);
   }
 
-  AddImagesforCar(body: any) {
+  addImageforCar(body: any) {
     return this.http.post(`${this.baseUrl}Car/AddImage`, body);
   }
 
+  uploadBulkImages(body: any) {
+    return this.http.post(`${this.baseUrl}Car/AddBulkImages`, body);
+  }
+
   deleteImagesForCar(id: number) {
-    return this.http.delete(`${this.baseUrl}Car/DeleteImage?id=${id}`);
+    return this.http.delete(`${this.baseUrl}Car/DeleteImage?ImageId=${id}`);
   }
 
   //branch

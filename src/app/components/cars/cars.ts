@@ -104,15 +104,12 @@ getColorCode(colorName: string): string {
     this.showCarDialog = true;
   }
 
-  editCar(car: any) {
-    this.selectedCarToEdit = car;
-    this.isCarEditMode = true;
-    this.showCarForm = true;
+editCar(car: any) {
+  this.selectedCar = { ...car };       // 🟡 تخزين بيانات العربية المختارة
+  this.isEditMode = true;              // 🟡 وضع تعديل
+  this.showRegisterForm = true;        // 🟡 عرض الفورم
+}
 
-    // if (this.carForm) {
-    //   this.patchCarForm(car);
-    // }
-  }
 
 deleteCar(car: any) {
   this.confirmationService.confirm({
@@ -141,8 +138,11 @@ deleteCar(car: any) {
 
 
   toggleRegisterForm() {
-    this.selectedCar = null; // ✨ عشان الفورم يفتح فاضي
-    this.showRegisterForm = !this.showRegisterForm;
+  this.showRegisterForm = !this.showRegisterForm;
+  if (!this.showRegisterForm) {
+    this.selectedCar = null;   // 🧽 تنظيف
+    this.isEditMode = false;
+  }
   }
 
   showError(msg: string) {
