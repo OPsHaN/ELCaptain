@@ -1,0 +1,163 @@
+<div class="container py-1">
+  <div class="row justify-content-center">
+    <div class="col-12">
+      <div class="card p-2">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="justify-content-end">
+            <h3 class="text-center mb-2 fw-bold text-dark">
+              {{ isEditMode ? "✏️ تعديل عميل" : "➕ تسجيل عميل جديد" }}
+            </h3>
+          </div>
+          <div class="justify-content-start">
+            <button class="btn" (click)="closeForm.emit()">⬅️ غلق</button>
+          </div>
+        </div>
+
+        <form
+          [formGroup]="clientForm"
+          (ngSubmit)="onSubmit()"
+          novalidate
+          dir="rtl"
+        >
+          <div class="row g-3 text-end">
+            <!-- اسم العميل -->
+            <div class="col-md-4">
+              <label class="form-label">اسم العميل</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="ClientName"
+              />
+              <small
+                class="text-danger"
+                *ngIf="
+                  clientForm.get('ClientName')?.touched &&
+                  clientForm.get('ClientName')?.invalid
+                "
+                >مطلوب</small
+              >
+            </div>
+
+            <!-- رقم الهاتف -->
+            <div class="col-md-4">
+              <label class="form-label">رقم الهاتف</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="PhoneNumber"
+              />
+              <small
+                class="text-danger"
+                *ngIf="
+                  clientForm.get('PhoneNumber')?.touched &&
+                  clientForm.get('PhoneNumber')?.invalid
+                "
+                >مطلوب</small
+              >
+            </div>
+
+            <!-- التصنيف -->
+            <div class="col-md-4">
+              <label class="form-label">تصنيف العميل</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="Classification">
+                  <mat-option
+                    *ngFor="let c of classification"
+                    [value]="c.code"
+                  >
+                    {{ c.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- الدولة المهتم بها -->
+            <div class="col-md-4">
+              <label class="form-label">الدولة المهتم بها</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="InterstedInCountryId">
+                  <mat-option
+                    *ngFor="let country of countries"
+                    [value]="country.id"
+                  >
+                    {{ country.name }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- الميزانية -->
+            <div class="col-md-4">
+              <label class="form-label">الميزانية</label>
+              <input
+                type="text"
+                class="form-control custom-input"
+                formControlName="Budget"
+              />
+            </div>
+
+            <!-- طريقة الدفع -->
+            <div class="col-md-4">
+              <label class="form-label">طريقة الدفع</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="PaymentMethod">
+                  <mat-option [value]="1">كاش</mat-option>
+                  <mat-option [value]="2">تقسيط</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Sales Id -->
+            <div class="col-md-4">
+              <label class="form-label">الموظف المسؤل</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="SalesId">
+                  <mat-option
+                    *ngFor="let s of salesList"
+                    [value]="s.Id"
+                  >
+                    {{ s.FullName }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- رسالة -->
+            <div class="col-md-8">
+              <label class="form-label">ملاحظات</label>
+              <textarea
+                class="form-control custom-input"
+                rows="2"
+                formControlName="Message"
+              ></textarea>
+            </div>
+
+            <!-- رفع الملفات -->
+            <div class="col-12 mt-2">
+              <label class="form-label d-block">📎 رفع ملفات</label>
+              <input
+                type="file"
+                multiple
+                (change)="onFileSelected($event)"
+                class="form-control"
+              />
+              <ul class="mt-2" *ngIf="selectedFiles.length > 0">
+                <li *ngFor="let f of selectedFiles">{{ f.name }}</li>
+              </ul>
+            </div>
+
+            <!-- زر التسجيل -->
+            <div class="col-12 text-center mt-3">
+              <button
+                class="btn btn-warning btn-lg py-0"
+                [disabled]="isSubmitting"
+              >
+                {{ isEditMode ? "📝 تعديل" : "➕ تسجيل" }}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

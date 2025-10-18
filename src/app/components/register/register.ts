@@ -331,19 +331,7 @@ export class Register implements OnInit {
     }
   }
 
-  // onFileSelected(event: Event): void {
-  //   const input = event.target as HTMLInputElement;
-  //   if (input.files && input.files.length > 0) {
-  //     this.uploadedFile = input.files[0];
-  //     this.registerForm.patchValue({ Img: this.uploadedFile });
-
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       this.selectedImage = reader.result;
-  //     };
-  //     reader.readAsDataURL(this.uploadedFile);
-  //   }
-  // }
+ 
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;

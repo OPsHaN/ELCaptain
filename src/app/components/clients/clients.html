@@ -1,1 +1,98 @@
-العملاء
+<!-- ✅ شريط الأزرار -->
+<div
+  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
+>
+  <div class="position-relative">
+    <button class="btn btn-outline-primary" (click)="toggleRegisterForm()">
+      ➕ تسجيل عميل جديد
+    </button>
+    <div class="arrow-wrapper" *ngIf="showRegisterForm">
+      <i class="bi bi-caret-down-fill arrow-icon"></i>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ فورم تسجيل العميل -->
+<div class="table-container mt-0" *ngIf="showRegisterForm" dir="rtl">
+  <app-client-register
+    *ngIf="showRegisterForm"
+    [client]="selectedClient"
+    [isEditMode]="isEditMode"
+    (closeForm)="toggleRegisterForm()"
+    (refreshClients)="getAllClients()"
+  ></app-client-register>
+</div>
+
+<!-- ✅ عرض العملاء على هيئة كروت -->
+<div class="clients-wrap" *ngIf="!showRegisterForm">
+  <div class="cards-grid" dir="rtl">
+    <div
+      class="card client-card"
+      *ngFor="let c of clients; trackBy: trackById"
+      (click)="viewClient(c)"
+      role="button"
+      aria-label="Open client {{ c.ClientName }}"
+    >
+      <!-- <div class="card-media">
+        <img
+          [src]="c.avatar || defaultAvatar"
+          alt="{{ c.ClientName }}"
+          loading="lazy"
+          class="rounded-circle"
+        />
+      </div> -->
+
+      <div class="card-body">
+        <h3 class="client-name">{{ c.ClientName }}</h3>
+        <p class="client-phone"> {{ c.PhoneNumber }} 📞</p>
+        <p class="client-classification">🏷 {{ c.Classification }}</p>
+
+        <div class="card-actions my-0">
+          <button
+            class="btn btn-sm btn-success rounded-circle px-1"
+            (click)="editClient(c); $event.stopPropagation()"
+          >
+            ✏️
+          </button>
+          <button
+            class="btn btn-sm btn-danger rounded-circle"
+            (click)="deleteClient(c); $event.stopPropagation()"
+          >
+            🗑
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Dialog عرض بيانات العميل -->
+<p-dialog
+  header="👤 بيانات العميل"
+  [(visible)]="showClientDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '400px' }"
+  [baseZIndex]="10000"
+  dir="rtl"
+>
+  <ng-container *ngIf="selectedClient">
+    <div class="text-center p-1">
+      <!-- <img
+        [src]="selectedClient.avatar || defaultAvatar"
+        alt="Avatar"
+        class="avatar-image rounded-pill mb-3 mx-auto d-block"
+      /> -->
+      <h4>{{ selectedClient.ClientName }}</h4>
+      <p>🏷 {{ selectedClient.Classification }}</p>
+      <hr />
+      <p><strong>📞 الهاتف:</strong> {{ selectedClient.PhoneNumber }}</p>
+      <p><strong>💰 الميزانية:</strong> {{ selectedClient.Budget }}</p>
+      <p><strong>💳 طريقة الدفع:</strong> {{ getPaymentMethod(selectedClient.PaymentMethod) }}</p>
+      <p><strong>📍 الدولة:</strong> {{ selectedClient.InterstedInCountryName }}</p>
+      <p><strong>📝 الملاحظات:</strong> {{ selectedClient.Message }}</p>
+    </div>
+  </ng-container>
+</p-dialog>
+
+<p-confirmDialog></p-confirmDialog>
