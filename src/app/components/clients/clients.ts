@@ -28,7 +28,9 @@ export class Clients implements OnInit {
 
   constructor(
     private api: Apiservice,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -89,5 +91,24 @@ export class Clients implements OnInit {
       default:
         return 'غير محدد';
     }
+  }
+
+
+    showError(msg: string) {
+    this.messageService.add({
+      severity: "error",
+      // summary: "خطأ",
+      detail: msg,
+      life: 2000,
+    });
+  }
+
+  showSuccess(msg: string) {
+    this.messageService.add({
+      severity: "success",
+      // summary: "تم بنجاح",
+      detail: msg,
+      life: 3000,
+    });
   }
 }

@@ -11,6 +11,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { CommonModule } from "@angular/common";
 import { CheckboxModule } from "primeng/checkbox";
 import { Apiservice } from "../../services/apiservice";
+import { MessageService } from "primeng/api";
 
 @Component({
   selector: "app-client-register",
@@ -45,7 +46,7 @@ export class ClientRegister implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private http: HttpClient,
+    private messageService: MessageService,
     private api: Apiservice
   ) {}
 
@@ -161,5 +162,24 @@ export class ClientRegister implements OnInit {
 
   addClient(body: any) {
     return this.api.addClient(body);
+  }
+
+
+    showError(msg: string) {
+    this.messageService.add({
+      severity: "error",
+      // summary: "خطأ",
+      detail: msg,
+      life: 2000,
+    });
+  }
+
+  showSuccess(msg: string) {
+    this.messageService.add({
+      severity: "success",
+      // summary: "تم بنجاح",
+      detail: msg,
+      life: 3000,
+    });
   }
 }
