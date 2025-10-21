@@ -50,23 +50,51 @@ export class ClientRegister implements OnInit {
     private api: Apiservice
   ) {}
 
-  ngOnInit() {
-    this.clientForm = this.fb.group({
-      ClientName: ["", Validators.required],
-      PhoneNumber: ["", Validators.required],
-      Classification: [""],
-      InterstedInCountryId: [0],
-      Budget: [""],
-      PaymentMethod: [0],
-      AddedBy: [0],
-      Message: [""],
-      SalesId: [0],
-    });
-
-    this.loadEmployees();
-
-    this.loadCountries();
+  ngOnChanges() {
+  if (this.isEditMode && this.client && this.clientForm) {
+    this.patchClientData(this.client);
   }
+}
+
+
+ ngOnInit() {
+  this.clientForm = this.fb.group({
+    ClientName: ["", Validators.required],
+    PhoneNumber: ["", Validators.required],
+    Classification: [""],
+    InterstedInCountryId: [0],
+    Budget: [""],
+    PaymentMethod: [0],
+    AddedBy: [0],
+    Message: [""],
+    SalesId: [0],
+  });
+
+  this.loadEmployees();
+  this.loadCountries();
+
+  // 🟡 لو داخل وضع تعديل
+  if (this.isEditMode && this.client) {
+    this.patchClientData(this.client);
+  }
+}
+
+// ✅ لو عايز يشتغل دايناميك بمجرد تغيير القيمة
+
+private patchClientData(client: any) {
+  this.clientForm.patchValue({
+    ClientName: client.ClientName,
+    PhoneNumber: client.PhoneNumber,
+    Classification: client.Classification,
+    InterstedInCountryId: client.InterstedInCountryId,
+    Budget: client.Budget,
+    PaymentMethod: client.PaymentMethod,
+    Message: client.Message,
+    SalesId: client.SalesId,
+  });
+
+  this.clientId = client.Id;
+}
 
   loadEmployees() {
     this.api.getAllEmployee().subscribe({
@@ -97,62 +125,77 @@ export class ClientRegister implements OnInit {
     }
   }
 
-  onSubmit(): void {
-    if (this.clientForm.invalid) {
-      this.clientForm.markAllAsTouched();
-      return;
-    }
+ onSubmit(): void {
+  if (this.clientForm.invalid) {
+    this.clientForm.markAllAsTouched();
+    return;
+  }
 
-    this.isSubmitting = true;
+  this.isSubmitting = true;
+  this.clientId = this.client ? this.client.Id : 0;
 
-    this.clientId = this.client ? this.client.Id : 0;
+  // 🖼️ رفع الملفات أولاً لو فيه
+  const uploadPromises = this.selectedFiles.map((file) =>
+    this.api.uploadFile(this.clientId, file).toPromise()
+  );
 
-    const uploadPromises = this.selectedFiles.map((file) =>
-      this.api.uploadFile(this.clientId, file).toPromise()
-    );
-
-    Promise.all(uploadPromises)
-      .then((uploadedFiles: any) => {
-        const body = {
-          FilesArray: uploadedFiles.map((file: any) => ({
-            Id: 0,
-            ClientId: 0,
-            FilePath: file?.filePath || file?.path || "",
-            AddedBy: 0,
-            AddedAt: new Date().toISOString(),
-            Message: "",
-            EditedBy: 0,
-            EditedAt: new Date().toISOString(),
-          })),
+  Promise.all(uploadPromises)
+    .then((uploadedFiles: any) => {
+      // 📝 تجهيز جسم البيانات للإرسال
+      const body = {
+        FilesArray: uploadedFiles.map((file: any) => ({
           Id: 0,
-          ClientName: this.clientForm.value.ClientName,
-          PhoneNumber: this.clientForm.value.PhoneNumber,
-          Classification: this.clientForm.value.Classification,
-          InterstedInCountryId: this.clientForm.value.InterstedInCountryId,
-          Budget: this.clientForm.value.Budget,
-          PaymentMethod: this.clientForm.value.PaymentMethod,
+          ClientId: this.clientId || 0,
+          FilePath: file?.filePath || file?.path || "",
           AddedBy: 0,
           AddedAt: new Date().toISOString(),
-          Message: this.clientForm.value.Message,
+          Message: "",
           EditedBy: 0,
-          SalesId: this.clientForm.value.SalesId,
           EditedAt: new Date().toISOString(),
-        };
+        })),
+        Id: this.clientId || 0,
+        ClientName: this.clientForm.value.ClientName,
+        PhoneNumber: this.clientForm.value.PhoneNumber,
+        Classification: this.clientForm.value.Classification,
+        InterstedInCountryId: this.clientForm.value.InterstedInCountryId,
+        Budget: this.clientForm.value.Budget,
+        PaymentMethod: this.clientForm.value.PaymentMethod,
+        AddedBy: 0,
+        AddedAt: new Date().toISOString(),
+        Message: this.clientForm.value.Message,
+        EditedBy: 0,
+        SalesId: this.clientForm.value.SalesId,
+        EditedAt: new Date().toISOString(),
+      };
 
-        return this.addClient(body).toPromise();
-      })
-      .then(() => {
-        this.isSubmitting = false;
-        alert("✅ تم تسجيل العميل بنجاح");
-        this.clientForm.reset();
-        this.selectedFiles = [];
-        this.closeForm.emit();
-      })
-      .catch((err) => {
-        console.error("❌ خطأ أثناء الحفظ", err);
-        this.isSubmitting = false;
-      });
-  }
+      // ✨ لو تعديل استدعاء update ولو إضافة استدعاء add
+      if (this.isEditMode && this.clientId > 0) {
+        return this.api.updateClient(body).toPromise();
+      } else {
+        return this.api.addClient(body).toPromise();
+      }
+    })
+    .then(() => {
+      this.isSubmitting = false;
+
+      if (this.isEditMode) {
+        this.showSuccess("✅ تم تعديل بيانات العميل بنجاح");
+      } else {
+        this.showSuccess("✅ تم تسجيل العميل بنجاح");
+      }
+
+      this.clientForm.reset();
+      this.selectedFiles = [];
+      this.closeForm.emit();
+      this.refreshClients.emit();
+    })
+    .catch((err) => {
+      console.error("❌ خطأ أثناء الحفظ", err);
+      this.showError("حدث خطأ أثناء حفظ البيانات");
+      this.isSubmitting = false;
+    });
+}
+
 
   uploadFile(file: File) {
     const formData = new FormData();

@@ -9,7 +9,13 @@
             </h3>
           </div>
           <div class="justify-content-start">
-            <button class="btn" (click)="closeForm.emit()">⬅️ غلق</button>
+            <span
+              class="position-realtive top-0 end-0 bg-danger text-white rounded-circle px-2 py-1"
+              style="cursor: pointer"
+              (click)="closeForm.emit()"
+            >
+              ✖
+            </span>
           </div>
         </div>
 
@@ -61,10 +67,7 @@
               <label class="form-label">تصنيف العميل</label>
               <mat-form-field appearance="outline" class="w-100 custom-outline">
                 <mat-select formControlName="Classification">
-                  <mat-option
-                    *ngFor="let c of classification"
-                    [value]="c.code"
-                  >
+                  <mat-option *ngFor="let c of classification" [value]="c.code">
                     {{ c.name }}
                   </mat-option>
                 </mat-select>
@@ -112,10 +115,7 @@
               <label class="form-label">الموظف المسؤل</label>
               <mat-form-field appearance="outline" class="w-100 custom-outline">
                 <mat-select formControlName="SalesId">
-                  <mat-option
-                    *ngFor="let s of salesList"
-                    [value]="s.Id"
-                  >
+                  <mat-option *ngFor="let s of salesList" [value]="s.Id">
                     {{ s.FullName }}
                   </mat-option>
                 </mat-select>

@@ -5,11 +5,17 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
           <div class="justify-content-end">
             <h3 class="text-center mb-2 fw-bold text-dark">
-               {{ isEditMode ? "✏️ تعديل موظف" : "📝 تسجيل موظف" }}
+              {{ isEditMode ? "✏️ تعديل موظف" : "📝 تسجيل موظف" }}
             </h3>
           </div>
           <div class="justify-content-start">
-            <button class="btn" (click)="closeForm.emit()">⬅️ غلق</button>
+            <span
+              class="position-realtive top-0 end-0 bg-danger text-white rounded-circle px-2 py-1"
+              style="cursor: pointer"
+              (click)="closeForm.emit()"
+            >
+              ✖
+            </span>
           </div>
         </div>
         <form

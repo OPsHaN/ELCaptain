@@ -58,20 +58,32 @@ export class Clients implements OnInit {
     this.showRegisterForm = true;
   }
 
-  deleteClient(client: any) {
+ deleteClient(client: any) {
     this.confirmationService.confirm({
-      message: `هل تريد حذف العميل <b>${client.ClientName}</b> ؟`,
-      acceptLabel: 'نعم',
-      rejectLabel: 'لا',
-      icon: 'pi pi-exclamation-triangle',
+      message: `هل أنت متأكد أنك تريد حذف العميل <strong>${client.ClientName}</strong>؟`,
+      header: "تأكيد الحذف",
+      icon: "pi pi-exclamation-triangle",
+      acceptLabel: "نعم",
+      rejectLabel: "لا",
       accept: () => {
         this.api.deleteCelient(client.Id).subscribe({
-          next: () => this.getAllClients(),
-          error: (err:any) => console.error(err),
+          next: () => {
+            this.clients = this.clients.filter((c) => c.Id !== client.Id);
+            this.showSuccess("✅ تم حذف العميل بنجاح");
+          },
+          error: (err) => {
+            console.error("❌ Error deleting client:", err);
+            this.showError("حدث خطأ أثناء حذف العميل");
+          },
         });
+      },
+      reject: () => {
+        // لا تفعل شيء
       },
     });
   }
+
+ 
 
   viewClient(client: any) {
     this.selectedClient = client;
@@ -92,6 +104,8 @@ export class Clients implements OnInit {
         return 'غير محدد';
     }
   }
+
+  
 
 
     showError(msg: string) {

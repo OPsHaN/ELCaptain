@@ -1,60 +1,96 @@
 <div class="content text-center p-0 w-100 mb-auto mt-4">
-<!-- ✅ الأزرار الرئيسية -->
-<div class="d-flex justify-content-center align-items-center gap-5 mt-0">
-  <!-- زرار الإستيراد -->
-  <div class="text-center position-relative">
-    <button class="btn export-btn px-5 py-5 rounded-pill" (click)="showContainer('import')">
-   الإستيراد 
-    </button>
-    <i
-      class="bi bi-caret-down-fill arrow-icon"
-      *ngIf="activeContainer === 'import'"
+  <!-- ✅ الأزرار الرئيسية -->
+  <div class="d-flex justify-content-center align-items-center flex-wrap gap-4 mt-0">
+    <!-- زرار الإستيراد -->
+    <div class="text-center position-relative my-3">
+      <button class="btn export-btn main-btn" (click)="showContainer('import')">
+        الإستيراد
+      </button>
+      <i
+        class="bi bi-caret-down-fill arrow-icon"
+        *ngIf="activeContainer === 'import'">
+      </i>
+    </div>
+
+    <!-- زرار المخزون -->
+    <div class="text-center position-relative my-3">
+      <button class="btn stock-btn main-btn" (click)="showContainer('stock')">
+        المخزون
+      </button>
+      <i
+        class="bi bi-caret-down-fill arrow-icon"
+        *ngIf="activeContainer === 'stock'">
+      </i>
+    </div>
+  </div>
+
+  <!-- 📦 Container للمخزون -->
+  <div
+    class="container my-4 p-4 border rounded shadow text-end section-container"
+    dir="rtl"
+    *ngIf="activeContainer === 'stock'">
+    <h4 class="mb-3">📦 المخزون</h4>
+    <hr />
+
+  <!-- ✅ عرض الدول -->
+<div class="countries-grid d-flex flex-wrap justify-content-center gap-4 mt-4">
+  <div
+    *ngFor="let country of countries"
+    class="country-item text-center position-relative"
+    (click)="selectCountry(country)"
+  >
+    <div
+      class="country-circle overflow-hidden"
+      [class.selected]="country.id === selectedCountryId"
     >
-    </i>
+      <img
+        [src]="country.img || 'assets/no-flag.png'"
+        [alt]="country.name"
+        class="country-img"
+      />
+    </div>
+    <div class="country-name mt-2">
+      {{ country.name }}
+    </div>
+
+    <!-- ⬇️ السهم تحت الدولة المختارة -->
+    <i
+      *ngIf="country.id === selectedCountryId"
+      class="bi bi-caret-down-fill selected-arrow"
+    ></i>
+  </div>
+</div>
+
+<!-- 🚘 البراندات تحت الدولة المختارة -->
+<div *ngIf="selectedCountryId" class="brands-grid d-flex flex-wrap justify-content-center gap-4 mt-4">
+  <div *ngFor="let brand of brands" class="brand-item text-center" (click)="selectBrand(brand)">
+    <div class="brand-circle overflow-hidden">
+      <img
+        [src]="brand.Img || 'assets/no-car.png'"
+        [alt]="brand.BrandName"
+        class="brand-img"
+      />
+    </div>
+    <div class="brand-name mt-2">{{ brand.BrandName }}</div>
+  </div>
+</div>
+
+<!-- 🚫 لو مفيش براندات -->
+<div *ngIf="selectedCountryId && brands.length === 0" class="mt-4 text-muted d-flex flex-wrap justify-content-center">
+  لا توجد ماركات مسجلة لهذه الدولة 🚘
+</div>
+
+
   </div>
 
-  <!-- <div class="arrow-between"></div> -->
-
-  <!-- زرار المخزون -->
-  <div class="text-center position-relative">
-<button class="btn stock-btn px-5 py-5 rounded-pill" (click)="showContainer('stock')">
- المخزون
-</button>
-<i
-  class="bi bi-caret-down-fill arrow-icon"
-  *ngIf="activeContainer === 'stock'">
-</i>
-
   </div>
-</div>
 
-<!-- 📦 Container للمخزون -->
-<div
-  class="container mt-4 p-4 border rounded shadow text-end "
-  dir="rtl"
-  *ngIf="activeContainer === 'stock'"
->
-  <h4 class="mb-3">📦 قسم المخزون</h4>
+  <!-- 🚢 Container للإستيراد -->
+  <div
+    class="container mt-4 p-4 border rounded shadow text-end section-container"
+    dir="rtl"
+    *ngIf="activeContainer === 'import'">
+    <h4 class="mb-3">🚢 الإستيراد</h4>
+    <hr />
+  </div>
 
- 
-
-  <hr />
-
- 
-</div>
-
-<!-- 🚢 Container للإستيراد -->
-
-<div
-  class="container mt-4 p-4 border rounded shadow text-end "
-  dir="rtl"
-  *ngIf="activeContainer === 'import'"
->
-  <h4 class="mb-3">🚢 قسم الإستيراد</h4>
-
-
-  <hr />
-
- 
-</div>
-      </div>

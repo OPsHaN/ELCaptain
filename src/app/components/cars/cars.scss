@@ -14,7 +14,7 @@
   overflow: hidden;
   transition: transform 0.3s ease;
   position: relative;
-  max-width: fit-content;
+  // max-width: fit-content;
 }
 
 /* ✅ حالة السيارة أعلى يمين */
@@ -124,7 +124,7 @@
 /* ✅ الشبكة */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   align-items: stretch;
 }
@@ -217,7 +217,7 @@
   height: 25px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  margin-left: 9px;
+  // margin-left: 9px;
 }
 
 /* RESPONSIVE BREAKPOINTS */
