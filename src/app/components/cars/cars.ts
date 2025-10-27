@@ -9,6 +9,7 @@ import { Apiservice } from "../../services/apiservice";
 import { DialogModule } from "primeng/dialog";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ConfirmationService, MessageService } from "primeng/api";
+import { ActivatedRoute } from "@angular/router";
 
 @Component({
   selector: "app-cars",
@@ -18,12 +19,11 @@ import { ConfirmationService, MessageService } from "primeng/api";
     CarRegister,
     DialogModule,
     CarouselModule,
-    ConfirmDialogModule
+    ConfirmDialogModule,
   ],
   templateUrl: "./cars.html",
   styleUrl: "./cars.scss",
-    providers: [ConfirmationService],
-
+  providers: [ConfirmationService],
 })
 export class Cars implements OnInit {
   activeTable: string | null = null;
@@ -39,51 +39,72 @@ export class Cars implements OnInit {
   car: any[] = [];
 
   colorsList = [
-  { name: 'أحمر', code: '#FF0000' },
-  { name: 'أزرق', code: '#0000FF' },
-  { name: 'أسود', code: '#000000' },
-  { name: 'أبيض', code: '#FFFFFF' },
-  { name: 'رمادي', code: '#808080' },
-  { name: 'أخضر', code: '#008000' },
-  { name: 'فضي', code: '#C0C0C0' },
-  { name: 'ذهبي', code: '#FFD700' },
-  { name: 'برتقالي', code: '#FFA500' },
-  { name: 'وردي', code: '#FFC0CB' },
-  { name: 'بني', code: '#8B4513' },
-  { name: 'بنفسجي', code: '#800080' },
-  { name: 'كحلي', code: '#000080' },
-  { name: 'زيتي', code: '#808000' },
-  { name: 'سماوي', code: '#87CEEB' },
-  { name: 'عنابي', code: '#800000' },
-  { name: 'بيج', code: '#F5F5DC' },
-  { name: 'تركواز', code: '#40E0D0' },
-];
+    { name: "أحمر", code: "#FF0000" },
+    { name: "أزرق", code: "#0000FF" },
+    { name: "أسود", code: "#000000" },
+    { name: "أبيض", code: "#FFFFFF" },
+    { name: "رمادي", code: "#808080" },
+    { name: "أخضر", code: "#008000" },
+    { name: "فضي", code: "#C0C0C0" },
+    { name: "ذهبي", code: "#FFD700" },
+    { name: "برتقالي", code: "#FFA500" },
+    { name: "وردي", code: "#FFC0CB" },
+    { name: "بني", code: "#8B4513" },
+    { name: "بنفسجي", code: "#800080" },
+    { name: "كحلي", code: "#000080" },
+    { name: "زيتي", code: "#808000" },
+    { name: "سماوي", code: "#87CEEB" },
+    { name: "عنابي", code: "#800000" },
+    { name: "بيج", code: "#F5F5DC" },
+    { name: "تركواز", code: "#40E0D0" },
+  ];
 
-
-getColorCode(colorName: string): string {
-  const color = this.colorsList.find(
-    c => c.name.trim().toLowerCase() === colorName?.trim().toLowerCase()
-  );
-  return color ? color.code : '#000000';
-}
-
-
+  getColorCode(colorName: string): string {
+    const color = this.colorsList.find(
+      (c) => c.name.trim().toLowerCase() === colorName?.trim().toLowerCase()
+    );
+    return color ? color.code : "#000000";
+  }
 
   constructor(
     private api: Apiservice,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
-    private confirmationService: ConfirmationService
+    private confirmationService: ConfirmationService,
+    private route: ActivatedRoute
   ) {}
 
-  ngOnInit() {
-    this.loadCars();
-  }
+ngOnInit() {
+  // ✅ قراءة البرامترات من الرابط
+  this.route.queryParams.subscribe((params) => {
+    const countryId = params['countryId'];
+    const brandId = params['brandId'];
+
+    if (brandId) {
+      // 📡 جلب السيارات الخاصة بالبراند
+      this.api.getCarsInBrands(brandId).subscribe({
+        next: (data: any) => {
+          // cast response to any[] to satisfy TypeScript array assignment
+          this.cars = data as any[];
+          console.log('✅ Cars for selected brand:', this.cars);
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error('❌ خطأ في جلب السيارات:', err);
+        },
+      });
+    } else {
+      // 📡 لو مفيش فلترة، اعرض كل السيارات
+      this.loadCars();
+    }
+  });
+}
+
 
   //ريفريش بعد الاضافة او التعديل
   getAllCars() {
     this.loadCars();
-  } 
+  }
 
   loadCars() {
     this.api.getAllCars().subscribe({
@@ -104,45 +125,43 @@ getColorCode(colorName: string): string {
     this.showCarDialog = true;
   }
 
-editCar(car: any) {
-  this.selectedCar = { ...car };       // 🟡 تخزين بيانات العربية المختارة
-  this.isEditMode = true;              // 🟡 وضع تعديل
-  this.showRegisterForm = true;        // 🟡 عرض الفورم
-}
+  editCar(car: any) {
+    this.selectedCar = { ...car }; // 🟡 تخزين بيانات العربية المختارة
+    this.isEditMode = true; // 🟡 وضع تعديل
+    this.showRegisterForm = true; // 🟡 عرض الفورم
+  }
 
-
-deleteCar(car: any) {
-  this.confirmationService.confirm({
-    message: `هل أنت متأكد من حذف السيارة: ${car.Model}؟`,
-    header: 'تأكيد الحذف',
-    icon: 'pi pi-exclamation-triangle',
-    acceptLabel: 'نعم',
-    rejectLabel: 'لا',
-    accept: () => {
-      this.api.deleteCar(car.Id).subscribe({
-        next: () => {
-          this.cars = this.cars.filter((c) => c.Id !== car.Id);
-          this.showSuccess('✅ تم حذف السيارة بنجاح');
-        },
-        error: (err) => {
-          console.error('❌ Delete error:', err);
-          this.showError('حدث خطأ أثناء حذف السيارة');
-        },
-      });
-    },
-    reject: () => {
-      // لا تفعل شيء عند الرفض
-    }
-  });
-}
-
+  deleteCar(car: any) {
+    this.confirmationService.confirm({
+      message: `هل أنت متأكد من حذف السيارة: ${car.Model}؟`,
+      header: "تأكيد الحذف",
+      icon: "pi pi-exclamation-triangle",
+      acceptLabel: "نعم",
+      rejectLabel: "لا",
+      accept: () => {
+        this.api.deleteCar(car.Id).subscribe({
+          next: () => {
+            this.cars = this.cars.filter((c) => c.Id !== car.Id);
+            this.showSuccess("✅ تم حذف السيارة بنجاح");
+          },
+          error: (err) => {
+            console.error("❌ Delete error:", err);
+            this.showError("حدث خطأ أثناء حذف السيارة");
+          },
+        });
+      },
+      reject: () => {
+        // لا تفعل شيء عند الرفض
+      },
+    });
+  }
 
   toggleRegisterForm() {
-  this.showRegisterForm = !this.showRegisterForm;
-  if (!this.showRegisterForm) {
-    this.selectedCar = null;   // 🧽 تنظيف
-    this.isEditMode = false;
-  }
+    this.showRegisterForm = !this.showRegisterForm;
+    if (!this.showRegisterForm) {
+      this.selectedCar = null; // 🧽 تنظيف
+      this.isEditMode = false;
+    }
   }
 
   showError(msg: string) {

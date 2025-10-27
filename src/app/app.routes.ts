@@ -12,6 +12,7 @@ import { AuthGuard } from "./shared/authguard";
 import { Register } from "./components/register/register";
 import { Adds } from "./components/adds/adds";
 import { SpinnerComponent } from "./shared/spinner/spinner.component";
+import { WaitingList } from "./components/waiting-list/waiting-list";
 
 export const routes: Routes = [
   // {
@@ -29,6 +30,7 @@ export const routes: Routes = [
   { path: "home", component: Home },
   { path: "register", component: Register },
   { path: "adds", component: Adds },
+  { path: "waiting", component: WaitingList },
 ];
 
 @NgModule({

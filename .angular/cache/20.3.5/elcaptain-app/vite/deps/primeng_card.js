@@ -1,16 +1,16 @@
 import {
   BaseComponent
-} from "./chunk-UJ3PMSPZ.js";
+} from "./chunk-SU3FIUTT.js";
 import {
   BaseStyle
-} from "./chunk-GURUXA4U.js";
+} from "./chunk-RCUPAB2Y.js";
 import {
   Footer,
   Header,
   PrimeTemplate,
   SharedModule,
-  k
-} from "./chunk-G2OBFYHL.js";
+  k2 as k
+} from "./chunk-C5MNLU6Y.js";
 import {
   CommonModule,
   NgIf,

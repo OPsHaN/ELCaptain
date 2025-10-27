@@ -177,6 +177,7 @@ export class Nav {
           this.newCountry = "";
           this.countryPreview = ""; // 🧹 نفضي الـ preview
           this.showSuccess("تم تعديل البلد");
+          this.loadCountries(); // 🆙 إعادة تحميل الدول من السيرفر
         },
         error: (err) => {
           if (err.status === 401) {
@@ -205,6 +206,7 @@ export class Nav {
           this.newCountry = "";
           this.countryPreview = ""; // 🧹 نفضي الـ preview
           this.showSuccess("تم إضافة البلد");
+          this.loadCountries(); // 🆙 إعادة تحميل الدول من السيرفر
         },
         error: (err) => {
           if (err.status === 401) {
@@ -231,6 +233,7 @@ export class Nav {
       next: () => {
         this.countries.splice(index, 1);
         this.showSuccess("تم حذف البلد");
+        this.loadCountries
       },
       error: (err) => {
         console.error("Error deleting country:", err);
@@ -347,6 +350,7 @@ deleteBranch(index: number) {
       // 🆗 نحذف من المصفوفة بعد نجاح الحذف
       this.branchs.splice(index, 1);
       this.showSuccess("✅ تم حذف الفرع بنجاح");
+      this.loadBranchs(); // 🆙 إعادة تحميل الفروع من السيرفر
     },
     error: (err) => {
       console.error("❌ خطأ أثناء حذف الفرع:", err);
@@ -415,7 +419,7 @@ deleteBranch(index: number) {
           this.showSuccess("✅ تم تعديل البراند بنجاح");
 
           // 🆙 تحديث القائمة من السيرفر بعد التعديل
-          this.loadBrand();
+          this.loadBrands();
         },
         error: (err) => {
           this.showError("حدث خطأ أثناء تعديل البراند");
@@ -446,7 +450,7 @@ deleteBranch(index: number) {
           this.newBrandCountryId = null;
 
           this.showSuccess("✅ تم إضافة البراند بنجاح");
-          this.loadBrand(); // ⬅️ تحديث القائمة
+          this.loadBrands(); // ⬅️ تحديث القائمة
         },
         error: (err) => {
           this.showError("حدث خطأ أثناء إضافة البراند");
@@ -472,6 +476,7 @@ deleteBranch(index: number) {
       next: () => {
         this.brands.splice(index, 1); // حذف من الـ array
         this.showSuccess("تم حذف البراند");
+        this.loadBrands(); // 🆙 إعادة تحميل البراندات من السيرفر
       },
       error: (err) => {
         console.error("حدث خطأ أثناء حذف البراند:", err);

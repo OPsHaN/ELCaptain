@@ -76,12 +76,41 @@ function x(t2) {
   }
   return null;
 }
+function w(t2) {
+  let e = { width: 0, height: 0 };
+  if (t2) {
+    let [o, n] = [t2.style.visibility, t2.style.display];
+    t2.style.visibility = "hidden", t2.style.display = "block", e.width = t2.offsetWidth, e.height = t2.offsetHeight, t2.style.display = n, t2.style.visibility = o;
+  }
+  return e;
+}
 function h() {
   let t2 = window, e = document, o = e.documentElement, n = e.getElementsByTagName("body")[0], r = t2.innerWidth || o.clientWidth || n.clientWidth, i2 = t2.innerHeight || o.clientHeight || n.clientHeight;
   return { width: r, height: i2 };
 }
 function E(t2) {
   return t2 ? Math.abs(t2.scrollLeft) : 0;
+}
+function k() {
+  let t2 = document.documentElement;
+  return (window.pageXOffset || E(t2)) - (t2.clientLeft || 0);
+}
+function $() {
+  let t2 = document.documentElement;
+  return (window.pageYOffset || t2.scrollTop) - (t2.clientTop || 0);
+}
+function V(t2) {
+  return t2 ? getComputedStyle(t2).direction === "rtl" : false;
+}
+function D(t2, e, o = true) {
+  var n, r, i2, l2;
+  if (t2) {
+    let d = t2.offsetParent ? { width: t2.offsetWidth, height: t2.offsetHeight } : w(t2), s4 = d.height, a2 = d.width, u = e.offsetHeight, c2 = e.offsetWidth, f2 = e.getBoundingClientRect(), g3 = $(), it = k(), lt = h(), L, N, ot = "top";
+    f2.top + u + s4 > lt.height ? (L = f2.top + g3 - s4, ot = "bottom", L < 0 && (L = g3)) : L = u + f2.top + g3, f2.left + a2 > lt.width ? N = Math.max(0, f2.left + it + c2 - a2) : N = f2.left + it, V(t2) ? t2.style.insetInlineEnd = N + "px" : t2.style.insetInlineStart = N + "px", t2.style.top = L + "px", t2.style.transformOrigin = ot, o && (t2.style.marginTop = ot === "bottom" ? `calc(${(r = (n = x(/-anchor-gutter$/)) == null ? void 0 : n.value) != null ? r : "2px"} * -1)` : (l2 = (i2 = x(/-anchor-gutter$/)) == null ? void 0 : i2.value) != null ? l2 : "");
+  }
+}
+function S(t2, e) {
+  t2 && (typeof e == "string" ? t2.style.cssText = e : Object.entries(e || {}).forEach(([o, n]) => t2.style[o] = n));
 }
 function v(t2, e) {
   if (t2 instanceof HTMLElement) {
@@ -93,6 +122,16 @@ function v(t2, e) {
     return o;
   }
   return 0;
+}
+function I(t2, e, o = true, n = void 0) {
+  var r;
+  if (t2) {
+    let i2 = t2.offsetParent ? { width: t2.offsetWidth, height: t2.offsetHeight } : w(t2), l2 = e.offsetHeight, d = e.getBoundingClientRect(), s4 = h(), a2, u, c2 = n != null ? n : "top";
+    if (!n && d.top + l2 + i2.height > s4.height ? (a2 = -1 * i2.height, c2 = "bottom", d.top + a2 < 0 && (a2 = -1 * d.top)) : a2 = l2, i2.width > s4.width ? u = d.left * -1 : d.left + i2.width > s4.width ? u = (d.left + i2.width - s4.width) * -1 : u = 0, t2.style.top = a2 + "px", t2.style.insetInlineStart = u + "px", t2.style.transformOrigin = c2, o) {
+      let f2 = (r = x(/-anchor-gutter$/)) == null ? void 0 : r.value;
+      t2.style.marginTop = c2 === "bottom" ? `calc(${f2 != null ? f2 : "2px"} * -1)` : f2 != null ? f2 : "";
+    }
+  }
 }
 function y(t2) {
   if (t2) {
@@ -180,6 +219,15 @@ function U(t2, e = {}, ...o) {
     return A(n, e), n.append(...o), n;
   }
 }
+function ht(t2, e) {
+  if (t2) {
+    t2.style.opacity = "0";
+    let o = +/* @__PURE__ */ new Date(), n = "0", r = function() {
+      n = `${+t2.style.opacity + ((/* @__PURE__ */ new Date()).getTime() - o) / e}`, t2.style.opacity = n, o = +/* @__PURE__ */ new Date(), +n < 1 && ("requestAnimationFrame" in window ? requestAnimationFrame(r) : setTimeout(r, 16));
+    };
+    r();
+  }
+}
 function Y(t2, e) {
   return p(t2) ? Array.from(t2.querySelectorAll(e)) : [];
 }
@@ -217,6 +265,17 @@ function Tt(t2) {
   }
   return 0;
 }
+function Ht(t2) {
+  var e;
+  if (t2) {
+    let o = (e = y(t2)) == null ? void 0 : e.childNodes, n = 0;
+    if (o) for (let r = 0; r < o.length; r++) {
+      if (o[r] === t2) return n;
+      o[r].nodeType === 1 && n++;
+    }
+  }
+  return -1;
+}
 function Lt(t2, e) {
   let o = b(t2, e);
   return o.length > 0 ? o[o.length - 1] : null;
@@ -239,6 +298,10 @@ function C(t2, e) {
   }
   return 0;
 }
+function Mt() {
+  if (window.getSelection) return window.getSelection().toString();
+  if (document.getSelection) return document.getSelection().toString();
+}
 function Rt(t2) {
   if (t2) {
     let e = t2.offsetWidth, o = getComputedStyle(t2);
@@ -246,9 +309,24 @@ function Rt(t2) {
   }
   return 0;
 }
+function et(t2) {
+  return !!(t2 && t2.offsetParent != null);
+}
+function Yt() {
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
+}
 function Qt(t2) {
   var e;
   t2 && ("remove" in Element.prototype ? t2.remove() : (e = t2.parentNode) == null || e.removeChild(t2));
+}
+function Zt(t2, e) {
+  let o = H(t2);
+  if (o) o.removeChild(e);
+  else throw new Error("Cannot remove " + e + " from " + t2);
+}
+function Jt(t2, e) {
+  let o = getComputedStyle(t2).getPropertyValue("borderTopWidth"), n = o ? parseFloat(o) : 0, r = getComputedStyle(t2).getPropertyValue("paddingTop"), i2 = r ? parseFloat(r) : 0, l2 = t2.getBoundingClientRect(), s4 = e.getBoundingClientRect().top + document.body.scrollTop - (l2.top + document.body.scrollTop) - n - i2, a2 = t2.scrollTop, u = t2.clientHeight, c2 = C(e);
+  s4 < 0 ? t2.scrollTop = a2 + s4 : s4 + c2 > u && (t2.scrollTop = a2 + s4 - u + c2);
 }
 function Kt(t2, e = "", o) {
   p(t2) && o !== null && o !== void 0 && t2.setAttribute(e, o);
@@ -288,12 +366,12 @@ function R2(e, t2, n = /* @__PURE__ */ new WeakSet()) {
     return true;
   }
   if (r != o) return false;
-  let A2 = e instanceof Date, S = t2 instanceof Date;
-  if (A2 != S) return false;
-  if (A2 && S) return e.getTime() == t2.getTime();
-  let I = e instanceof RegExp, L = t2 instanceof RegExp;
-  if (I != L) return false;
-  if (I && L) return e.toString() == t2.toString();
+  let A2 = e instanceof Date, S2 = t2 instanceof Date;
+  if (A2 != S2) return false;
+  if (A2 && S2) return e.getTime() == t2.getTime();
+  let I2 = e instanceof RegExp, L = t2 instanceof RegExp;
+  if (I2 != L) return false;
+  if (I2 && L) return e.toString() == t2.toString();
   let O2 = Object.keys(e);
   if (f2 = O2.length, f2 !== Object.keys(t2).length) return false;
   for (u = f2; u-- !== 0; ) if (!Object.prototype.hasOwnProperty.call(t2, O2[u])) return false;
@@ -330,17 +408,26 @@ function c(e, t2) {
   }
   return null;
 }
-function k(e, t2, n) {
+function k2(e, t2, n) {
   return n ? c(e, n) === c(t2, n) : y2(e, t2);
 }
 function B2(e, t2) {
   if (e != null && t2 && t2.length) {
-    for (let n of t2) if (k(e, n)) return true;
+    for (let n of t2) if (k2(e, n)) return true;
   }
   return false;
 }
 function i(e, t2 = true) {
   return e instanceof Object && e.constructor === Object && (t2 || Object.keys(e).length !== 0);
+}
+function M(e, t2) {
+  let n = -1;
+  if (s2(e)) try {
+    n = e.findLastIndex(t2);
+  } catch (r) {
+    n = e.lastIndexOf([...e].reverse().find(t2));
+  }
+  return n;
 }
 function m(e, ...t2) {
   return l(e) ? e(...t2) : e;
@@ -362,8 +449,14 @@ function F(e, t2 = "", n = {}) {
   }
   return m(e, n);
 }
+function T2(e) {
+  return e instanceof Date;
+}
 function _(e) {
   return s2(e) && !isNaN(e);
+}
+function j2(e = "") {
+  return s2(e) && e.length === 1 && !!e.match(/\S| /);
 }
 function z2(e, t2) {
   if (t2) {
@@ -597,7 +690,7 @@ var FilterService = class _FilterService {
         return true;
       }
       for (let i2 = 0; i2 < filter.length; i2++) {
-        if (k(value, filter[i2])) {
+        if (k2(value, filter[i2])) {
           return true;
         }
       }
@@ -1316,32 +1409,51 @@ export {
   dt,
   x,
   h,
+  k,
+  $,
+  D,
+  S,
   v,
+  I,
+  j,
   ut,
   A,
   U,
+  ht,
   Y,
   z,
   bt,
   Q,
+  b,
   vt,
   Tt,
+  Ht,
   Lt,
   K,
   C,
+  Mt,
   Rt,
+  et,
+  Yt,
   Qt,
+  Zt,
+  Jt,
   Kt,
   s,
   a,
+  y2 as y,
   s2,
-  k,
+  c,
+  k2,
   B2 as B,
   i,
+  M,
   m,
   p2 as p,
   F,
+  T2 as T,
   _,
+  j2,
   z2,
   G,
   ee,
@@ -1362,4 +1474,4 @@ export {
   TranslationKeys,
   TreeDragDropService
 };
-//# sourceMappingURL=chunk-G2OBFYHL.js.map
+//# sourceMappingURL=chunk-C5MNLU6Y.js.map

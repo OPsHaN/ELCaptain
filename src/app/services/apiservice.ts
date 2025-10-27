@@ -110,6 +110,11 @@ export class Apiservice {
     return this.http.get(`${this.baseUrl}brand/GetBrand?id=${id}`);
   }
 
+  getBrandByCountryId(countryId: number): Observable<Brand[]> {
+    return this.http
+      .get<Brand[]>(`${this.baseUrl}brand/GetBrandsInCountry?CountryId=${countryId}`);
+  }
+
   deleteBrand(id: number) {
     return this.http.delete(`${this.baseUrl}brand/Delete?id=${id}`);
   }
@@ -142,6 +147,11 @@ export class Apiservice {
 
   deleteImagesForCar(id: number) {
     return this.http.delete(`${this.baseUrl}Car/DeleteImage?ImageId=${id}`);
+  }
+
+
+  getCarsInBrands(brandId:number){
+    return this.http.get(`${this.baseUrl}car/GetCarsInBrand?BrandId=${brandId}`)
   }
 
   //branch
@@ -181,6 +191,33 @@ export class Apiservice {
 
   deleteEmployee(id: number) {
     return this.http.delete(`${this.baseUrl}auth/Delete?id=${id}`);
+  }
+
+  //uploadImage
+
+  //addClient
+  addClient(body: any) {
+    return this.http.post(`${this.baseUrl}Client/Add`, body);
+  }
+  updateClient(body: any) {
+    return this.http.put(`${this.baseUrl}Client/Update`, body);
+  }
+  deleteCelient(id: number) {
+    return this.http.delete(`${this.baseUrl}Client/Delete?id=${id}`);
+  }
+  getAllClients() {
+    return this.http.get(`${this.baseUrl}Client/GetAll`);
+  }
+  deleteFile(id: number) {
+    return this.http.delete(`${this.baseUrl}Client/DeleteFile?FileId=${id}`);
+  }
+  uploadFile(clientId: number, file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("clientId", clientId.toString()); // ⬅️ إرسال clientId مع الملف
+
+    const url = `${this.baseUrl}Client/UploadFile`;
+    return this.http.post(url, formData);
   }
 
   //uploadImage

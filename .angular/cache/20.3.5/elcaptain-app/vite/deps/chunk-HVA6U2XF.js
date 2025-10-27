@@ -1,13 +1,13 @@
 import {
   SpinnerIcon
-} from "./chunk-VXEVVWYF.js";
+} from "./chunk-LTQOTOFL.js";
 import {
   BaseComponent
-} from "./chunk-UJ3PMSPZ.js";
+} from "./chunk-SU3FIUTT.js";
 import {
   BaseStyle,
   rr
-} from "./chunk-GURUXA4U.js";
+} from "./chunk-RCUPAB2Y.js";
 import {
   C,
   K,
@@ -27,7 +27,7 @@ import {
   v,
   x,
   z
-} from "./chunk-G2OBFYHL.js";
+} from "./chunk-C5MNLU6Y.js";
 import {
   CommonModule,
   NgIf,
@@ -787,6 +787,35 @@ function blockBodyScroll() {
 function unblockBodyScroll() {
   dt({ variableName: rr("scrollbar.width").name });
 }
+var ConnectedOverlayScrollHandler = class {
+  element;
+  listener;
+  scrollableParents;
+  constructor(element, listener = () => {
+  }) {
+    this.element = element;
+    this.listener = listener;
+  }
+  bindScrollListener() {
+    this.scrollableParents = DomHandler.getScrollableParents(this.element);
+    for (let i = 0; i < this.scrollableParents.length; i++) {
+      this.scrollableParents[i].addEventListener("scroll", this.listener);
+    }
+  }
+  unbindScrollListener() {
+    if (this.scrollableParents) {
+      for (let i = 0; i < this.scrollableParents.length; i++) {
+        this.scrollableParents[i].removeEventListener("scroll", this.listener);
+      }
+    }
+  }
+  destroy() {
+    this.unbindScrollListener();
+    this.element = null;
+    this.listener = null;
+    this.scrollableParents = null;
+  }
+};
 
 // node_modules/primeng/fesm2022/primeng-autofocus.mjs
 var AutoFocus = class _AutoFocus extends BaseComponent {
@@ -3466,7 +3495,18 @@ export {
   DomHandler,
   blockBodyScroll,
   unblockBodyScroll,
+  ConnectedOverlayScrollHandler,
+  AutoFocus,
+  Badge,
+  BadgeModule,
+  Fluid,
+  Ripple,
+  ButtonStyle,
+  ButtonClasses,
+  ButtonLabel,
+  ButtonIcon,
+  ButtonDirective,
   Button,
   ButtonModule
 };
-//# sourceMappingURL=chunk-DAPU43RW.js.map
+//# sourceMappingURL=chunk-HVA6U2XF.js.map

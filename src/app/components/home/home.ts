@@ -4,6 +4,7 @@ import { FormsModule } from "@angular/forms";
 import { Nav } from "../../shared/nav/nav";
 import { MessageService } from "primeng/api";
 import { Apiservice, Country } from "../../services/apiservice";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-home",
@@ -20,7 +21,8 @@ export class Home {
   constructor(
     private api: Apiservice,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -70,13 +72,17 @@ export class Home {
     });
   }
 
-
   selectBrand(brand: any) {
     console.log("تم اختيار البراند:", brand);
     // 📡 جلب السيارات حسب البراند
-    this.api.getCar(brand.Id).subscribe(
+    this.api.getCarsInBrands(brand.Id).subscribe(
       (res: any) => {
-        console.log("السيارات المحملة للبراند:", res as any[]);
+        this.router.navigate(["/cars"], {
+          queryParams: {
+            countryId: this.selectedCountryId,
+            brandId: brand.Id,
+          },
+        });
       },
       (err) => {
         console.error("❌ خطأ في جلب السيارات:", err);

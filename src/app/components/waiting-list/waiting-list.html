@@ -1,0 +1,220 @@
+<!-- ✅ شريط الأزرار -->
+<div
+  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
+>
+  <div class="position-relative">
+    <button class="btn btn-outline-primary" (click)="toggleRegisterForm()">
+      ➕ تسجيل صفقة جديدة
+    </button>
+    <div class="arrow-wrapper" *ngIf="showRegisterForm">
+      <i class="bi bi-caret-down-fill arrow-icon"></i>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ فورم تسجيل العميل -->
+<div class="table-container mt-0" *ngIf="showRegisterForm" dir="rtl"></div>
+
+<div class="container mt-4" *ngIf="!showRegisterForm">
+  <div class="table-responsive">
+    <p-table
+      [value]="deals"
+      [paginator]="true"
+      [rows]="10"
+      dir="rtl"
+      stripedRows
+      [tableStyle]="{ 'min-width': '50rem' }"
+      [rowsPerPageOptions]="[10, 20]"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th>
+            <!-- <p-checkbox
+              [(ngModel)]="selectAll"
+              binary="true"
+              (onChange)="toggleAll($event)"
+            ></p-checkbox> -->
+            #
+          </th>
+          <th>الرقم</th>
+          <th >إسم العميل</th>
+          <th>التواصل</th>
+          <th>الإهتمام</th>
+          <th class="w-25">إسم الموظف المسؤل</th>
+          <th class="w-50">حالة العميل</th>
+          <th>تفاصيل المكالمة</th>
+
+          <th>الإجراء</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-deal let-rowIndex="rowIndex">
+        <tr [ngClass]="{ 'active-row': deal.active }">
+          <td>
+            <p-checkbox [(ngModel)]="deal.selected" binary="true"></p-checkbox>
+          </td>
+          <td>{{ deal.order }}</td>
+          <td class="pl-0">
+            <div class="d-flex align-items-center">
+              {{ deal.name }}
+            </div>
+          </td>
+
+          <td>{{ deal.phone }}</td>
+          <td>{{ deal.intersted }}</td>
+          <td>
+            <a href="">{{ deal.empolyee }}</a>
+          </td>
+          <td>
+            <div class="switch-wrapper">
+              <span class="switch-label mx-1" [class.active]="!deal.active"
+                >جاد</span
+              >
+              <label class="custom-control ios-switch">
+                <input
+                  type="checkbox"
+                  class="ios-switch-control-input"
+                  [(ngModel)]="deal.active"
+                  (click)="onToggleActive(deal); $event.preventDefault()"
+                />
+                <span class="ios-switch-control-indicator"></span>
+              </label>
+              <span class="switch-label mx-1" [class.active]="deal.active"
+                >غير جاد</span
+              >
+            </div>
+          </td>
+
+          <td>
+            <button class="btn btn-info my-0 py-0" (click)="openModal(deal)">
+              تفاصيل
+            </button>
+          </td>
+          <td>
+            <div class="py-3" style="display: inline-flex; gap: 8px">
+              <button class="btn btn-warning my-0 py-0" (click)="editModal()">
+                تعديل
+              </button>
+              <button
+                class="btn btn-success my-0 py-0"
+                (click)="openModal(deal)"
+              >
+                حفظ
+              </button>
+            </div>
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>
+
+<!-- تأكد إنك ضيفت <p-confirmDialog> أو <p-dialog> في الـ app كما تحتاج -->
+<p-dialog
+  [(visible)]="displayModal"
+  [modal]="true"
+  [closable]="false"
+  [style]="{ width: '520px' }"
+  [breakpoints]="{ '640px': '95vw' }"
+  dir="rtl"
+>
+  <!-- header: title on right, close on left -->
+  <ng-template pTemplate="header">
+    <div class="dialog-header">
+      <div class="d-flex justify-content-start">
+        <div class="dialog-title">تأكيد الحفظ</div>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- body -->
+  <div class="dialog-body">
+    <form class="form-grid">
+      <!-- اسم الموظف -->
+      <div class="form-row">
+        <label class="form-label">إسم الموظف</label>
+        <input
+          type="text"
+          pInputText
+          [value]="employeeName"
+          readonly
+          class="form-input"
+        />
+      </div>
+
+      <!-- الوقت والتاريخ -->
+      <div class="form-row">
+        <label class="form-label">الوقت والتاريخ</label>
+        <input
+          type="text"
+          pInputText
+          [value]="currentDateTime"
+          readonly
+          class="form-input"
+        />
+      </div>
+
+      <!-- Dropdown طريقة التواصل -->
+      <div class="form-row mb-2">
+        <label class="form-label d-block">طريقة التواصل</label>
+        <select
+          class="form-select"
+          [(ngModel)]="selectedContactMethod"
+          name="contactMethod"
+          (change)="onContactMethodChange($event)"
+        >
+          <option value="" disabled selected>اختر طريقة التواصل</option>
+          <option *ngFor="let method of contactMethods" [value]="method.value">
+            {{ method.name }}
+          </option>
+        </select>
+      </div>
+
+      <!-- ⏱️ يظهر فقط لو اختار "call" -->
+      <div class="form-row" *ngIf="selectedContactMethod === 'call'">
+        <label class="form-label d-block">مدة المكالمة (دقيقة)</label>
+        <input
+          type="number"
+          class="form-control"
+          [(ngModel)]="callDuration"
+          name="callDuration"
+          placeholder="ادخل مدة المكالمة"
+          min="1"
+        />
+      </div>
+
+      <!-- الرسالة -->
+      <div class="form-row textarea-row">
+        <label class="form-label align-top">تفاصيل التواصل</label>
+        <textarea
+          pInputTextarea
+          [(ngModel)]="message"
+          [ngModelOptions]="{ standalone: true }"
+          rows="3"
+          class="form-textarea"
+          placeholder="اكتب ملاحظتك هنا..."
+        ></textarea>
+      </div>
+    </form>
+  </div>
+
+  <!-- footer -->
+  <ng-template pTemplate="footer">
+    <div class="dialog-footer">
+      <button
+        pButton
+        class="btn-cancel"
+        (click)="displayModal = false"
+        label="إلغاء"
+      ></button>
+      <button
+        pButton
+        class="btn-save py-0"
+        (click)="saveModal()"
+        label="إرسال"
+      ></button>
+    </div>
+  </ng-template>
+</p-dialog>
+
+<p-confirmDialog></p-confirmDialog>

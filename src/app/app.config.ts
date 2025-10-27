@@ -26,6 +26,7 @@ export const appConfig: ApplicationConfig = {
 
     // 🟢 HTTP client مع auth + spinner + 401 handling
     provideHttpClient(withInterceptors([authInterceptor])),
+    
 
     provideRouter(routes),
     importProvidersFrom(ToastModule),

@@ -55,6 +55,7 @@ export class Login implements OnInit {
     { label: "الصفقات", route: "/deals", icon: "bi bi-briefcase" },
     { label: "الرسائل", route: "/messages", icon: "bi bi-envelope" },
     { label: "الإضافات", route: "/adds", icon: "bi bi-bookmark-plus" },
+    { label: "قائمة الإنتظار", route: "/waiting", icon: "bi bi-clock-history" },
 
     {
       label: "خروج",
@@ -77,9 +78,7 @@ export class Login implements OnInit {
   ngOnInit(): void {
     const token = localStorage.getItem("token");
     const lastRoute = localStorage.getItem("lastRoute");
-     this.rankProfile = localStorage.getItem("rank") || "غير معروف";
-
-
+    this.rankProfile = localStorage.getItem("rank") || "غير معروف";
 
     if (token) {
       this.isLoggedIn = true;

@@ -1,0 +1,52 @@
+.kanban-board {
+  overflow-x: auto;
+  background: #f9fafb;
+}
+
+.kanban-column {
+  background: #fff;
+  min-width: 260px;
+  max-width: 280px;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.deal-card {
+  background: #fdfdfd;
+  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #eee;
+  cursor: grab;
+  transition: 0.2s;
+}
+.deal-card:hover {
+  background: #f7f9fc;
+  transform: translateY(-2px);
+}
+
+.deal-header .priority {
+  font-size: 12px;
+  padding: 2px 8px;
+  border-radius: 8px;
+}
+.priority.High {
+  background: #ffe2e2;
+  color: #d9534f;
+}
+.priority.Medium {
+  background: #fff3cd;
+  color: #856404;
+}
+.priority.Low {
+  background: #d4edda;
+  color: #155724;
+}
+
+.avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  margin-left: -6px;
+  border: 2px solid #fff;
+}

@@ -1,1 +1,163 @@
-الصفقات
+<!-- ✅ شريط الأزرار -->
+<div
+  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
+>
+  <div class="position-relative">
+    <button class="btn btn-outline-primary" (click)="toggleRegisterForm()">
+      ➕ إنشاء صفقة جديدة
+    </button>
+    <div class="arrow-wrapper" *ngIf="showRegisterForm">
+      <i class="bi bi-caret-down-fill arrow-icon"></i>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ فورم تسجيل الصفقة -->
+<div class="table-container mt-0" *ngIf="showRegisterForm" dir="rtl">
+  <app-register-deal
+    *ngIf="showRegisterForm"
+    [deal]="selectedDeal"
+    [isEditMode]="isEditMode"
+    (closeForm)="toggleRegisterForm()"
+    (refreshDeals)="getAllDeals()"
+  ></app-register-deal>
+</div>
+
+<!-- ✅ عرض الصفقات على هيئة كروت -->
+<div class="deals-wrap" *ngIf="!showRegisterForm">
+  <div class="container mt-4" dir="rtl">
+<!-- <div class="row mb-4 mx-auto">
+  <div class="col-12 text-center border rounded-3 px-0">
+    <h3 class="fw-bold text-warning border-bottom py-2 ">
+      الصفقات المنتظرة
+    </h3>
+
+    <div class="d-flex flex-wrap justify-content-start gap-3 my-3 mx-3">
+      <div class="card p-2 border rounded shadow-sm" style="width: 220px;">
+        <h6 class="fw-bold mb-1">صفقة رقم 101</h6>
+        <p class="mb-0 text-muted">عميل: أحمد علي</p>
+      </div>
+
+      <div class="card p-2 border rounded shadow-sm" style="width: 220px;">
+        <h6 class="fw-bold mb-1">صفقة رقم 102</h6>
+        <p class="mb-0 text-muted">عميل: محمد حسن</p>
+      </div>
+
+      <div class="card p-2 border rounded shadow-sm" style="width: 220px;">
+        <h6 class="fw-bold mb-1">صفقة رقم 103</h6>
+        <p class="mb-0 text-muted">عميل: سارة إبراهيم</p>
+      </div>
+
+      <div class="card p-2 border rounded shadow-sm" style="width: 220px;">
+        <h6 class="fw-bold mb-1">صفقة رقم 104</h6>
+        <p class="mb-0 text-muted">عميل: يوسف محمود</p>
+      </div>
+    </div>
+  </div>
+</div> -->
+  
+
+    <!-- 🟥 الأعمدة الأربعة -->
+    <div class="row g-4">
+      <!-- 🟢 مفتوحة -->
+      <div class="col-md-3">
+        <div class="card shadow-sm border-success">
+          <div class="card-header bg-success text-white text-center fw-bold">
+            مفتوحة
+          </div>
+          <div class="card-body">
+            <div class="mb-3 p-2 border rounded">
+              <h6 class="fw-bold mb-1">صفقة رقم 101</h6>
+              <p class="mb-0 text-muted">عميل: أحمد علي</p>
+            </div>
+            <div class="mb-3 p-2 border rounded">
+              <h6 class="fw-bold mb-1">صفقة رقم 102</h6>
+              <p class="mb-0 text-muted">عميل: محمد حسن</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔴 مرفوضة -->
+      <div class="col-md-3">
+        <div class="card shadow-sm border-danger">
+          <div class="card-header bg-danger text-white text-center fw-bold">
+            مرفوضة
+          </div>
+          <div class="card-body">
+            <div class="mb-3 p-2 border rounded">
+              <h6 class="fw-bold mb-1">صفقة رقم 201</h6>
+              <p class="mb-0 text-muted">عميل: خالد يوسف</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔵 منتهية -->
+      <div class="col-md-3">
+        <div class="card shadow-sm border-primary">
+          <div class="card-header bg-primary text-white text-center fw-bold">
+            منتهية
+          </div>
+          <div class="card-body">
+            <div class="mb-3 p-2 border rounded">
+              <h6 class="fw-bold mb-1">صفقة رقم 301</h6>
+              <p class="mb-0 text-muted">عميل: ياسر محمود</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🟡 معلقة -->
+      <div class="col-md-3">
+        <div class="card shadow-sm border-warning">
+          <div class="card-header bg-warning text-dark text-center fw-bold">
+            معلقة
+          </div>
+          <div class="card-body">
+            <div class="mb-3 p-2 border rounded">
+              <h6 class="fw-bold mb-1">صفقة رقم 401</h6>
+              <p class="mb-0 text-muted">عميل: فاطمة محمد</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Dialog عرض بيانات الصفقة -->
+<p-dialog
+  header="📋 تفاصيل الصفقة"
+  [(visible)]="showDealDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '400px' }"
+  [baseZIndex]="10000"
+  dir="rtl"
+>
+  <ng-container *ngIf="selectedDeal">
+    <div class="text-center p-1">
+      <h4>{{ selectedDeal.DealName }}</h4>
+      <p>📊 الحالة: {{ selectedDeal.Status }}</p>
+      <hr />
+      <p><strong>👤 العميل:</strong> {{ selectedDeal.ClientName }}</p>
+      <p>
+        <strong>💰 القيمة:</strong> {{ selectedDeal.Amount | number }}
+        {{ selectedDeal.Currency }}
+      </p>
+      <p>
+        <strong>📅 تاريخ الإنشاء:</strong>
+        {{ selectedDeal.CreatedAt | date : "mediumDate" }}
+      </p>
+      <p>
+        <strong>💳 طريقة الدفع:</strong>
+        {{ getPaymentMethod(selectedDeal.PaymentMethod) }}
+      </p>
+      <p><strong>📍 الدولة:</strong> {{ selectedDeal.CountryName }}</p>
+      <p><strong>📝 الملاحظات:</strong> {{ selectedDeal.Notes }}</p>
+    </div>
+  </ng-container>
+</p-dialog>
+
+<p-confirmDialog></p-confirmDialog>
