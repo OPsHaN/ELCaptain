@@ -18,6 +18,11 @@ export class Home {
   countryMap: { [key: number]: string } = {};
   selectedCountryId: number | null = null;
   brands: any[] = [];
+  import = [
+    { id: 1, name: "مبادرة", img: "/photos/export.jpg" },
+    { id: 2, name: "إستيراد شخصى", img: "/photos/export.jpg" },
+  ];
+
   constructor(
     private api: Apiservice,
     private messageService: MessageService,
@@ -73,20 +78,15 @@ export class Home {
   }
 
   selectBrand(brand: any) {
-    console.log("تم اختيار البراند:", brand);
-    // 📡 جلب السيارات حسب البراند
-    this.api.getCarsInBrands(brand.Id).subscribe(
-      (res: any) => {
-        this.router.navigate(["/cars"], {
-          queryParams: {
-            countryId: this.selectedCountryId,
-            brandId: brand.Id,
-          },
-        });
+    this.router.navigate(["/cars"], {
+      queryParams: {
+        countryId: this.selectedCountryId,
+        brandId: brand.Id,
       },
-      (err) => {
-        console.error("❌ خطأ في جلب السيارات:", err);
-      }
-    );
+    });
+  }
+
+  selectCar(im: any) {
+    console.log(im);
   }
 }

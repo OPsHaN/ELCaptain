@@ -241,7 +241,10 @@
             <div class="col-md-4">
               <label class="form-label">نوع المحرك</label>
               <mat-form-field appearance="outline" class="w-100 custom-outline">
-                <mat-select formControlName="EngineType">
+                <mat-select
+                  formControlName="EngineType"
+                  (selectionChange)="onEngineTypeChange($event.value)"
+                >
                   <mat-option
                     *ngFor="let engineType of engineTypes"
                     [value]="engineType"
@@ -250,6 +253,15 @@
                   </mat-option>
                 </mat-select>
               </mat-form-field>
+
+              <!-- ✅ تنبيه في حالة المحرك الكهربائي -->
+              <div
+                *ngIf="carForm.get('IsElectricty')?.value"
+                class="alert alert-success text-center py-1 mt-1"
+              >
+                ⚡ سيارة كهربائية
+              </div>
+
               <small
                 class="text-danger"
                 *ngIf="
@@ -337,6 +349,83 @@
                 هذا الحقل مطلوب
               </small>
             </div>
+            <!-- الاستيراد -->
+            <!-- <div class="col-md-4">
+              <fieldset class="border rounded-3 p-1">
+                <legend
+                  class="float-none w-auto px-2 fs-6 fw-bold text-primary"
+                >
+                  تسجيل السيارة فى
+                </legend>
+
+                <div
+                  class="d-flex align-items-center justify-content-between switch-wrapper"
+                >
+                  <span class="me-2 fw-semibold">المخزن</span>
+
+                  <div class="form-check form-switch m-0">
+                    <input
+                      class="form-check-input custom-switch"
+                      type="checkbox"
+                      id="InstantDelivery"
+                      formControlName="InstantDelivery"
+                    />
+                  </div>
+                  <span class="ms-2 fw-semibold">الإستيراد</span>
+                </div>
+              </fieldset>
+            </div> -->
+            <!-- الاستيراد -->
+<div class="col-md-8">
+  <div class="d-flex gap-3">
+    <!-- ✅ تسجيل السيارة في -->
+    <fieldset class="border rounded-3 p-2 flex-fill">
+      <legend class="float-none w-auto px-2 fs-6 fw-bold text-primary">
+        تسجيل السيارة في
+      </legend>
+      <div class="d-flex align-items-center justify-content-between switch-wrapper">
+      <span class="me-2 fw-semibold">المخزن</span>
+
+      <div class="form-check form-switch m-0">
+        <input
+          class="form-check-input custom-switch"
+          type="checkbox"
+          id="InstantDelivery"
+          formControlName="InstantDelivery"
+          (change)="onInstantDeliveryChange($event)"
+        />
+      </div>
+
+      <span class="ms-2 fw-semibold">الإستيراد</span>
+      </div>
+    </fieldset>
+
+    <!-- ✅ نوع الاستيراد -->
+    <fieldset
+      class="border rounded-3 p-2 flex-fill"
+      *ngIf="carForm.get('InstantDelivery')?.value === true"
+    >
+      <legend class="float-none w-auto px-2 fs-6 fw-bold text-primary">
+        نوع الاستيراد
+      </legend>
+<div class="d-flex align-items-center justify-content-between switch-wrapper" *ngIf="carForm.get('InstantDelivery')?.value">
+  <span class="me-2 fw-semibold">مبادرة</span>
+  <div class="form-check form-switch m-0">
+    <input
+      class="form-check-input custom-switch"
+      type="checkbox"
+      id="ImportType"
+      [checked]="carForm.get('InitiativeType')?.value === 2"
+      (change)="onInitiativeToggle($event)"
+    />
+  </div>
+  <span class="ms-2 fw-semibold">شخصي</span>
+</div>
+
+    </fieldset>
+  </div>
+</div>
+
 
             <!-- ✅ المميزات -->
             <div class="col-12 mt-3">

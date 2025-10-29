@@ -95,6 +95,28 @@
                 {{ car.Brand.Country.CountryName }}
               </td>
             </tr>
+            <tr>
+              <!-- ✅ نوع تسجيل السيارة -->
+              <td class="fw-bold">نوع التسجيل</td>
+              <td class="text-center">
+                <ng-container *ngIf="car.InstantDelivery; else storedCar">
+                  <ng-container [ngSwitch]="car.InitiativeType">
+                    <span *ngSwitchCase="1" class="text-primary fw-semibold"
+                      >مبادرة</span
+                    >
+                    <span *ngSwitchCase="2" class="text-info fw-semibold"
+                      >استيراد شخصي</span
+                    >
+                    <span *ngSwitchDefault class="text-success fw-semibold"
+                      >استيراد</span
+                    >
+                  </ng-container>
+                </ng-container>
+                <ng-template #storedCar>
+                  <span class="text-secondary fw-semibold">مخزن</span>
+                </ng-template>
+              </td>
+            </tr>
             <!-- <tr>
               <td class="fw-bold">الحالة</td>
               <td [ngClass]="{ 'text-success': car.IsForSale, 'text-danger': !car.IsForSale }">
@@ -107,7 +129,7 @@
 
       <!-- السعر -->
       <div class="car-price-box">
-        {{ car.Price | currency : ' EGP ' }}
+        {{ car.Price | currency : " EGP " }}
       </div>
 
       <!-- أزرار الإجراءات -->
@@ -173,9 +195,7 @@
         <tbody>
           <tr>
             <td class="fw-bold">البراند</td>
-            <td
-              class="d-flex align-items-center gap-2 justify-content-center"
-            >
+            <td class="d-flex align-items-center gap-2 justify-content-center">
               <img
                 [src]="selectedCar.Brand.Img || defaultCarImage"
                 alt="{{ selectedCar.Brand.BrandName }}"
@@ -186,9 +206,7 @@
           </tr>
           <tr>
             <td class="fw-bold">اللون</td>
-            <td
-              class="d-flex align-items-center justify-content-center gap-2"
-            >
+            <td class="d-flex align-items-center justify-content-center gap-2">
               <span
                 class="color-box"
                 [ngStyle]="{ backgroundColor: getColorCode(selectedCar.Color) }"
@@ -198,9 +216,7 @@
           </tr>
           <tr>
             <td class="fw-bold">الدولة</td>
-            <td
-              class="d-flex align-items-center gap-2 justify-content-center"
-            >
+            <td class="d-flex align-items-center gap-2 justify-content-center">
               <img
                 [src]="selectedCar.Brand.Country.Img || defaultCarImage"
                 alt="{{ selectedCar.Brand.Country.CountryName }}"
@@ -219,12 +235,17 @@
           </tr>
           <tr>
             <td class="fw-bold">السعر</td>
-            <td>{{ selectedCar.Price | currency : 'EGP' }}</td>
+            <td>{{ selectedCar.Price | currency : "EGP" }}</td>
           </tr>
           <tr>
-            <td class="fw-bold"> الحالة</td>
-            <td [ngClass]="{ 'text-success': selectedCar.IsForSale, 'text-danger': !selectedCar.IsForSale }">
-              {{ selectedCar.IsForSale ? 'معروضة للبيع' : 'غير معروضة' }}
+            <td class="fw-bold">الحالة</td>
+            <td
+              [ngClass]="{
+                'text-success': selectedCar.IsForSale,
+                'text-danger': !selectedCar.IsForSale
+              }"
+            >
+              {{ selectedCar.IsForSale ? "معروضة للبيع" : "غير معروضة" }}
             </td>
           </tr>
         </tbody>

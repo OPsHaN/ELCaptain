@@ -50,12 +50,27 @@ export class AuthService {
     this._isLoggedIn.next(true);
   }
 
-  logout() {
-    this._isLoggedIn.next(false); // 👈 إشعار للكل إنك سجلت خروج
-    this.router.navigate(["/login"]);
-    localStorage.removeItem("token");
-    this.activePage = "home";
-  }
+logout() {
+  // 👇 إرسال طلب الخروج للسيرفر أولاً
+  this.http.post(`${this.baseUrl}logout`, {}).subscribe({
+    next: (res) => {
+      // ✅ لو الخروج نجح، نحذف التوكن ونغيّر الحالة
+      localStorage.removeItem("token");
+      this._isLoggedIn.next(false);
+      this.activePage = "home";
+      this.router.navigate(["/login"]);
+    },
+    error: (err) => {
+      console.error("Logout error:", err);
+      // حتى لو حصل خطأ في الـ API، نعمل تسجيل خروج محلي
+      localStorage.removeItem("token");
+      this._isLoggedIn.next(false);
+      this.activePage = "home";
+      this.router.navigate(["/login"]);
+    },
+  });
+}
+
 
   showSuccess(msg: string) {
     this.messageService.add({

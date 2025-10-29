@@ -2,9 +2,6 @@
   position: absolute;
   top: 100%;
   left: 50%;
-  transform: translateX(-50%);
-  font-size: 1.5rem;
-  color: #000;
   margin-top: 5px;
 }
 
@@ -21,12 +18,9 @@
   max-width: 100px; // تقدر تغير العرض حسب التصميم
 }
 
-
 .button-container {
   position: relative;
 }
-
-
 
 /* ✅ شكل الزرار الرئيسي */
 .main-btn {
@@ -45,31 +39,28 @@
 /* الأيقونة السهم */
 .arrow-icon {
   position: absolute;
-  bottom: -15px;
+  bottom: -10px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 1.2rem;
+  font-size: 1.7rem;
   color: #ffc107;
 }
-
 
 /* ✅ حاوية العنصر */
 .country-item {
   cursor: pointer;
   transition: transform 0.3s ease;
-  width: 110px;
-
+  width: 150px;
 }
 
 .country-item:hover {
   transform: scale(1.05);
-
 }
 
 /* ✅ شكل الدائرة */
 .country-circle {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 150px;
   border-radius: 30%;
   border: 2px solid #ccc;
   display: flex;
@@ -79,12 +70,9 @@
   box-shadow: 0px 0px 10px black;
 
   &:hover {
-      box-shadow: 0px 0px 10px orange;
+    box-shadow: 0px 0px 10px orange;
   }
-
 }
-
-
 
 /* 🖼️ صورة الدولة */
 .country-img {
@@ -100,8 +88,6 @@
   color: #333;
   word-break: break-word;
 }
-
-
 
 /* 📱 Responsive للجوال */
 @media (max-width: 768px) {
@@ -130,18 +116,16 @@
   }
 }
 
-
-
 .stock-btn {
   position: relative;
-  overflow: hidden;           /* علشان الصورة المموهة متطلعش بره الزرار */
+  overflow: hidden; /* علشان الصورة المموهة متطلعش بره الزرار */
   color: white;
   width: 250px;
   height: 250px;
   font-size: 2.5rem;
   font-weight: bold;
   border: none;
-  box-shadow: 0 5px 20px  rgba(0, 0, 0, 0.5);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
   z-index: 1;
 }
 
@@ -152,12 +136,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/photos/storage.jpg');
+  background-image: url("/photos/storage.jpg");
   background-size: cover;
   background-position: center;
-  filter: blur(3px);                /* 💥 هنا الضبابية */
-  transform: scale(1.1);            /* علشان الحواف متبانش */
-  z-index: -1;                      /* تحت النص */
+  filter: blur(3px); /* 💥 هنا الضبابية */
+  transform: scale(1.1); /* علشان الحواف متبانش */
+  z-index: -1; /* تحت النص */
 }
 
 /* لو عايز تأثير عند مرور الماوس */
@@ -167,10 +151,9 @@
   transition: 0.3s;
 }
 
-
 .export-btn {
   position: relative;
-  overflow: hidden;           /* علشان الصورة المموهة متطلعش بره الزرار */
+  overflow: hidden; /* علشان الصورة المموهة متطلعش بره الزرار */
   color: white;
   width: 250px;
   height: 250px;
@@ -188,12 +171,12 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-image: url('/photos/export.jpg'); /* مسار الصورة */
+  background-image: url("/photos/export.jpg"); /* مسار الصورة */
   background-size: cover;
   background-position: center;
-  filter: blur(3px);                /* 💥 هنا الضبابية */
-  transform: scale(1.1);            /* علشان الحواف متبانش */
-  z-index: -1;                      /* تحت النص */
+  filter: blur(3px); /* 💥 هنا الضبابية */
+  transform: scale(1.1); /* علشان الحواف متبانش */
+  z-index: -1; /* تحت النص */
 }
 
 /* لو عايز تأثير عند مرور الماوس */
@@ -202,7 +185,6 @@
   transform: scale(1.02);
   transition: 0.3s;
 }
-
 
 /* ⬇️ السهم */
 .selected-arrow {
@@ -234,10 +216,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-    box-shadow: 0px 0px 10px black;
+  box-shadow: 0px 0px 10px black;
 
   &:hover {
-      box-shadow: 0px 0px 10px orange;
+    box-shadow: 0px 0px 10px orange;
   }
 }
 

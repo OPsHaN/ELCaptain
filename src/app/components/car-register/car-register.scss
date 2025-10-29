@@ -184,3 +184,47 @@ height: 33px !important;
   border-radius: 4px;
   border: 1px solid #ccc;
 }
+
+
+/* ✅ الإطار العام */
+fieldset {
+  border: 2px solid #007bff33;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin: 0;
+}
+
+/* ✅ عنوان الـ legend */
+legend {
+  color: #050505;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+/* ✅ اتجاه السويتش في RTL */
+.switch-wrapper {
+  direction: ltr;
+}
+
+/* ✅ شكل السويتش */
+.custom-switch {
+  width: 3rem;
+  height: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  background-color: #ffbb00 !important; /* افتراضي رمادي */
+  border-color: #ffbb00 !important;
+}
+
+/* ✅ لما يكون استيراد */
+.custom-switch:checked {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+}
+
+/* ✅ الدائرة تبقى بيضاء في كل الحالات */
+.custom-switch::before {
+  background-color: #fff !important;
+}
+
+

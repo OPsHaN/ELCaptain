@@ -33,6 +33,9 @@ export interface UserResponse {
   Img: string;
   Message: string;
   Token: string;
+  ExperiencedInElec: boolean,
+  ExperiencedInHybrd: boolean,
+  ExperiencedInCountryId: number,
   Branch: {
     Id: number;
     BranchName: string | null;

@@ -172,6 +172,9 @@ export class CarRegister {
       HasTirbo: [false],
       HasExtraEngine: [false],
       IsForSale: [false],
+      IsElectricty: [false],
+      InstantDelivery: [false],
+      InitiativeType: ["0"],
     });
 
     if (this.isEditMode && this.car) {
@@ -201,6 +204,31 @@ export class CarRegister {
     return this.imagesFormArray.controls
       .map((ctrl) => ctrl.value?.Img) // ✅ تحقق من وجود ctrl.value
       .filter((img) => !!img); // ✅ تصفية القيم null/undefined
+  }
+
+  onEngineTypeChange(selectedEngine: string) {
+    if (selectedEngine === "كهربائي") {
+      this.carForm.patchValue({ IsElectricty: true });
+    } else {
+      this.carForm.patchValue({ IsElectricty: false });
+    }
+  }
+
+  // لما يغير السويتش الرئيسي
+  onInstantDeliveryChange(event: Event) {
+    const isImport = (event.target as HTMLInputElement).checked;
+    if (!isImport) {
+      this.carForm.patchValue({ InitiativeType: "0" });
+    } else {
+      // افتراضيًا يكون "1" (مبادرة)
+      this.carForm.patchValue({ InitiativeType: "1" });
+    }
+  }
+
+  // لما يغير نوع الاستيراد (مبادرة / شخصي)
+  onInitiativeToggle(event: Event) {
+    const isPersonal = (event.target as HTMLInputElement).checked;
+    this.carForm.patchValue({ InitiativeType: isPersonal ? "2" : "1" });
   }
 
   confirmIsForSale(event: MouseEvent) {
@@ -360,6 +388,11 @@ export class CarRegister {
 
     const formValue = this.carForm.value;
 
+    let finalInitiativeType = "0";
+    if (formValue.InstantDelivery) {
+      finalInitiativeType = formValue.InitiativeType || "1";
+    }
+
     const payload: any = {
       Id: this.isEditMode && this.car ? this.car.Id : 0, // 🟡 لو تعديل نستخدم ID الحالى
       Type: formValue.Type,
@@ -386,6 +419,10 @@ export class CarRegister {
       AddedAt: new Date().toISOString(),
       Message: "string",
       Brand: this.selectedBrand,
+      IsElectricty: formValue.IsElectricty,
+      InstantDelivery: formValue.InstantDelivery,
+      InitiativeType: finalInitiativeType,
+
       // Images: imagesArray,
     };
 
@@ -434,92 +471,91 @@ export class CarRegister {
     }
   }
 
-saveCarImages(): void {
-  this.carId = this.car?.Id || this.carId;
+  saveCarImages(): void {
+    this.carId = this.car?.Id || this.carId;
 
-  // ✅ تأكد إن فيه ID للعربية
-  if (!this.carId) {
-    this.showError("لم يتم تحديد السيارة");
-    return;
-  }
+    // ✅ تأكد إن فيه ID للعربية
+    if (!this.carId) {
+      this.showError("لم يتم تحديد السيارة");
+      return;
+    }
 
-  this.isSubmitting = true;
+    this.isSubmitting = true;
 
-  // 📸 الصور الجديدة فقط (اللي فيها File)
-  const newImageControls = this.imagesFormArray.controls.filter(
-    (ctrl) => ctrl.value.File
-  );
+    // 📸 الصور الجديدة فقط (اللي فيها File)
+    const newImageControls = this.imagesFormArray.controls.filter(
+      (ctrl) => ctrl.value.File
+    );
 
-  // 🛑 لو لا صور جديدة ولا قديمة → Error
-  if (newImageControls.length === 0 && this.carImagesPreview.length === 0) {
-    this.showError("لا توجد صور لرفعها");
-    this.isSubmitting = false;
-    return;
-  }
-
-  // 🟡 لو مفيش صور جديدة لكن فيه صور قديمة → مفيش API call
-  if (newImageControls.length === 0) {
-    console.log("🟡 لا توجد صور جديدة، لن يتم استدعاء API");
-    this.showSuccess("✅ لا توجد صور جديدة للرفع، تم حفظ التغييرات");
-    this.isSubmitting = false;
-    this.refreshCars.emit();
-    this.closeForm.emit();
-    return;
-  }
-
-  // ✅ لو فيه صور جديدة → ارفعها
-  const uploadPromises = newImageControls.map((ctrl) =>
-    this.api.uploadImage(ctrl.value.File).toPromise()
-  );
-
-  Promise.all(uploadPromises)
-    .then((uploadResults) => {
-      const imagesToAdd = uploadResults.map((res, idx) => ({
-        Id: 0,
-        CarId: this.carId,
-        Img: (res as any)?.fileUrl || newImageControls[idx].value.Img,
-        AddedBy: 1,
-        AddedAt: new Date().toISOString(),
-        Message: "تم الرفع",
-        EditedBy: 1,
-        EditedAt: new Date().toISOString(),
-      }));
-
-      // 📤 استدعاء API للصور الجديدة فقط
-      this.api.uploadBulkImages(imagesToAdd).subscribe({
-        next: () => {
-          this.showSuccess("✅ تم رفع الصور الجديدة بنجاح");
-
-          // 🧼 إزالة الصور الجديدة من الفورم
-          newImageControls.forEach((ctrl) => {
-            const i = this.imagesFormArray.controls.indexOf(ctrl);
-            if (i >= 0) this.imagesFormArray.removeAt(i);
-          });
-
-          // 🖼️ تحديث المعاينة
-          this.carImagesPreview = [
-            ...this.carImagesPreview,
-            ...imagesToAdd.map((i) => i.Img),
-          ];
-
-          console.log("🚀 الصور بعد الرفع:", this.carImagesPreview);
-          console.log("🚀 الفورم:", this.carForm.value);
-
-          this.cdr.detectChanges();
-          this.refreshCars.emit();
-          this.closeForm.emit();
-        },
-        error: () => this.showError("حدث خطأ أثناء إضافة الصور للسيارة"),
-        complete: () => (this.isSubmitting = false),
-      });
-    })
-    .catch((err) => {
-      console.error("❌ Image upload error:", err);
-      this.showError("حدث خطأ أثناء رفع واحدة أو أكثر من الصور");
+    // 🛑 لو لا صور جديدة ولا قديمة → Error
+    if (newImageControls.length === 0 && this.carImagesPreview.length === 0) {
+      this.showError("لا توجد صور لرفعها");
       this.isSubmitting = false;
-    });
-}
+      return;
+    }
 
+    // 🟡 لو مفيش صور جديدة لكن فيه صور قديمة → مفيش API call
+    if (newImageControls.length === 0) {
+      console.log("🟡 لا توجد صور جديدة، لن يتم استدعاء API");
+      this.showSuccess("✅ لا توجد صور جديدة للرفع، تم حفظ التغييرات");
+      this.isSubmitting = false;
+      this.refreshCars.emit();
+      this.closeForm.emit();
+      return;
+    }
+
+    // ✅ لو فيه صور جديدة → ارفعها
+    const uploadPromises = newImageControls.map((ctrl) =>
+      this.api.uploadImage(ctrl.value.File).toPromise()
+    );
+
+    Promise.all(uploadPromises)
+      .then((uploadResults) => {
+        const imagesToAdd = uploadResults.map((res, idx) => ({
+          Id: 0,
+          CarId: this.carId,
+          Img: (res as any)?.fileUrl || newImageControls[idx].value.Img,
+          AddedBy: 1,
+          AddedAt: new Date().toISOString(),
+          Message: "تم الرفع",
+          EditedBy: 1,
+          EditedAt: new Date().toISOString(),
+        }));
+
+        // 📤 استدعاء API للصور الجديدة فقط
+        this.api.uploadBulkImages(imagesToAdd).subscribe({
+          next: () => {
+            this.showSuccess("✅ تم رفع الصور الجديدة بنجاح");
+
+            // 🧼 إزالة الصور الجديدة من الفورم
+            newImageControls.forEach((ctrl) => {
+              const i = this.imagesFormArray.controls.indexOf(ctrl);
+              if (i >= 0) this.imagesFormArray.removeAt(i);
+            });
+
+            // 🖼️ تحديث المعاينة
+            this.carImagesPreview = [
+              ...this.carImagesPreview,
+              ...imagesToAdd.map((i) => i.Img),
+            ];
+
+            console.log("🚀 الصور بعد الرفع:", this.carImagesPreview);
+            console.log("🚀 الفورم:", this.carForm.value);
+
+            this.cdr.detectChanges();
+            this.refreshCars.emit();
+            this.closeForm.emit();
+          },
+          error: () => this.showError("حدث خطأ أثناء إضافة الصور للسيارة"),
+          complete: () => (this.isSubmitting = false),
+        });
+      })
+      .catch((err) => {
+        console.error("❌ Image upload error:", err);
+        this.showError("حدث خطأ أثناء رفع واحدة أو أكثر من الصور");
+        this.isSubmitting = false;
+      });
+  }
 
   // ✅ إعادة تهيئة الفورم بعد الإرسال
   resetForm() {
@@ -545,6 +581,8 @@ saveCarImages(): void {
       HasTirbo: false,
       HasExtraEngine: false,
       IsForSale: false,
+      InstantDelivery: false,
+      InitiativeType:"0"
     });
 
     this.carImagesPreview = [];

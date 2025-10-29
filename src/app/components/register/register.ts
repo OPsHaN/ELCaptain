@@ -24,7 +24,7 @@ import { CommonModule } from "@angular/common";
 import { MatSelectModule } from "@angular/material/select";
 import { CheckboxModule } from "primeng/checkbox";
 import { MessageService } from "primeng/api";
-import { Apiservice } from "../../services/apiservice";
+import { Apiservice, Country } from "../../services/apiservice";
 
 @Component({
   selector: "app-register",
@@ -52,15 +52,17 @@ export class Register implements OnInit {
   private pendingEmployee: any = null;
   @Input() isEditMode = false;
   employeeIdToUpdate: number | null = null;
+  countries: any[] = [];
+  countryMap: { [key: number]: string } = {};
 
   @Output() closeForm = new EventEmitter<void>();
-  @Output() refreshEmployees = new EventEmitter<void>(); 
+  @Output() refreshEmployees = new EventEmitter<void>();
 
   classification = [
+    { name: "A+", code: "A+" },
     { name: "A", code: "A" },
-    { name: "A +", code: "A+" },
+    { name: "B+", code: "B+" },
     { name: "B", code: "B" },
-    { name: "B +", code: "B+" },
   ];
 
   ranks = [
@@ -136,7 +138,10 @@ export class Register implements OnInit {
       Classification: ["", Validators.required],
       FromTime: ["", Validators.required],
       ToTime: ["", Validators.required],
-      Img: [null], // ✅ حقل الصورة
+      Img: [null],
+      ExperiencedInElec: [false],
+      ExperiencedInHybrd: [false],
+      ExperiencedInCountryId: [null, Validators.required],
       Days: this.fb.array(
         this.daysOfWeek.map(() => this.fb.control(false)),
         [this.minSelectedCheckboxes(1)]
@@ -156,6 +161,7 @@ export class Register implements OnInit {
     });
 
     this.loadBranches();
+    this.loadCountries();
   }
 
   private patchFormData(emp: any) {
@@ -176,6 +182,9 @@ export class Register implements OnInit {
       FromTime: this.formatTime(emp.ShiftFrom),
       ToTime: this.formatTime(emp.ShiftTo),
       Img: emp.Img,
+      ExperiencedInElec: emp.ExperiencedInElec,
+      ExperiencedInHybrd: emp.ExperiencedInHybrd,
+      ExperiencedInCountryId: emp.ExperiencedInCountryId,
     });
 
     // ✅ تعبئة الأيام حسب الـ API
@@ -233,6 +242,19 @@ export class Register implements OnInit {
     });
   }
 
+  loadCountries(): void {
+    this.api.getAllCountry().subscribe({
+      next: (res: any) => {
+        this.countries = res;
+        this.cdr.detectChanges();
+        console.log(this.countries);
+      },
+      error: (err) => {
+        console.error("خطأ أثناء جلب الدول:", err);
+      },
+    });
+  }
+
   onSubmit(): void {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched();
@@ -284,7 +306,9 @@ export class Register implements OnInit {
       WedShift: daysBooleans[4],
       ThuShift: daysBooleans[5],
       FriShift: daysBooleans[6],
-
+      ExperiencedInElec: formValue.ExperiencedInElec,
+      ExperiencedInHybrd: formValue.ExperiencedInHybrd,
+      ExperiencedInCountryId: formValue.ExperiencedInCountryId,
       IsLoggedIn: true,
       Img: this.profilePreview || "",
       Message: "",
@@ -330,8 +354,6 @@ export class Register implements OnInit {
       });
     }
   }
-
- 
 
   onFileSelected(event: Event) {
     const input = event.target as HTMLInputElement;
