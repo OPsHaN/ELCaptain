@@ -1,15 +1,80 @@
-<!-- ✅ شريط الأزرار -->
+<!-- ✅ شريط الأدوات -->
 <div
-  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
+  class="toolbar d-flex flex-wrap justify-content-between gap-3 position-relative mt-3 pb-0"
+  dir="rtl"
 >
-  <div class="position-relative">
-    <button class="btn btn-outline-primary" (click)="toggleRegisterForm()">
-      ➕ تسجيل عربية جديدة
+  <!-- القسم الأيمن: زرار تسجيل عربية جديدة -->
+  <div class="position-realtive">
+    <button class="btn btn-outline-primary h-75" (click)="toggleRegisterForm()">
+      تسجيل عربية جديدة ➕
     </button>
     <div class="arrow-wrapper" *ngIf="showRegisterForm">
       <i class="bi bi-caret-down-fill arrow-icon"></i>
     </div>
   </div>
+
+  <!-- القسم الأيسر: البحث + الـ Dropdowns -->
+  <div class="d-flex flex-wrap my-auto align-items-center gap-2">
+    <mat-form-field appearance="outline" class="custom-outline">
+      <mat-label>الدولة</mat-label>
+      <mat-select
+        [(value)]="selectedCountry"
+        (selectionChange)="onFilterChange()"
+      >
+        <mat-option value="">كل الدول</mat-option>
+        <mat-option *ngFor="let c of countries" [value]="c.id">
+          <img
+            [src]="c.img"
+            alt="{{ c.name }}"
+            width="20"
+            height="20"
+            class="me-2 rounded-circle"
+          />
+          {{ c.name }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- 🚘 Dropdown 2 -->
+    <mat-form-field appearance="outline" class="custom-outline">
+      <mat-label>البراند</mat-label>
+      <mat-select
+        [(value)]="selectedBrand"
+        (selectionChange)="onFilterChange()"
+      >
+        <mat-option value="">كل البراندات</mat-option>
+        <mat-option *ngFor="let b of brands" [value]="b.Id">
+          {{ b.BrandName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <!-- ⚙️ Dropdown 3 -->
+    <mat-form-field appearance="outline" class="custom-outline">
+      <mat-label>الفروع</mat-label>
+      <mat-select
+        [(value)]="selectedBranch"
+        (selectionChange)="onFilterChange()"
+      >
+        <mat-option value="">كل الفروع</mat-option>
+        <mat-option *ngFor="let b of branchs" [value]="b.Id">
+          {{ b.BranchName }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- 🔍 مربع البحث -->
+  <mat-form-field appearance="outline" class="search-outline">
+    <mat-label>بحث</mat-label>
+    <input
+      matInput
+      type="text"
+      placeholder="ابحث..."
+      [(ngModel)]="searchText"
+      (input)="filterBySearch()"
+    />
+  </mat-form-field>
 </div>
 
 <!-- ✅ فورم تسجيل / تعديل السيارة -->
@@ -19,7 +84,7 @@
     [car]="selectedCar"
     (closeForm)="toggleRegisterForm()"
     [isEditMode]="isEditMode"
-    (refreshCars)="getAllCars()"
+    (refreshCars)="loadCars()"
   ></app-car-register>
 </div>
 
@@ -28,7 +93,7 @@
   <div class="cards-grid" dir="rtl">
     <div
       class="card car-card dome-card text-center position-relative"
-      *ngFor="let car of cars; trackBy: trackById"
+      *ngFor="let car of filteredCars; trackBy: trackById"
       (click)="viewCar(car)"
       role="button"
       aria-label="Open car {{ car.Brand.BrandName }} {{ car.Model }}"
@@ -96,6 +161,14 @@
               </td>
             </tr>
             <tr>
+              <td class="fw-bold">الفرع</td>
+              <td
+                class="d-flex align-items-center justify-content-center gap-2"
+              >
+                {{ getBranchName(car.BranchId) }}
+              </td>
+            </tr>
+            <tr>
               <!-- ✅ نوع تسجيل السيارة -->
               <td class="fw-bold">نوع التسجيل</td>
               <td class="text-center">
@@ -128,9 +201,7 @@
       </div>
 
       <!-- السعر -->
-      <div class="car-price-box">
-        {{ car.Price | currency : " EGP " }}
-      </div>
+      <div class="car-price-box">{{ car.Price | number }} جنية</div>
 
       <!-- أزرار الإجراءات -->
       <div class="card-actions d-flex justify-content-center gap-2 p-2">
@@ -235,7 +306,7 @@
           </tr>
           <tr>
             <td class="fw-bold">السعر</td>
-            <td>{{ selectedCar.Price | currency : "EGP" }}</td>
+            <td>{{ selectedCar.Price | number }} جنية</td>
           </tr>
           <tr>
             <td class="fw-bold">الحالة</td>

@@ -2,7 +2,7 @@
   <div class="row justify-content-center">
     <div class="col-12 col-lg-12 col-md-12 col-sm-12">
       <div class="card p-2">
-        <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-1">
           <div>
             <h3 class="text-center mb-2 fw-bold text-dark">
               {{ isEditMode ? "✏️ تعديل سيارة" : "🚗 تسجيل سيارة" }}
@@ -375,57 +375,89 @@
                 </div>
               </fieldset>
             </div> -->
-            <!-- الاستيراد -->
-<div class="col-md-8">
-  <div class="d-flex gap-3">
-    <!-- ✅ تسجيل السيارة في -->
-    <fieldset class="border rounded-3 p-2 flex-fill">
-      <legend class="float-none w-auto px-2 fs-6 fw-bold text-primary">
-        تسجيل السيارة في
-      </legend>
-      <div class="d-flex align-items-center justify-content-between switch-wrapper">
-      <span class="me-2 fw-semibold">المخزن</span>
 
-      <div class="form-check form-switch m-0">
-        <input
-          class="form-check-input custom-switch"
-          type="checkbox"
-          id="InstantDelivery"
-          formControlName="InstantDelivery"
-          (change)="onInstantDeliveryChange($event)"
-        />
-      </div>
+             <!-- مكان الفرع -->
+            <div class="col-md-4">
+              <label class="form-label">مكان الفرع</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select formControlName="BranchId">
+                  <mat-option
+                    *ngFor="let b of branchs"
+                    [value]="b.Id"
+                  >
+                    {{ b.BranchName }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+              <small
+                class="text-danger"
+                *ngIf="
+                  carForm.get('BranchId')?.touched &&
+                  carForm.get('BranchId')?.hasError('required')
+                "
+              >
+                هذا الحقل مطلوب
+              </small>
+            </div>
 
-      <span class="ms-2 fw-semibold">الإستيراد</span>
-      </div>
-    </fieldset>
+                        <!-- الاستيراد -->
+            <div class="col-md-4">
+              <div class="d-flex flex-column gap-3">
+                <!-- ✅ تسجيل السيارة في -->
+                <fieldset class="border rounded-3 p-2 flex-fill">
+                  <legend
+                    class="float-none w-auto px-2 fs-6 fw-bold text-primary"
+                  >
+                    تسجيل السيارة في
+                  </legend>
+                  <div
+                    class="d-flex align-items-center justify-content-between switch-wrapper"
+                  >
+                    <span class="me-2 fw-semibold">المخزن</span>
 
-    <!-- ✅ نوع الاستيراد -->
-    <fieldset
-      class="border rounded-3 p-2 flex-fill"
-      *ngIf="carForm.get('InstantDelivery')?.value === true"
-    >
-      <legend class="float-none w-auto px-2 fs-6 fw-bold text-primary">
-        نوع الاستيراد
-      </legend>
-<div class="d-flex align-items-center justify-content-between switch-wrapper" *ngIf="carForm.get('InstantDelivery')?.value">
-  <span class="me-2 fw-semibold">مبادرة</span>
-  <div class="form-check form-switch m-0">
-    <input
-      class="form-check-input custom-switch"
-      type="checkbox"
-      id="ImportType"
-      [checked]="carForm.get('InitiativeType')?.value === 2"
-      (change)="onInitiativeToggle($event)"
-    />
-  </div>
-  <span class="ms-2 fw-semibold">شخصي</span>
-</div>
+                    <div class="form-check form-switch m-0">
+                      <input
+                        class="form-check-input custom-switch"
+                        type="checkbox"
+                        id="InstantDelivery"
+                        formControlName="InstantDelivery"
+                        (change)="onInstantDeliveryChange($event)"
+                      />
+                    </div>
 
-    </fieldset>
-  </div>
-</div>
+                    <span class="ms-2 fw-semibold">الإستيراد</span>
+                  </div>
+                </fieldset>
 
+                <!-- ✅ نوع الاستيراد -->
+                <fieldset
+                  class="border rounded-3 p-2 flex-fill"
+                  *ngIf="carForm.get('InstantDelivery')?.value === true"
+                >
+                  <legend
+                    class="float-none w-auto px-2 fs-6 fw-bold text-primary"
+                  >
+                    نوع الاستيراد
+                  </legend>
+                  <div
+                    class="d-flex align-items-center justify-content-between switch-wrapper"
+                    *ngIf="carForm.get('InstantDelivery')?.value"
+                  >
+                    <span class="me-2 fw-semibold">مبادرة</span>
+                    <div class="form-check form-switch m-0">
+                      <input
+                        class="form-check-input custom-switch"
+                        type="checkbox"
+                        id="ImportType"
+                        [checked]="carForm.get('InitiativeType')?.value === 2"
+                        (change)="onInitiativeToggle($event)"
+                      />
+                    </div>
+                    <span class="ms-2 fw-semibold">شخصي</span>
+                  </div>
+                </fieldset>
+              </div>
+            </div>
 
             <!-- ✅ المميزات -->
             <div class="col-12 mt-3">

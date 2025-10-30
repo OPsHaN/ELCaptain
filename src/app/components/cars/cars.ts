@@ -5,11 +5,14 @@ import { CarouselModule } from "primeng/carousel";
 
 import { OnInit } from "@angular/core";
 import { CarRegister } from "../car-register/car-register";
-import { Apiservice } from "../../services/apiservice";
+import { Apiservice, Brand, Country } from "../../services/apiservice";
 import { DialogModule } from "primeng/dialog";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { ActivatedRoute } from "@angular/router";
+import { MatSelectModule } from "@angular/material/select";
+import { FormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
 
 @Component({
   selector: "app-cars",
@@ -20,6 +23,9 @@ import { ActivatedRoute } from "@angular/router";
     DialogModule,
     CarouselModule,
     ConfirmDialogModule,
+    MatSelectModule,
+    FormsModule,
+    MatInputModule,
   ],
   templateUrl: "./cars.html",
   styleUrl: "./cars.scss",
@@ -37,6 +43,15 @@ export class Cars implements OnInit {
   isEditMode = false; // ⬅️ لو true معناها بنعدل موظف
   defaultCarImage = "./photos/default-car.jpg";
   car: any[] = [];
+  filteredCars: any[] = []; // اللي هيتعرض في الجدول أو الصفحة
+
+  selectedCountry: number | "" = "";
+  selectedBrand: number | "" = "";
+  selectedBranch: number | "" = "";
+  searchText: string | "" = "";
+  countries: Country[] = [];
+  brands: Brand[] = [];
+  branchs: any[] = [];
 
   colorsList = [
     { name: "أحمر", code: "#FF0000" },
@@ -74,42 +89,45 @@ export class Cars implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-ngOnInit() {
-  // ✅ قراءة البرامترات من الرابط
-  this.route.queryParams.subscribe((params) => {
-    const countryId = params['countryId'];
-    const brandId = params['brandId'];
+  ngOnInit() {
+    // ✅ قراءة البرامترات من الرابط
+    this.route.queryParams.subscribe((params) => {
+      const countryId = params["countryId"];
+      const brandId = params["brandId"];
 
-    if (brandId) {
-      // 📡 جلب السيارات الخاصة بالبراند
-      this.api.getCarsInBrands(brandId).subscribe({
-        next: (data: any) => {
-          // cast response to any[] to satisfy TypeScript array assignment
-          this.cars = data as any[];
-          console.log('✅ Cars for selected brand:', this.cars);
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error('❌ خطأ في جلب السيارات:', err);
-        },
-      });
-    } else {
-      // 📡 لو مفيش فلترة، اعرض كل السيارات
-      this.loadCars();
-    }
-  });
-}
+      if (brandId) {
+        // 📡 جلب السيارات الخاصة بالبراند
+        this.api.getCarsInBrands(brandId).subscribe({
+          next: (data: any) => {
+            // cast response to any[] to satisfy TypeScript array assignment
+            this.cars = data as any[];
+            this.filteredCars = [...this.cars];
+            console.log("✅ Cars for selected brand:", this.cars);
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            console.error("❌ خطأ في جلب السيارات:", err);
+          },
+        });
+      } else {
+        // 📡 لو مفيش فلترة، اعرض كل السيارات
+        this.loadCars();
+      }
+    });
 
+    this.loadBranches();
+    this.loadBrands();
+    this.loadCountries();
+  }
 
   //ريفريش بعد الاضافة او التعديل
-  getAllCars() {
-    this.loadCars();
-  }
 
   loadCars() {
     this.api.getAllCars().subscribe({
       next: (data) => {
         this.cars = data as any[];
+        this.filteredCars = [...this.cars]; // نسخة مبدئية
+
         console.log("✅ Cars loaded:", this.cars);
         this.cdr.detectChanges();
       },
@@ -156,6 +174,13 @@ ngOnInit() {
     });
   }
 
+  filterBySearch() {
+    const search = this.searchText.toLowerCase().trim();
+
+    this.filteredCars = this.cars.filter((car: any) =>
+      car.Brand?.BrandName?.toLowerCase().includes(search)
+    );
+  }
   toggleRegisterForm() {
     this.showRegisterForm = !this.showRegisterForm;
     if (!this.showRegisterForm) {
@@ -180,5 +205,69 @@ ngOnInit() {
       detail: msg,
       life: 3000,
     });
+  }
+
+  loadBranches(): void {
+    this.api.getBranchs().subscribe({
+      next: (res: any) => {
+        this.branchs = res;
+        this.cdr.detectChanges();
+        console.log(res);
+      },
+      error: (err) => {
+        console.error("خطأ أثناء جلب الفروع:", err);
+      },
+    });
+  }
+
+  getBranchName(branchId: number): string {
+  const branch = this.branchs.find((b: any) => b.Id === branchId);
+  return branch ? branch.BranchName : 'غير محدد';
+}
+
+  loadCountries(): void {
+    this.api.getAllCountry().subscribe({
+      next: (res: any) => {
+        this.countries = res;
+        this.cdr.detectChanges();
+        console.log(this.countries);
+      },
+      error: (err) => {
+        console.error("خطأ أثناء جلب الدول:", err);
+      },
+    });
+  }
+
+  loadBrands() {
+    this.api.getAllBrand().subscribe((res) => {
+      this.brands = res;
+      console.log(res);
+    });
+  }
+
+  onFilterChange() {
+    const countryId = this.selectedCountry || 0;
+    const brandId = this.selectedBrand || 0;
+    const branchId = this.selectedBranch || 0;
+
+    // لو كله فاضي → رجّع كل العربيات
+    if (!countryId && !brandId && !branchId) {
+      this.loadCars();
+      return;
+    }
+
+    this.api.filterCars(countryId, brandId, branchId).subscribe({
+      next: (res: any) => {
+        console.log("Filter result:", res);
+        this.filteredCars = res; // أو res.data حسب شكل الـ response
+      },
+      error: (err) => {
+        console.error("Error loading filtered cars:", err);
+      },
+    });
+  }
+
+  onSearch() {
+    console.log("بحث عن:", this.searchText);
   }
 }

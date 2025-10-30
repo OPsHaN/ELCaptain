@@ -47,6 +47,7 @@ export class CarRegister {
   brands: Brand[] = [];
   carId: number | null = null;
   carImagesPreview: string[] = [];
+  branchs: any[] = [];
 
   defaultCarImage = "photos/default-car.jpg"; // مسار الصورة الافتراضية
   // carImagesPreview: string[] = []; // للمعاينة
@@ -149,11 +150,12 @@ export class CarRegister {
 
   ngOnInit(): void {
     this.loadBrands();
-
+    this.loadBranches();
     this.carForm = this.fb.group({
       Type: ["", Validators.required],
       Model: ["", Validators.required],
       BrandId: ["", Validators.required],
+      BranchId: ["", Validators.required],
       Color: ["", Validators.required],
       Kilometers: [""],
       Transmission: [""],
@@ -189,6 +191,19 @@ export class CarRegister {
       this.brands = res;
       console.log("bands", res);
       this.cdr.detectChanges(); // ✅ يحل مشكلة ExpressionChangedAfterItHasBeenCheckedError
+    });
+  }
+
+  loadBranches(): void {
+    this.api.getBranchs().subscribe({
+      next: (res: any) => {
+        this.branchs = res;
+        this.cdr.detectChanges();
+        console.log(res);
+      },
+      error: (err) => {
+        console.error("خطأ أثناء جلب الفروع:", err);
+      },
     });
   }
 
@@ -397,6 +412,7 @@ export class CarRegister {
       Id: this.isEditMode && this.car ? this.car.Id : 0, // 🟡 لو تعديل نستخدم ID الحالى
       Type: formValue.Type,
       Model: formValue.Model,
+      BranchId: formValue.BranchId,
       BrandId: formValue.BrandId,
       Color: formValue.Color,
       Kilometers: formValue.Kilometers,
@@ -563,6 +579,7 @@ export class CarRegister {
       Type: "",
       Model: "",
       BrandId: null,
+      BranchId: null,
       Color: "",
       Kilometers: "",
       Transmission: "",
@@ -582,7 +599,7 @@ export class CarRegister {
       HasExtraEngine: false,
       IsForSale: false,
       InstantDelivery: false,
-      InitiativeType:"0"
+      InitiativeType: "0",
     });
 
     this.carImagesPreview = [];

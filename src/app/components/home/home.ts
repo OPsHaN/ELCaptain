@@ -18,10 +18,17 @@ export class Home {
   countryMap: { [key: number]: string } = {};
   selectedCountryId: number | null = null;
   brands: any[] = [];
-  import = [
+  importTypes = [
     { id: 1, name: "مبادرة", img: "/photos/export.jpg" },
     { id: 2, name: "إستيراد شخصى", img: "/photos/export.jpg" },
   ];
+  importedCars: any[] = [];
+  filteredImportedCars: any[] = [];
+  selectedImportType: number | null = null;
+  cars: any[] = [];
+  selectedBrandId: number | null = null;
+  filteredBrands: any[] = [];
+  filteredCountries: any[] = [];
 
   constructor(
     private api: Apiservice,
@@ -34,13 +41,23 @@ export class Home {
     this.loadCountries(); // جلب البيانات عند بداية الكمبوننت
     // this.loadBrands();
     // this.loadBranchs();
+    this.loadCars();
+  }
+
+  loadCars() {
+    this.api.getAllCars().subscribe({
+      next: (data: any[]) => {
+        this.cars = data;
+        this.importedCars = data.filter((c) => c.InstantDelivery === true);
+      },
+      error: (err) => console.error(err),
+    });
   }
 
   loadCountries() {
     this.api.getAllCountry().subscribe({
       next: (res: Country[]) => {
         this.countries = res;
-        console.log("الدول المحملة:", this.countries);
         this.countryMap = {};
         for (const c of this.countries) {
           if (c.id != null) this.countryMap[c.id] = c.name;
@@ -50,6 +67,51 @@ export class Home {
         console.error("خطأ جلب الدول:", err);
       },
     });
+  }
+
+  onSelectImportType(typeId: number) {
+    this.selectedImportType = typeId;
+    this.selectedCountryId = null;
+    this.selectedBrandId = null;
+    this.filteredImportedCars = [];
+    this.filteredBrands = [];
+
+    // الدول اللي فيها سيارات من نفس النوع
+    const filtered = this.importedCars.filter(
+      (c) => c.InitiativeType === typeId
+    );
+
+    const uniqueCountries = filtered
+      .map((c) => c.Country)
+      .filter(
+        (country, i, arr) =>
+          country && arr.findIndex((x) => x.Id === country.Id) === i
+      );
+
+    this.filteredCountries = uniqueCountries;
+  }
+  // اختيار البراند
+  selectImportBrand(brand: any) {
+    this.selectedBrandId = brand.Id;
+
+    this.filteredImportedCars = this.importedCars.filter(
+      (c) =>
+        c.Brand?.Id === brand.Id &&
+        c.InitiativeType === this.selectedImportType &&
+        c.Country?.Id === this.selectedCountryId
+    );
+  }
+
+   selectImportCountry(country: any) {
+    this.selectedCountryId = country.Id;
+    this.selectedBrandId = null;
+    this.filteredImportedCars = [];
+
+    const filtered = this.importedCars.filter(
+      (c) =>
+        c.InitiativeType === this.selectedImportType &&
+        c.Country?.Id === country.Id
+    );
   }
 
   showContainer(type: string) {
@@ -76,6 +138,7 @@ export class Home {
       },
     });
   }
+
 
   selectBrand(brand: any) {
     this.router.navigate(["/cars"], {

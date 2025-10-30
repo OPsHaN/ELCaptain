@@ -121,8 +121,8 @@ export class Apiservice {
 
   ///cars///
 
-  getAllCars() {
-    return this.http.get(`${this.baseUrl}Car/GetAll`);
+  getAllCars():Observable<any[]> {
+    return this.http.get<any[]>(`${this.baseUrl}Car/GetAll`);
   }
   getCar(id: number) {
     return this.http.get(`${this.baseUrl}Car/GetCar?id=${id}`);
@@ -152,6 +152,10 @@ export class Apiservice {
 
   getCarsInBrands(brandId:number){
     return this.http.get(`${this.baseUrl}car/GetCarsInBrand?BrandId=${brandId}`)
+  }
+
+  filterCars(countryId:number , brandId:number , branchId:number){
+    return this.http.get(`${this.baseUrl}car/Filter?CountryId=${countryId}&BrandId=${brandId}&BranchId=${branchId}`)
   }
 
   //branch
@@ -193,7 +197,6 @@ export class Apiservice {
     return this.http.delete(`${this.baseUrl}auth/Delete?id=${id}`);
   }
 
-  //uploadImage
 
   //addClient
   addClient(body: any) {
@@ -218,6 +221,28 @@ export class Apiservice {
 
     const url = `${this.baseUrl}Client/UploadFile`;
     return this.http.post(url, formData);
+  }
+
+  //opertaion
+
+  addOperation(body:any){
+    return this.http.post(`${this.baseUrl}Operation/Add` , body)
+  }
+
+  getOperation(operationId:number) {
+    return this.http.get(`${this.baseUrl}Operation/GetOperation?id=${operationId}`)
+  }
+
+  updateOperation(body:any){
+    return this.http.put(`${this.baseUrl}Operation/Update` , body)
+  }
+
+  deleteOperation(operationId:number){
+    this.http.delete(`${this.baseUrl}Operation/Delete?id=${operationId}`)
+  }
+
+  getAllOperation(){
+    return this.http.get(`${this.baseUrl}Operation/GetAll`)
   }
 
   //uploadImage

@@ -13,13 +13,20 @@
 </div>
 
 <!-- ✅ فورم تسجيل العميل -->
-<div class="table-container mt-0" *ngIf="showRegisterForm" dir="rtl"></div>
+<div class="table-container mt-0" *ngIf="showRegisterForm" dir="rtl">
+  <app-register-deal
+    *ngIf="showRegisterForm"
+    [deal]="selectedDeal"
+    [isEditMode]="isEditMode"
+    (closeForm)="toggleRegisterForm()"
+  ></app-register-deal>
+</div>
 
-<div class="container mt-4" *ngIf="!showRegisterForm">
-  <div class="table-responsive">
+<div class="container mt-3" *ngIf="!showRegisterForm">
+  <div class="table-responsive rounded-5">
     <p-table
       [value]="deals"
-      [paginator]="true"
+      [paginator]="false"
       [rows]="10"
       dir="rtl"
       stripedRows
@@ -36,14 +43,13 @@
             ></p-checkbox> -->
             #
           </th>
-          <th>الرقم</th>
-          <th class="w-25">إسم العميل</th>
-          <th>التواصل</th>
+          <th>رقم العملية</th>
+          <th >إسم العميل</th>
+          <th class="w-25">رقم التواصل</th>
           <th>الإهتمام</th>
-          <th class="w-25">إسم الموظف المسؤل</th>
+          <th>الميزانية</th>
+          <th class="w-25">إسم الموظف</th>
           <th class="w-50">حالة العميل</th>
-          <th>تفاصيل المكالمة</th>
-
           <th>الإجراء</th>
         </tr>
       </ng-template>
@@ -53,15 +59,26 @@
           <td>
             <p-checkbox [(ngModel)]="deal.selected" binary="true"></p-checkbox>
           </td>
-          <td>{{ deal.order }}</td>
+          <td>{{ deal.id }}</td>
           <td class="pl-0">
             <div class="d-flex align-items-center">
-              {{ deal.name }}
+              <a href="">{{ deal.name }}</a>
             </div>
           </td>
 
-          <td>{{ deal.phone }}</td>
-          <td>{{ deal.intersted }}</td>
+          <td>
+            <a
+              [href]="'https://wa.me/' + deal.phone"
+              target="_blank"
+              class="text-success text-decoration-none fw-bold"
+            >
+              {{ deal.phone }}
+              <i class="bi bi-whatsapp ms-1"></i>
+            </a>
+          </td>
+          <td>{{ getCountryNameById(deal.intersted) }}</td>
+          <td>{{ deal.budget }}</td>
+
           <td>
             <a href="">{{ deal.empolyee }}</a>
           </td>
@@ -84,15 +101,12 @@
               >
             </div>
           </td>
-
           <td>
-            <button class="btn btn-info my-0 py-0" (click)="openModal(deal)">
-              تفاصيل
-            </button>
-          </td>
-          <td>
-            <div class="py-3" style="display: inline-flex; gap: 8px">
-              <button class="btn btn-warning my-0 py-0" (click)="editModal()">
+            <div class="py-3 d-flex flex-column gap-2 align-items-stretch">
+              <button
+                class="btn btn-warning my-0 py-0"
+                (click)="editModal(deal)"
+              >
                 تعديل
               </button>
               <button
@@ -100,6 +114,12 @@
                 (click)="openModal(deal)"
               >
                 حفظ
+              </button>
+              <button
+                class="btn btn-info my-0 py-0"
+                (click)="openDetails(deal)"
+              >
+                تفاصيل
               </button>
             </div>
           </td>
@@ -109,7 +129,7 @@
   </div>
 </div>
 
-<!-- تأكد إنك ضيفت <p-confirmDialog> أو <p-dialog> في الـ app كما تحتاج -->
+<!-- ✅ المودال -->
 <p-dialog
   [(visible)]="displayModal"
   [modal]="true"
@@ -118,28 +138,36 @@
   [breakpoints]="{ '640px': '95vw' }"
   dir="rtl"
 >
-  <!-- header: title on right, close on left -->
   <ng-template pTemplate="header">
     <div class="dialog-header">
-      <div class="d-flex justify-content-start">
-        <div class="dialog-title">تأكيد الحفظ</div>
-      </div>
+      <div class="dialog-title">{{ titleModel }}</div>
     </div>
   </ng-template>
 
-  <!-- body -->
   <div class="dialog-body">
     <form class="form-grid">
-      <!-- اسم الموظف -->
+      <!-- الموظف -->
       <div class="form-row">
-        <label class="form-label">إسم الموظف</label>
+        <label class="form-label">الموظف المسؤول</label>
         <input
+          *ngIf="!editMode"
           type="text"
           pInputText
           [value]="employeeName"
           readonly
           class="form-input"
         />
+        <select
+          *ngIf="editMode"
+          class="form-select"
+          [(ngModel)]="selectedSalesId"
+          name="salesId"
+        >
+          <option value="" disabled selected>اختر موظفًا جديدًا</option>
+          <option *ngFor="let s of salesList" [value]="s.Id">
+            {{ s.FullName }}
+          </option>
+        </select>
       </div>
 
       <!-- الوقت والتاريخ -->
@@ -154,14 +182,14 @@
         />
       </div>
 
-      <!-- Dropdown طريقة التواصل -->
+      <!-- طريقة التواصل -->
       <div class="form-row mb-2">
         <label class="form-label d-block">طريقة التواصل</label>
         <select
           class="form-select"
           [(ngModel)]="selectedContactMethod"
           name="contactMethod"
-          (change)="onContactMethodChange($event)"
+          [disabled]="!editMode"
         >
           <option value="" disabled selected>اختر طريقة التواصل</option>
           <option *ngFor="let method of contactMethods" [value]="method.value">
@@ -170,7 +198,7 @@
         </select>
       </div>
 
-      <!-- ⏱️ يظهر فقط لو اختار "call" -->
+      <!-- مدة المكالمة -->
       <div class="form-row" *ngIf="selectedContactMethod === 'call'">
         <label class="form-label d-block">مدة المكالمة (دقيقة)</label>
         <input
@@ -180,25 +208,41 @@
           name="callDuration"
           placeholder="ادخل مدة المكالمة"
           min="1"
+          [readonly]="!editMode"
         />
       </div>
 
-      <!-- الرسالة -->
+      <!-- الملاحظات -->
       <div class="form-row textarea-row">
         <label class="form-label align-top">تفاصيل التواصل</label>
         <textarea
           pInputTextarea
           [(ngModel)]="message"
           [ngModelOptions]="{ standalone: true }"
+          [readonly]="!editMode"
           rows="3"
           class="form-textarea"
           placeholder="اكتب ملاحظتك هنا..."
         ></textarea>
       </div>
+
+      <!-- 🧾 الأوامر -->
+      <div
+        class="commands-box mt-3 p-2 border rounded bg-light"
+        *ngIf="isDetailsMode"
+      >
+        <h6 class="fw-bold text-primary mb-2">سجل الأوامر</h6>
+        <div *ngFor="let cmd of commands" class="mb-1 small">
+          🕓 {{ cmd.AddedAt | date : "yyyy/MM/dd hh:mm a" }} —
+          <span class="text-dark">{{ cmd.Text }}</span>
+        </div>
+        <div *ngIf="!commands?.length" class="text-muted small">
+          لا توجد أوامر مسجلة
+        </div>
+      </div>
     </form>
   </div>
 
-  <!-- footer -->
   <ng-template pTemplate="footer">
     <div class="dialog-footer">
       <button
@@ -209,9 +253,10 @@
       ></button>
       <button
         pButton
+        *ngIf="editMode"
         class="btn-save py-0"
         (click)="saveModal()"
-        label="إرسال"
+        label="حفظ التعديل"
       ></button>
     </div>
   </ng-template>
