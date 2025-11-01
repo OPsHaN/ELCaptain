@@ -52,6 +52,7 @@ export class Archive implements OnInit {
   operationData: any = null;
   selectedSalesId: number | null = null;
   salesList: any[] = []; // هتحملها من API
+  originalOperations: any[] = [];
 
   contactMethods = [
     { name: "مكالمة", value: "call" },
@@ -82,6 +83,10 @@ export class Archive implements OnInit {
       next: (res: any) => {
         console.log("Response:", res);
 
+        // نحفظ النسخة الأصلية كما هي
+        this.originalOperations = res;
+
+        // نعرض نسخة مبسطة للجدول
         this.deals = res.map((item: any, index: number) => ({
           order: index + 1,
           id: item.Id,
@@ -96,7 +101,7 @@ export class Archive implements OnInit {
           communicationType: item.CommunicationType,
           callDuration: item.CallDuration,
           editedAt: item.EditedAt,
-          active: item.Status === 2, // جاد = 2 ✅
+          active: item.Status === 2,
           selected: false,
         }));
       },
@@ -175,7 +180,7 @@ export class Archive implements OnInit {
     deal.active = !deal.active;
 
     // تحديث الحالة داخل الجدول فقط بدون API
-    deal.status = deal.active ? 3 : 2; // 3 = جاد ، 2 = غير جاد
+    deal.status = deal.active ? 2 : 3; // 3 = جاد ، 2 = غير جاد
 
     console.log("🟡 تم تغيير حالة العميل محليًا فقط:", {
       Id: deal.id,
@@ -373,55 +378,50 @@ export class Archive implements OnInit {
   }
 
   saveNewOperation() {
-    // ✅ تحقق من وجود بيانات أصلية
-    if (!this.operationData) {
-      console.error("❌ لا توجد بيانات في operationData:", this.operationData);
+    if (!this.selectedDeal) {
       this.messageService.add({
         severity: "warn",
         summary: "تنبيه",
-        detail: "⚠️ لا توجد بيانات عملية للحفظ",
-        life: 3000,
+        detail: "يرجى اختيار صفقة أولاً ⚠️",
       });
       return;
     }
 
-    // ✅ نسخة آمنة من البيانات الأصلية
-    const body: any = { ...this.operationData };
+    // ✅ نجيب النسخة الأصلية من العملية
+    const original = this.originalOperations.find(
+      (op: any) => op.Id === this.selectedDeal.id
+    );
 
-    // ✅ دمج بيانات الصفقة المحددة لو موجودة
-    if (this.selectedDeal) {
-      body.Id = this.selectedDeal.id ?? body.Id;
-      body.Status = this.selectedDeal.status ?? body.Status;
-      body.OperationType =
-        this.selectedDeal.OperationType ?? body.OperationType ?? 2;
-      body.CallDuration =
-        this.selectedDeal.CallDuration ?? body.CallDuration ?? "0";
-      body.Notes = this.selectedDeal.Notes ?? body.Notes ?? "";
+    if (!original) {
+      console.error("❌ لم يتم العثور على العملية الأصلية!");
+      return;
     }
 
-    // ✅ تعديل نوع التواصل ومدة المكالمة حسب اختيار المستخدم
-    if (this.selectedContactMethod === "call") {
-      body.OperationType = 1;
-      body.CallDuration = this.callDuration?.toString() || "0";
-    } else if (this.selectedContactMethod === "whatsapp") {
-      body.OperationType = 2;
-      body.CallDuration = "0";
-    } else if (this.selectedContactMethod === "visit") {
-      body.OperationType = 3;
-      body.CallDuration = "0";
-    }
+    // ✅ نعمل نسخة جديدة منها عشان نعدل فيها بأمان
+    const body = JSON.parse(JSON.stringify(original));
 
-    // ✅ تحديث الملاحظات إذا تم تعديلها
-    if (this.message) {
-      body.Notes = this.message;
-    }
+    // 🧩 ندمج التعديلات الجديدة فقط
+    body.Status = this.selectedDeal.status ?? body.Status;
+    body.DealStatus = this.selectedDeal.DealStatus ?? body.DealStatus;
+    body.Notes = this.message || this.selectedDeal.notes || body.Notes;
+    body.CommunicationType =
+      this.selectedContactMethod === "call"
+        ? 1
+        : this.selectedContactMethod === "whatsapp"
+        ? 2
+        : this.selectedContactMethod === "visit"
+        ? 3
+        : body.CommunicationType;
+    body.CallDuration =
+      this.selectedContactMethod === "call"
+        ? this.callDuration?.toString() || "0"
+        : "0";
 
-    // ✅ تاريخ التعديل
     body.EditedAt = new Date().toISOString();
 
-    console.log("📦 Body النهائي المرسل للـ API:", body);
+    console.log("📦 Body النهائي قبل الإرسال:", body);
 
-    // ✅ إرسال الـ API
+    // ✅ حفظ العملية
     this.api.updateOperation(body).subscribe({
       next: () => {
         this.messageService.add({
