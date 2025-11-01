@@ -15,7 +15,7 @@ import { RegisterDeal } from "../register-deal/register-deal";
 import { Apiservice, Country } from "../../services/apiservice";
 
 @Component({
-  selector: "app-waiting-list",
+  selector: "app-archive",
   standalone: true,
   imports: [
     TableModule,
@@ -29,12 +29,13 @@ import { Apiservice, Country } from "../../services/apiservice";
     MatInputModule,
     RegisterDeal,
   ],
-  templateUrl: "./waiting-list.html",
-  styleUrls: ["./waiting-list.scss"],
+  templateUrl: "./archive.html",
+  styleUrl: "./archive.scss",
   providers: [ConfirmationService],
 })
-export class WaitingList implements OnInit {
-  selectAll = false;
+export class Archive implements OnInit {
+
+ selectAll = false;
   showRegisterForm = false;
   isEditMode = false;
   displayModal = false; // تحكم في إظهار المودال
@@ -77,7 +78,7 @@ export class WaitingList implements OnInit {
   }
 
   getAllOperarions() {
-    this.api.getOperationWithStatus(1).subscribe({
+    this.api.getOperationWithStatus(3).subscribe({
       next: (res: any) => {
         console.log("Response:", res);
 
@@ -372,16 +373,17 @@ export class WaitingList implements OnInit {
   }
 
   saveNewOperation() {
-    // if (!this.operationData) {
-    //   console.error("❌ لا توجد بيانات في operationData:", this.operationData);
-    //   this.messageService.add({
-    //     severity: "warn",
-    //     summary: "تنبيه",
-    //     detail: "⚠️ لا توجد بيانات عملية للحفظ",
-    //     life: 3000,
-    //   });
-    //   return;
-    // }
+    // ✅ تحقق من وجود بيانات أصلية
+    if (!this.operationData) {
+      console.error("❌ لا توجد بيانات في operationData:", this.operationData);
+      this.messageService.add({
+        severity: "warn",
+        summary: "تنبيه",
+        detail: "⚠️ لا توجد بيانات عملية للحفظ",
+        life: 3000,
+      });
+      return;
+    }
 
     // ✅ نسخة آمنة من البيانات الأصلية
     const body: any = { ...this.operationData };

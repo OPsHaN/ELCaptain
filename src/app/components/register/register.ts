@@ -69,6 +69,7 @@ export class Register implements OnInit {
     { name: "عضو مجلس إدارة", code: 1 },
     { name: "مدير فرع", code: 2 },
     { name: "موظف", code: 3 },
+    { name: "ماركتينج", code: 4 },
   ];
   fromTime: Date | null = null;
   toTime: Date | null = null;

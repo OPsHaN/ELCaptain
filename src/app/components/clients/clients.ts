@@ -8,24 +8,22 @@ import { Apiservice } from "../../services/apiservice";
 import { ClientRegister } from "../client-register/client-register";
 
 @Component({
-  selector: 'app-clients',
+  selector: "app-clients",
   standalone: true,
   imports: [CommonModule, DialogModule, ConfirmDialogModule, ClientRegister],
-  templateUrl: './clients.html',
-  styleUrls: ['./clients.scss'],
+  templateUrl: "./clients.html",
+  styleUrls: ["./clients.scss"],
   providers: [ConfirmationService],
-
 })
 export class Clients implements OnInit {
-
   clients: any[] = [];
   selectedClient: any = null;
   showRegisterForm = false;
   showClientDialog = false;
   isEditMode = false;
-  defaultAvatar = 'assets/images/user-placeholder.png';
+  defaultAvatar = "assets/images/user-placeholder.png";
   selectedEmployee: any | null = null;
-
+  countries: any[] = [];
   constructor(
     private api: Apiservice,
     private confirmationService: ConfirmationService,
@@ -35,6 +33,7 @@ export class Clients implements OnInit {
 
   ngOnInit() {
     this.getAllClients();
+    this.loadCountries();
   }
 
   getAllClients() {
@@ -58,7 +57,7 @@ export class Clients implements OnInit {
     this.showRegisterForm = true;
   }
 
- deleteClient(client: any) {
+  deleteClient(client: any) {
     this.confirmationService.confirm({
       message: `هل أنت متأكد أنك تريد حذف العميل <strong>${client.ClientName}</strong>؟`,
       header: "تأكيد الحذف",
@@ -83,8 +82,6 @@ export class Clients implements OnInit {
     });
   }
 
- 
-
   viewClient(client: any) {
     this.selectedClient = client;
     this.showClientDialog = true;
@@ -97,18 +94,34 @@ export class Clients implements OnInit {
   getPaymentMethod(method: number): string {
     switch (method) {
       case 1:
-        return 'كاش';
+        return "كاش";
       case 2:
-        return 'تقسيط';
+        return "تقسيط";
       default:
-        return 'غير محدد';
+        return "غير محدد";
     }
   }
 
-  
+  loadCountries(): void {
+    this.api.getAllCountry().subscribe({
+      next: (res: any) => {
+        this.countries = res;
+        this.cdr.detectChanges();
+        console.log(this.countries);
+      },
+      error: (err) => {
+        console.error("خطأ أثناء جلب الدول:", err);
+      },
+    });
+  }
 
+  getCountryName(countryId: number): string {
+    const country = this.countries.find((c) => c.id === countryId);
+    console.log(country);
+    return country ? country.name : "غير محددة";
+  }
 
-    showError(msg: string) {
+  showError(msg: string) {
     this.messageService.add({
       severity: "error",
       // summary: "خطأ",

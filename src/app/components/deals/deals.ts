@@ -7,6 +7,7 @@ import { CommonModule } from "@angular/common";
 import {
   CdkDragDrop,
   DragDropModule,
+  moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import { Apiservice } from "../../services/apiservice";
@@ -33,13 +34,10 @@ export class Deals implements OnInit {
   selectedDeals: any | null = null;
   showRegisterForm = false;
   showDealDialog = false;
-  dealColumns = [
-    { title: "Backlog", status: "backlog", deals: [] },
-    { title: "To Do", status: "todo", deals: [] },
-    { title: "In Progress", status: "inProgress", deals: [] },
-    { title: "In Review", status: "inReview", deals: [] },
-    { title: "Done", status: "done", deals: [] },
-  ];
+  openDeals: any[] = [];
+  closedDeals: any[] = [];
+  rejectedDeals: any[] = [];
+  pendingDeals: any[] = [];
 
   constructor(
     private api: Apiservice,
@@ -50,29 +48,76 @@ export class Deals implements OnInit {
 
   ngOnInit() {
     // Initialization logic can be added here
-
-    
+    this.getAllDeals();
   }
 
   getAllDeals() {
-    // this.api.getAllDeals().subscribe({
-    //   next: (res: any) => (this.deals = res),
-    //   error: (err) => console.error(err),
-    // });
+    this.api.getOperationWithStatus(2).subscribe((res: any) => {
+      this.deals = res;
+      console.log(res)
+
+      // تصنيف الصفقات حسب الحالة
+      this.openDeals = this.deals.filter(d => d.DealStatus === 1);
+      this.rejectedDeals = this.deals.filter(d => d.DealStatus === 3);
+      this.closedDeals = this.deals.filter(d => d.DealStatus === 2);
+      this.pendingDeals = this.deals.filter(d => d.DealStatus === 4);
+
+      this.cdr.detectChanges();
+    });
   }
 
-  onDrop(event: CdkDragDrop<any[]>, newStatus: string) {
-    if (event.previousContainer === event.container) return;
+  
+
+onDrop(event: CdkDragDrop<any[]>, newStatus: number) {
+  if (event.previousContainer === event.container) {
+    // نفس العمود ⇒ ترتيب فقط
+    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
+  } else {
+    // نقل من عمود لعمود آخر
     transferArrayItem(
       event.previousContainer.data,
       event.container.data,
       event.previousIndex,
       event.currentIndex
     );
-    // هنا ممكن تعمل API call لتحديث حالة الصفقة
+
+    // الصفقة المنقولة
     const movedDeal = event.container.data[event.currentIndex];
-    console.log(`🔄 نقل الصفقة ${movedDeal.DealName} إلى ${newStatus}`);
+
+    // ✅ تحديث الحالة الجديدة
+    movedDeal.DealStatus = newStatus;
+
+    // ✅ إرسالها كاملة إلى الـ API
+    this.api.updateOperation(movedDeal).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: "success",
+          summary: "تم التحديث",
+          detail: `تم نقل الصفقة رقم ${movedDeal.Id} بنجاح ✅`,
+        });
+      },
+      error: (err) => {
+        console.error("❌ خطأ أثناء تحديث الصفقة:", err);
+        this.messageService.add({
+          severity: "error",
+          summary: "خطأ",
+          detail: "تعذر تحديث حالة الصفقة ❌",
+        });
+
+        // ⛔ في حالة الخطأ: نرجع الصفقة إلى العمود الأصلي
+        transferArrayItem(
+          event.container.data,
+          event.previousContainer.data,
+          event.currentIndex,
+          event.previousIndex
+        );
+      },
+    });
   }
+
+  this.cdr.detectChanges();
+}
+
 
   toggleRegisterForm() {
     this.showRegisterForm = !this.showRegisterForm;
@@ -83,10 +128,11 @@ export class Deals implements OnInit {
   }
 
   /** ✅ عرض تفاصيل صفقة */
-  viewDeal(deal: any): void {
-    this.selectedDeal = deal;
-    this.showDealDialog = true;
-  }
+viewDeal(deal: any): void {
+  this.selectedDeal = { ...deal };
+  this.showDealDialog = true;
+  this.cdr.detectChanges();
+}
 
   /** ✅ تعديل صفقة */
   editDeal(deal: any): void {
@@ -131,16 +177,32 @@ export class Deals implements OnInit {
   }
 
   /** ✅ طريقة الدفع */
-  getPaymentMethod(method: string): string {
+  getPaymentMethod(method: number): string {
     switch (method) {
-      case "cash":
+      case 1:
         return "نقدي";
-      case "installment":
-        return "تقسيط";
-      case "transfer":
+      case 2:
+        return "كاش";
+      case 3:
         return "تحويل بنكي";
       default:
         return "غير محدد";
     }
   }
+
+  getStatusName(status: number): string {
+  switch (status) {
+    case 1:
+      return 'مفتوحة';
+    case 2:
+      return 'معلقة';
+    case 3:
+      return 'مغلقة';
+    case 4:
+      return 'مرفوضة';
+    default:
+      return 'غير معروفة';
+  }
+}
+
 }

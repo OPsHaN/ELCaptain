@@ -56,6 +56,7 @@ export class Login implements OnInit {
     { label: "الرسائل", route: "/messages", icon: "bi bi-envelope" },
     { label: "الإضافات", route: "/adds", icon: "bi bi-bookmark-plus" },
     { label: "قائمة الإنتظار", route: "/waiting", icon: "bi bi-clock-history" },
+    { label: "الأرشيف", route: "/archive", icon: "bi bi-archive-fill" },
 
     {
       label: "خروج",

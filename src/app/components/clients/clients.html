@@ -44,7 +44,7 @@
 
       <div class="card-body">
         <h3 class="client-name">{{ c.ClientName }}</h3>
-        <p class="client-phone"> {{ c.PhoneNumber }} 📞</p>
+        <p class="client-phone">{{ c.PhoneNumber }} 📞</p>
         <p class="client-classification">🏷 {{ c.Classification }}</p>
 
         <div class="card-actions my-0">
@@ -72,25 +72,47 @@
   [(visible)]="showClientDialog"
   [modal]="true"
   [closable]="true"
-  [style]="{ width: '400px' }"
+  [style]="{ width: '450px' }"
   [baseZIndex]="10000"
   dir="rtl"
 >
   <ng-container *ngIf="selectedClient">
-    <div class="text-center p-1">
-      <!-- <img
-        [src]="selectedClient.avatar || defaultAvatar"
-        alt="Avatar"
-        class="avatar-image rounded-pill mb-3 mx-auto d-block"
-      /> -->
-      <h4>{{ selectedClient.ClientName }}</h4>
-      <p>🏷 {{ selectedClient.Classification }}</p>
-      <hr />
-      <p><strong>📞 الهاتف:</strong> {{ selectedClient.PhoneNumber }}</p>
-      <p><strong>💰 الميزانية:</strong> {{ selectedClient.Budget }}</p>
-      <p><strong>💳 طريقة الدفع:</strong> {{ getPaymentMethod(selectedClient.PaymentMethod) }}</p>
-      <p><strong>📍 الدولة:</strong> {{ selectedClient.InterstedInCountryName }}</p>
-      <p><strong>📝 الملاحظات:</strong> {{ selectedClient.Message }}</p>
+    <div class="p-2">
+      <h4 class="text-center mb-3">{{ selectedClient.ClientName }}</h4>
+      <p class="text-center text-muted mb-3">
+        🏷 {{ selectedClient.Classification }}
+      </p>
+
+      <table
+        class="table table-bordered table-striped text-center align-middle"
+      >
+        <tbody>
+          <tr>
+            <th style="width: 40%">📞 الهاتف</th>
+            <td>{{ selectedClient.PhoneNumber }}</td>
+          </tr>
+          <tr>
+            <th>💰 الميزانية</th>
+            <td>{{ selectedClient.Budget }}</td>
+          </tr>
+          <tr>
+            <th>💳 طريقة الدفع</th>
+            <td>{{ getPaymentMethod(selectedClient.PaymentMethod) }}</td>
+          </tr>
+          <tr>
+            <th>📍 الدولة</th>
+            <td>
+              <p>
+                {{ getCountryName(selectedClient.InterstedInCountryId) }}
+              </p>
+            </td>
+          </tr>
+          <tr>
+            <th>📝 الملاحظات</th>
+            <td>{{ selectedClient.Message || "لا توجد ملاحظات" }}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </ng-container>
 </p-dialog>

@@ -81,52 +81,91 @@
   [(visible)]="showEmployeeDialog"
   [modal]="true"
   [closable]="true"
-  [style]="{ width: '400px' }"
+  [style]="{ width: '500px' }"
   [baseZIndex]="10000"
   dir="rtl"
 >
   <ng-container *ngIf="selectedEmployee">
-    <div class="text-center p-1">
+    <div class="p-3 text-center">
       <img
-        [src]="selectedEmployee.avatar"
+        [src]="selectedEmployee.avatar || 'assets/img/default-user.png'"
         alt="Avatar"
-       class="avatar-image rounded-pill mb-3 mx-auto d-block"
-  
+        class="rounded-circle mb-3 shadow-sm"
+        width="100"
+        height="100"
       />
-      <h4>{{ selectedEmployee.displayName }}</h4>
-      <p>{{ selectedEmployee.roleText }}</p>
-      <hr />
-      <p><strong>📞 الهاتف:</strong> {{ selectedEmployee.Phone }}</p>
-      <p><strong>📧 البريد:</strong> {{ selectedEmployee.Email }}</p>
-      <p>
-        <strong>🕒 من:</strong> {{ selectedEmployee.ShiftFrom }}
-        -
-        <strong>إلى:</strong> {{ selectedEmployee.ShiftTo }}
-      </p>
-      <p><strong>📡 الحالة:</strong> {{ selectedEmployee.loggedIn }}</p>
-      <p><strong>🏢 الفرع:</strong> {{ selectedEmployee.Branch?.BranchName }}</p>
+      <h4 class="fw-bold text-primary mb-1">
+        {{ selectedEmployee.displayName }}
+      </h4>
+      <p class="text-muted mb-3">{{ selectedEmployee.roleText }}</p>
+
+      <table class="table table-bordered align-middle text-center shadow-sm">
+        <tbody>
+          <tr>
+            <th class="bg-light" style="width: 40%">📞 الهاتف</th>
+            <td class="fw-semibold">{{ selectedEmployee.Phone }}</td>
+          </tr>
+          <tr>
+            <th class="bg-light">📧 البريد الإلكتروني</th>
+            <td>{{ selectedEmployee.Email }}</td>
+          </tr>
+          <tr>
+            <th class="bg-light">🕒 أوقات العمل</th>
+            <td>
+              من <strong>{{ selectedEmployee.ShiftFrom }}</strong> إلى
+              <strong>{{ selectedEmployee.ShiftTo }}</strong>
+            </td>
+          </tr>
+          <tr>
+            <th class="bg-light">📡 الحالة</th>
+            <td>
+              <span
+                [ngClass]="{
+                  'text-success fw-bold': selectedEmployee.loggedIn,
+                  'text-danger fw-bold': !selectedEmployee.loggedIn
+                }"
+              >
+                {{ selectedEmployee.loggedIn ? 'متصل الآن ✅' : 'غير متصل ❌' }}
+              </span>
+            </td>
+          </tr>
+          <tr>
+            <th class="bg-light">🏢 الفرع</th>
+            <td>{{ selectedEmployee.Branch?.BranchName }}</td>
+          </tr>
+        </tbody>
+      </table>
 
       <hr />
-      <p><strong>📅 أيام العمل:</strong></p>
-<ul class="list-unstyled m-0 week-days-list">
-  <li
-    *ngFor="let day of daysOfWeek"
-    [class.active-day]="selectedEmployee[day.key]"
-    [class.inactive-day]="!selectedEmployee[day.key]"
-  >
-    <i
-      class="pi me-1"
-      [ngClass]="
-        selectedEmployee[day.key] ? 'pi-check-circle' : 'pi-times-circle'
-      "
-    ></i>
-    {{ day.label }}
-  </li>
-</ul>
 
+      <h6 class="fw-bold text-center mb-2">📅 أيام العمل:</h6>
+      <ul
+        class="list-unstyled d-flex flex-wrap justify-content-center gap-2 m-0"
+      >
+        <li
+          *ngFor="let day of daysOfWeek"
+          class="px-2 py-1 rounded-3 border small"
+          [ngClass]="
+            selectedEmployee[day.key]
+              ? 'bg-success text-white border-success'
+              : 'bg-light text-muted border-secondary'
+          "
+        >
+          <i
+            class="pi me-1"
+            [ngClass]="
+              selectedEmployee[day.key]
+                ? 'pi-check-circle'
+                : 'pi-times-circle'
+            "
+          ></i>
+          {{ day.label }}
+        </li>
+      </ul>
     </div>
   </ng-container>
 </p-dialog>
+
 
 
 

@@ -1,17 +1,3 @@
-<!-- ✅ شريط الأزرار -->
-<div
-  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
->
-  <div class="position-relative">
-    <button class="btn btn-outline-primary" (click)="toggleRegisterForm()">
-      ➕ تسجيل صفقة جديدة
-    </button>
-    <div class="arrow-wrapper" *ngIf="showRegisterForm">
-      <i class="bi bi-caret-down-fill arrow-icon"></i>
-    </div>
-  </div>
-</div>
-
 <!-- ✅ فورم تسجيل العميل -->
 <div class="table-container mt-0" *ngIf="showRegisterForm" dir="rtl">
   <app-register-deal

@@ -1,1 +1,135 @@
-<p>register-deal works!</p>
+<div class="container py-1">
+  <div class="row justify-content-center">
+    <div class="col-12 col-lg-12 col-md-12 col-sm-12">
+      <div class="card p-3 border-0 rounded-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="justify-content-end">
+            <h3 class="text-center mb-2 fw-bold text-dark">
+              {{ isEditMode ? "✏️ تعديل صفقة حالية" : "📝 تسجيل صفقة جديدة" }}
+            </h3>
+          </div>
+          <div class="justify-content-start">
+            <span
+              class="position-realtive top-0 end-0 bg-danger text-white rounded-circle px-2 py-1"
+              style="cursor: pointer"
+              (click)="closeForm.emit()"
+            >
+              ✖
+            </span>
+          </div>
+        </div>
+
+        <form [formGroup]="dealForm" (ngSubmit)="submit()" novalidate dir="rtl">
+          <div class="row g-3 text-end">
+            <!-- Client (with search) -->
+            <div class="col-md-4">
+              <label class="form-label">العميل</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select
+                  formControlName="ClientId"
+                  (selectionChange)="onClientChange($event.value)"
+                  placeholder="اختر العميل"
+                >
+                  <!-- مربع البحث -->
+                  <input
+                    type="text"
+                    placeholder="ابحث..."
+                    (keyup)="filterClients($event)"
+                    class="form-control px-2"
+                  />
+
+                  <!-- قائمة العملاء -->
+                  <mat-option *ngFor="let c of filteredClients" [value]="c.Id">
+                    {{ c.ClientName }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Phone number -->
+            <div class="col-md-4">
+              <label class="form-label">رقم التواصل</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="PhoneNumber"
+                readonly
+              />
+            </div>
+
+            <!-- Sales (responsible) -->
+            <div class="col-md-4">
+              <label class="form-label d-block mb-1">الموظف المسؤول</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select
+                  formControlName="SalesId"
+                  placeholder="اختر الموظف"
+                  [disabled]="isSalesAutoAssigned"
+                >
+                  <mat-option *ngFor="let s of salesList" [value]="s.value">
+                    {{ s.label }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Communication Type -->
+            <div class="col-md-4">
+              <label class="form-label d-block mb-1">طريقة التواصل</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select
+                  formControlName="CommunicationType"
+                  placeholder="اختر نوع التواصل"
+                >
+                  <mat-option [value]="1">مكالمة</mat-option>
+                  <mat-option [value]="2">واتساب</mat-option>
+                  <mat-option [value]="3">آخرى</mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+            <!-- Call Duration - يظهر لو اخترت مكالمة -->
+            <div
+              class="col-md-4"
+              *ngIf="dealForm.get('CommunicationType')?.value === 1"
+            >
+              <label class="form-label">مدة المكالمة</label>
+              <input
+                type="text"
+                class="form-control"
+                formControlName="CallDuration"
+              />
+            </div>
+
+            <!-- Notes -->
+            <div class="col-4">
+              <label class="form-label">الملاحظات</label>
+              <textarea
+                class="form-control"
+                rows="3"
+                formControlName="Notes"
+              ></textarea>
+            </div>
+
+            <!-- submit -->
+            <div class="col-12 text-center mt-3">
+              <button
+                class="btn btn-warning btn-lg py-0"
+                [disabled]="isSubmitting"
+              >
+                <span *ngIf="!isSubmitting">حفظ الصفقة</span>
+                <span *ngIf="isSubmitting">
+                  <i
+                    class="pi pi-spin pi-spinner"
+                    style="margin-inline-end: 6px"
+                  ></i>
+                  جارٍ الحفظ...
+                </span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
