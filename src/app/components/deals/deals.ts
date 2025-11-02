@@ -13,6 +13,8 @@ import {
 import { Apiservice } from "../../services/apiservice";
 import { FormsModule } from "@angular/forms";
 import { NotesOnlyPipe } from "../../shared/pipe/notes-only-pipe";
+import { MatTabsModule } from "@angular/material/tabs";
+
 @Component({
   selector: "app-deals",
   standalone: true,
@@ -23,8 +25,9 @@ import { NotesOnlyPipe } from "../../shared/pipe/notes-only-pipe";
     RegisterDeal,
     DragDropModule,
     FormsModule,
-    NotesOnlyPipe
-],
+    NotesOnlyPipe,
+    MatTabsModule,
+  ],
 
   templateUrl: "./deals.html",
   styleUrls: ["./deals.scss"],
@@ -43,8 +46,6 @@ export class Deals implements OnInit {
   closedDeals: any[] = [];
   rejectedDeals: any[] = [];
   pendingDeals: any[] = [];
-  activityLogs: any[] = [];
-  notesLogs: any[] = [];
   showNoteDialog = false;
   noteText = "";
 
@@ -90,16 +91,19 @@ export class Deals implements OnInit {
       IsNotes: true,
     };
 
-
     // 🟢 إرسال إلى الـ API
     this.api.addCommands(body).subscribe({
-    next: (res) => {
+      next: (res) => {
         this.messageService.add({
-          severity: 'success',
-          summary: 'تمت الإضافة ✅',
-          detail: 'تمت إضافة الملاحظة بنجاح',
+          severity: "success",
+          summary: "تمت الإضافة ✅",
+          detail: "تمت إضافة الملاحظة بنجاح",
         });
+
         this.showNoteDialog = false;
+        this.noteText = "";
+        this.cdr.detectChanges();
+        this.getAllDeals();
 
         // لو عندك list للملاحظات:
         // this.notesLogs.push(body);
@@ -107,9 +111,9 @@ export class Deals implements OnInit {
       error: (err) => {
         console.error(err);
         this.messageService.add({
-          severity: 'error',
-          summary: 'خطأ ❌',
-          detail: 'حدث خطأ أثناء إضافة الملاحظة',
+          severity: "error",
+          summary: "خطأ ❌",
+          detail: "حدث خطأ أثناء إضافة الملاحظة",
         });
       },
     });
@@ -146,6 +150,8 @@ export class Deals implements OnInit {
             summary: "تم التحديث",
             detail: `تم نقل الصفقة رقم ${movedDeal.Id} بنجاح ✅`,
           });
+
+          this.getAllDeals();
         },
         error: (err) => {
           console.error("❌ خطأ أثناء تحديث الصفقة:", err);

@@ -1,6 +1,6 @@
 <!-- ✅ شريط الأزرار -->
 <div
-  class="toolbar d-flex flex-wrap justify-content-end gap-3 position-relative mt-2"
+  class="toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 position-relative mt-2" dir="rtl"
 >
   <div class="position-relative">
     <button class="btn btn-outline-primary" (click)="toggleRegisterForm()">
@@ -9,6 +9,20 @@
     <div class="arrow-wrapper" *ngIf="showRegisterForm">
       <i class="bi bi-caret-down-fill arrow-icon"></i>
     </div>
+  </div>
+
+    <div class="search-box position-relative" *ngIf="!showRegisterForm">
+    <input
+      type="text"
+      class="form-control ps-5"
+      placeholder="🔍 ابحث عن عميل..."
+      [(ngModel)]="searchQuery"
+      (input)="onSearchChange()"
+      style="min-width: 250px;"
+    />
+    <i
+      class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
+    ></i>
   </div>
 </div>
 
@@ -28,7 +42,7 @@
   <div class="cards-grid" dir="rtl">
     <div
       class="card client-card"
-      *ngFor="let c of clients; trackBy: trackById"
+      *ngFor="let c of filteredClients; trackBy: trackById"
       (click)="viewClient(c)"
       role="button"
       aria-label="Open client {{ c.ClientName }}"

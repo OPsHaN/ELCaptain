@@ -245,6 +245,29 @@ export class Apiservice {
     return this.http.get(`${this.baseUrl}Operation/GetAll`)
   }
 
+  getOperationWithStatus(id:number){
+    return this.http.get(`${this.baseUrl}Operation/GetAllWithStatus?OperationstatusId=${id}`)
+  }
+
+  addCommands(body:any){
+    return this.http.post(`${this.baseUrl}Operation/AddCommand` , body)
+
+  }
+
+  //notification
+
+  addReminder(body:any){
+    return this.http.post(`${this.baseUrl}SystemNotification/Add` , body)
+  }
+
+  getNotification(){
+    return this.http.get(`${this.baseUrl}SystemNotification/GetNotifications`)
+  }
+
+  // updateNotification(){
+  //   return this.http.post(`${this.baseUrl}SystemNotification/UpdateSeen`)
+  // }
+
   //uploadImage
 
   uploadImage(file: File) {

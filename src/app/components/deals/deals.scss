@@ -64,3 +64,15 @@
     box-shadow: 0px 0px 10px orange;
   }
 }
+
+::ng-deep .mat-mdc-tab-labels {
+  justify-content: center;
+}
+
+::ng-deep .mat-mdc-tab {
+  font-weight: bold;
+}
+
+::ng-deep .mat-mdc-tab-group {
+  --mdc-tab-indicator-active-indicator-color: #007bff;
+}

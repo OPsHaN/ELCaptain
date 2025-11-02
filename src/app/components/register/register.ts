@@ -59,10 +59,10 @@ export class Register implements OnInit {
   @Output() refreshEmployees = new EventEmitter<void>();
 
   classification = [
-    { name: "A+", code: "A+" },
-    { name: "A", code: "A" },
-    { name: "B+", code: "B+" },
     { name: "B", code: "B" },
+    { name: "B+", code: "B+" },
+    { name: "A", code: "A" },
+    { name: "A+", code: "A+" },
   ];
 
   ranks = [

@@ -2,14 +2,6 @@ import {
   zindexutils
 } from "./chunk-KYRF7XTP.js";
 import {
-  animate,
-  animation,
-  style,
-  transition,
-  trigger,
-  useAnimation
-} from "./chunk-B3BBCXQO.js";
-import {
   Button,
   DomHandler,
   blockBodyScroll,
@@ -44,6 +36,14 @@ import {
   v,
   vt
 } from "./chunk-C5MNLU6Y.js";
+import {
+  animate,
+  animation,
+  style,
+  transition,
+  trigger,
+  useAnimation
+} from "./chunk-B3BBCXQO.js";
 import {
   CommonModule,
   NgClass,
@@ -2036,4 +2036,4 @@ export {
   Dialog,
   DialogModule
 };
-//# sourceMappingURL=chunk-TWCMU3JD.js.map
+//# sourceMappingURL=chunk-4VYF6HU4.js.map

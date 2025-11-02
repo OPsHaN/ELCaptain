@@ -6,11 +6,18 @@ import { DialogModule } from "primeng/dialog";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Apiservice } from "../../services/apiservice";
 import { ClientRegister } from "../client-register/client-register";
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-clients",
   standalone: true,
-  imports: [CommonModule, DialogModule, ConfirmDialogModule, ClientRegister],
+  imports: [
+    CommonModule,
+    DialogModule,
+    ConfirmDialogModule,
+    ClientRegister,
+    FormsModule,
+  ],
   templateUrl: "./clients.html",
   styleUrls: ["./clients.scss"],
   providers: [ConfirmationService],
@@ -24,6 +31,8 @@ export class Clients implements OnInit {
   defaultAvatar = "assets/images/user-placeholder.png";
   selectedEmployee: any | null = null;
   countries: any[] = [];
+  searchQuery: string = "";
+  filteredClients: any[] = [];
   constructor(
     private api: Apiservice,
     private confirmationService: ConfirmationService,
@@ -34,12 +43,20 @@ export class Clients implements OnInit {
   ngOnInit() {
     this.getAllClients();
     this.loadCountries();
+    
   }
 
-  getAllClients() {
+
+
+    getAllClients() {
     this.api.getAllClients().subscribe({
-      next: (res: any) => (this.clients = res),
-      error: (err) => console.error(err),
+      next: (res) => {
+         this.clients = res as any[];
+        this.filteredClients = [...this.clients]; // نسخة مبدئية
+
+        console.log("✅ Cars loaded:", this.filteredClients);
+        this.cdr.detectChanges();
+      },
     });
   }
 
@@ -50,6 +67,24 @@ export class Clients implements OnInit {
       this.isEditMode = false;
     }
   }
+
+onSearchChange() {
+  const search = this.searchQuery.toLowerCase().trim();
+
+  if (!search) {
+    this.filteredClients = [...this.clients]; // لو مفيش كتابة، رجّع كل العملاء
+    return;
+  }
+
+  this.filteredClients = this.clients.filter((client: any) => {
+    return (
+      client.ClientName?.toLowerCase().includes(search) ||
+      client.Phone?.toLowerCase().includes(search) ||
+      client.Email?.toLowerCase().includes(search)
+    );
+  });
+}
+
 
   editClient(client: any) {
     this.selectedClient = client;

@@ -6,6 +6,7 @@ import { finalize } from "rxjs";
 import { ConfirmationService, MessageService } from "primeng/api";
 import { DialogModule } from "primeng/dialog";
 import { ConfirmDialog } from "primeng/confirmdialog";
+import { FormsModule } from "@angular/forms";
 
 // interface Employee {
 //   id: number;
@@ -17,7 +18,8 @@ import { ConfirmDialog } from "primeng/confirmdialog";
 @Component({
   selector: "app-employees",
   standalone: true,
-  imports: [CommonModule, Register, DialogModule, ConfirmDialog],
+  imports: [CommonModule, Register, DialogModule, ConfirmDialog ,     FormsModule,
+],
   templateUrl: "./employees.html",
   styleUrl: "./employees.scss",
   providers: [ConfirmationService],
@@ -31,6 +33,8 @@ export class Employees implements OnInit {
   selectedEmployee: any | null = null;
   isEditMode = false; // ⬅️ لو true معناها بنعدل موظف
   showEmployeeDialog: boolean = false;
+  searchQuery: string = "";
+  filteredEmployees: any[] = [];
 
   daysOfWeek = [
     { key: "SatShift", label: "السبت" },
@@ -65,32 +69,55 @@ export class Employees implements OnInit {
   }
 
   /** ✅ تحميل الموظفين من الـ API */
-  loadEmployees() {
-    this.isLoading = true;
-    this.api
-      .getAllEmployee()
-      .pipe(finalize(() => (this.isLoading = false)))
-      .subscribe({
-        next: (res: any) => {
-          this.employees = (res || []).map((emp: any) => ({
-            ...emp, // ✅ خزن كل بيانات الموظف
-            displayName: emp.FullName,
-            roleText:
-              this.ranks.find((r) => r.code === emp.UserType)?.name ||
-              "غير معروف",
-            avatar:
-              emp.Img && emp.Img !== "string" ? emp.Img : this.defaultAvatar,
-            loggedIn: emp.IsLoggedIn === true ? "متصل" : "غير متصل",
-          }));
-          this.cdr.detectChanges();
-        },
-        error: (err) => {
-          console.error("Error loading employees", err);
-          this.showError("حدث خطأ أثناء تحميل الموظفين");
-        },
-      });
+loadEmployees() {
+  this.isLoading = true;
+
+  this.api
+    .getAllEmployee()
+    .pipe(finalize(() => (this.isLoading = false)))
+    .subscribe({
+      next: (res: any) => {
+        // ✅ تجهيز البيانات
+        this.employees = (res || []).map((emp: any) => ({
+          ...emp,
+          displayName: emp.FullName || `${emp.FirstName} ${emp.SecondName} ${emp.ThirdName}`,
+          roleText:
+            this.ranks.find((r) => r.code === emp.UserType)?.name || "غير معروف",
+          avatar: emp.Img && emp.Img !== "string" ? emp.Img : this.defaultAvatar,
+          loggedIn: emp.IsLoggedIn ? "متصل" : "غير متصل",
+        }));
+
+        // ✅ أول تحميل يعرض الكل
+        this.filteredEmployees = [...this.employees];
+
+
+        // لو في نص مكتوب في البحث، فلتر على طول (مفيدة عند الرجوع من صفحة تانية)
+        if (this.searchQuery?.trim()) {
+          this.onSearchChange();
+        }
+
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error("Error loading employees", err);
+        this.showError("حدث خطأ أثناء تحميل الموظفين");
+      },
+    });
+}
+
+onSearchChange() {
+  const search = this.searchQuery?.toLowerCase().trim();
+
+  if (!search) {
+    this.filteredEmployees = [...this.employees];
+    return;
   }
 
+  this.filteredEmployees = this.employees.filter((emp: any) =>
+    [emp.FullName, emp.FirstName, emp.SecondName, emp.ThirdName, emp.Phone, emp.Phone2, emp.Email, emp.NationalId]
+      .some((field) => field?.toString().toLowerCase().includes(search))
+  );
+}
   /** ✅ إظهار أو إخفاء فورم التسجيل */
   toggleTable(type: string) {
     this.activeTable = this.activeTable === type ? null : type;

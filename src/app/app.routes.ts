@@ -13,7 +13,9 @@ import { Register } from "./components/register/register";
 import { Adds } from "./components/adds/adds";
 import { SpinnerComponent } from "./shared/spinner/spinner.component";
 import { WaitingList } from "./components/waiting-list/waiting-list";
-
+import { Archive } from "./components/archive/archive";
+import {Notification } from "./components/notification/notification"
+import { ClientRegister } from "./components/client-register/client-register";
 export const routes: Routes = [
   // {
   //   path: "",
@@ -31,6 +33,10 @@ export const routes: Routes = [
   { path: "register", component: Register },
   { path: "adds", component: Adds },
   { path: "waiting", component: WaitingList },
+  { path: "archive", component: Archive },
+  { path: "notifications", component: Notification },
+  { path: 'client-register', component: ClientRegister }
+
 ];
 
 @NgModule({

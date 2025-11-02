@@ -1,8 +1,4 @@
 import {
-  NG_VALUE_ACCESSOR,
-  NgControl
-} from "./chunk-Z3XS653K.js";
-import {
   CheckIcon,
   MinusIcon
 } from "./chunk-OA5HVWZT.js";
@@ -19,6 +15,10 @@ import {
   k2 as k,
   s2 as s
 } from "./chunk-C5MNLU6Y.js";
+import {
+  NG_VALUE_ACCESSOR,
+  NgControl
+} from "./chunk-Z3XS653K.js";
 import {
   CommonModule,
   NgClass,
@@ -826,4 +826,4 @@ export {
   Checkbox,
   CheckboxModule
 };
-//# sourceMappingURL=chunk-FNPUXP2U.js.map
+//# sourceMappingURL=chunk-LV2AWJZE.js.map

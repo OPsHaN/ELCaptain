@@ -35,7 +35,7 @@ export interface UserResponse {
   Token: string;
   ExperiencedInElec: boolean,
   ExperiencedInHybrd: boolean,
-  ExperiencedInCountryId: number,
+  ExperiencedInCountryIds: string,
   Branch: {
     Id: number;
     BranchName: string | null;
