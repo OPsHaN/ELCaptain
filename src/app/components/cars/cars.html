@@ -14,7 +14,7 @@
   </div>
 
   <!-- القسم الأيسر: البحث + الـ Dropdowns -->
-  <div class="d-flex flex-wrap my-auto align-items-center gap-2">
+  <div class="d-flex flex-wrap my-auto align-items-center gap-2" *ngIf="!showRegisterForm">
     <mat-form-field appearance="outline" class="custom-outline">
       <mat-label>الدولة</mat-label>
       <mat-select
@@ -65,7 +65,7 @@
   </div>
 
   <!-- 🔍 مربع البحث -->
-  <mat-form-field appearance="outline" class="search-outline">
+  <mat-form-field appearance="outline" class="search-outline" *ngIf="!showRegisterForm">
     <mat-label>بحث</mat-label>
     <input
       matInput

@@ -47,7 +47,7 @@
             (cdkDropListDropped)="onDrop($event, 1)"
           >
             <div
-              class="mb-0 p-2 border rounded deal"
+              class="my-2 p-2 border rounded deal"
               *ngFor="let deal of openDeals; trackBy: trackById"
               cdkDrag
               (click)="viewDeal(deal)"
@@ -85,7 +85,7 @@
             (cdkDropListDropped)="onDrop($event, 3)"
           >
             <div
-              class="mb-0 p-2 border rounded deal"
+              class="my-2 p-2 border rounded deal"
               *ngFor="let deal of rejectedDeals; trackBy: trackById"
               cdkDrag
               (click)="viewDeal(deal)"
@@ -126,7 +126,7 @@
             (cdkDropListDropped)="onDrop($event, 2)"
           >
             <div
-              class="mb-0 p-2 border rounded deal"
+              class="my-2 p-2 border rounded deal"
               *ngFor="let deal of closedDeals; trackBy: trackById"
               cdkDrag
               (click)="viewDeal(deal)"
@@ -167,7 +167,7 @@
             (cdkDropListDropped)="onDrop($event, 4)"
           >
             <div
-              class="mb-0 p-2 border rounded deal"
+              class="my-2 p-2 border rounded deal"
               *ngFor="let deal of pendingDeals; trackBy: trackById"
               cdkDrag
               (click)="viewDeal(deal)"
@@ -206,15 +206,26 @@
   [(visible)]="showDealDialog"
   [modal]="true"
   [closable]="true"
-  [style]="{ width: '450px' }"
+  [style]="{ width: '80%' }"
   [baseZIndex]="10000"
   dir="rtl"
 >
   <ng-container *ngIf="selectedDeal">
-    <div class="p-3">
+    <div class="p-0">
       <h4 class="fw-bold text-primary text-center mb-3">
         عملية رقم {{ selectedDeal.Id }}
       </h4>
+
+      <!-- 🧾 سجل الأوامر -->
+      <div class="text-end my-2">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          (click)="openNoteDialog()"
+        >
+          <i class="bi bi-chat-dots me-1"></i>
+          إضافة ملاحظة
+        </button>
+      </div>
 
       <!-- ✅ تفاصيل العملية -->
       <div class="table-responsive">
@@ -244,7 +255,7 @@
             <tr>
               <th>💰 الميزانية</th>
               <td>
-                {{ selectedDeal?.Client?.Budget | number }}
+                {{ selectedDeal?.Client?.Budget | number }} جنيه
                 {{ selectedDeal?.Currency }}
               </td>
             </tr>
@@ -279,34 +290,106 @@
         </table>
       </div>
 
-      <!-- 🧾 سجل الأوامر -->
-      <h6 class="fw-bold mt-3 mb-2">🧾 سجل النشاطات</h6>
+      <div class="row mt-3">
+        <!-- 🧾 سجل النشاطات -->
+        <div class="col-md-6">
+          <h6 class="fw-bold mb-2">🧾 سجل النشاطات</h6>
+          <div class="table-responsive border rounded shadow-sm">
+            <table class="table table-striped table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>النص</th>
+                  <th>التاريخ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let cmd of selectedDeal?.Commands | notesOnly : false ; let i = index">
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ cmd.Text }}</td>
+                  <td>{{ cmd.AddedAt | date : "short" }}</td>
+                </tr>
+                <tr *ngIf="!selectedDeal?.Commands?.length">
+                  <td colspan="3" class="text-muted text-center">
+                    لا يوجد نشاطات بعد
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
-      <div class="table-responsive">
-        <table class="table table-striped table-sm align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>#</th>
-              <th>النص</th>
-              <th>التاريخ</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cmd of selectedDeal?.Commands; let i = index">
-              <td>{{ i + 1 }}</td>
-              <td>{{ cmd.Text }}</td>
-              <td>{{ cmd.AddedAt | date : "short" }}</td>
-            </tr>
-            <tr *ngIf="!selectedDeal?.Commands?.length">
-              <td colspan="3" class="text-muted text-center">
-                لا يوجد سجل بعد
-              </td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- 📝 سجل الملاحظات -->
+        <div class="col-md-6">
+          <h6 class="fw-bold mb-2">📝 سجل الملاحظات</h6>
+          <div class="table-responsive border rounded shadow-sm">
+            <table class="table table-striped table-sm align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>الملاحظة</th>
+                  <th>التاريخ</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr
+                  *ngFor="
+                    let note of selectedDeal?.Commands | notesOnly : true;
+                    let i = index
+                  "
+                >
+                  <td>{{ i + 1 }}</td>
+                  <td>{{ note.Text }}</td>
+                  <td>{{ note.AddedAt | date : "short" }}</td>
+                </tr>
+                <!-- <tr *ngIf="!selectedDeal?.Commands.lenght | notesOnly : true">
+                  <td colspan="3" class="text-muted text-center">
+                    لا توجد ملاحظات
+                  </td>
+                </tr> -->
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   </ng-container>
+</p-dialog>
+
+<!-- 🔹 مودال إضافة الملاحظة -->
+<p-dialog
+  header="إضافة ملاحظة"
+  [(visible)]="showNoteDialog"
+  [modal]="true"
+  [style]="{ width: '400px' }"
+  [closable]="true"
+  dir="rtl"
+>
+  <div class="p-fluid">
+    <div class="field">
+      <label for="noteText" class="fw-bold text-end">لملاحظة:</label>
+      <textarea
+        id="noteText"
+        rows="4"
+        [(ngModel)]="noteText"
+        class="form-control"
+        placeholder="اكتب الملاحظة هنا..."
+      ></textarea>
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button class="btn btn-secondary btn-sm" (click)="showNoteDialog = false">
+      إلغاء
+    </button>
+    <button
+      class="btn btn-primary btn-sm"
+      (click)="addCommand()"
+      [disabled]="!noteText.trim()"
+    >
+      حفظ
+    </button>
+  </ng-template>
 </p-dialog>
 
 <p-confirmDialog></p-confirmDialog>

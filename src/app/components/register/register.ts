@@ -142,7 +142,7 @@ export class Register implements OnInit {
       Img: [null],
       ExperiencedInElec: [false],
       ExperiencedInHybrd: [false],
-      ExperiencedInCountryId: [null, Validators.required],
+      ExperiencedInCountryIds: [[]],
       Days: this.fb.array(
         this.daysOfWeek.map(() => this.fb.control(false)),
         [this.minSelectedCheckboxes(1)]
@@ -185,7 +185,9 @@ export class Register implements OnInit {
       Img: emp.Img,
       ExperiencedInElec: emp.ExperiencedInElec,
       ExperiencedInHybrd: emp.ExperiencedInHybrd,
-      ExperiencedInCountryId: emp.ExperiencedInCountryId,
+      ExperiencedInCountryIds: emp.ExperiencedInCountryIds
+        ? emp.ExperiencedInCountryIds.split(",").map((x: string) => +x)
+        : [],
     });
 
     // ✅ تعبئة الأيام حسب الـ API
@@ -309,7 +311,7 @@ export class Register implements OnInit {
       FriShift: daysBooleans[6],
       ExperiencedInElec: formValue.ExperiencedInElec,
       ExperiencedInHybrd: formValue.ExperiencedInHybrd,
-      ExperiencedInCountryId: formValue.ExperiencedInCountryId,
+      ExperiencedInCountryIds: formValue.ExperiencedInCountryIds.join(","),
       IsLoggedIn: true,
       Img: this.profilePreview || "",
       Message: "",

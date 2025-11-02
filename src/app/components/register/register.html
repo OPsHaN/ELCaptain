@@ -260,9 +260,9 @@
 
             <!-- ✅ الدولة ذات الخبرة -->
             <div class="col-md-4">
-              <label class="form-label">خبرة الموظف فى</label>
+              <label class="form-label">خبرة الموظف في</label>
               <mat-form-field appearance="outline" class="w-100 custom-outline">
-                <mat-select formControlName="ExperiencedInCountryId">
+                <mat-select formControlName="ExperiencedInCountryIds" multiple>
                   <mat-option *ngFor="let c of countries" [value]="c.id">
                     <div class="d-flex align-items-center gap-2">
                       <img
@@ -281,8 +281,8 @@
               <small
                 class="text-danger"
                 *ngIf="
-                  registerForm.get('ExperiencedInCountryId')?.touched &&
-                  registerForm.get('ExperiencedInCountryId')?.invalid
+                  registerForm.get('ExperiencedInCountryIds')?.touched &&
+                  registerForm.get('ExperiencedInCountryIds')?.invalid
                 "
               >
                 مطلوب اختيار الدولة
@@ -298,7 +298,9 @@
                   class="form-check-input"
                   formControlName="ExperiencedInElec"
                 />
-                <label for="elec" class="form-check-label">خبرة فى الكهرباء</label>
+                <label for="elec" class="form-check-label"
+                  >خبرة فى الكهرباء</label
+                >
               </div>
             </div>
 
@@ -311,7 +313,9 @@
                   class="form-check-input"
                   formControlName="ExperiencedInHybrd"
                 />
-                <label for="hybrd" class="form-check-label">خبرة فى الهايبرد</label>
+                <label for="hybrd" class="form-check-label"
+                  >خبرة فى الهايبرد</label
+                >
               </div>
             </div>
 

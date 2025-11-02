@@ -38,10 +38,10 @@ export class ClientRegister implements OnInit {
   countries: any[] = [];
   salesList: any[] = [];
   classification = [
-    { name: "A+", code: "A+" },
-    { name: "A", code: "A" },
-    { name: "B+", code: "B+" },
     { name: "B", code: "B" },
+    { name: "B+", code: "B+" },
+    { name: "A", code: "A" },
+    { name: "A+", code: "A+" },
   ];
 
   constructor(
@@ -66,7 +66,7 @@ export class ClientRegister implements OnInit {
       PaymentMethod: [0],
       AddedBy: [0],
       Message: [""],
-      SalesId: [0, Validators.required],
+      // SalesId: [0, Validators.required],
     });
 
     this.loadEmployees();
@@ -90,7 +90,7 @@ export class ClientRegister implements OnInit {
       Budget: client.Budget,
       PaymentMethod: client.PaymentMethod,
       Message: client.Message,
-      SalesId: client.SalesId,
+      SalesId: 0,
     });
 
     this.clientId = client.Id;
@@ -164,13 +164,11 @@ export class ClientRegister implements OnInit {
           AddedAt: new Date().toISOString(),
           Message: this.clientForm.value.Message,
           EditedBy: 0,
-          SalesId: Number(this.clientForm.value.SalesId),
+          SalesId: 0,
           EditedAt: new Date().toISOString(),
         };
 
-
         console.log("🟡 Body before send:", body);
-
 
         // ✨ لو تعديل استدعاء update ولو إضافة استدعاء add
         if (this.isEditMode && this.clientId > 0) {

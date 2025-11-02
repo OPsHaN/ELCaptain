@@ -11,6 +11,8 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import { Apiservice } from "../../services/apiservice";
+import { FormsModule } from "@angular/forms";
+import { NotesOnlyPipe } from "../../shared/pipe/notes-only-pipe";
 @Component({
   selector: "app-deals",
   standalone: true,
@@ -20,7 +22,10 @@ import { Apiservice } from "../../services/apiservice";
     ConfirmDialogModule,
     RegisterDeal,
     DragDropModule,
-  ],
+    FormsModule,
+    NotesOnlyPipe
+],
+
   templateUrl: "./deals.html",
   styleUrls: ["./deals.scss"],
   providers: [ConfirmationService],
@@ -38,6 +43,10 @@ export class Deals implements OnInit {
   closedDeals: any[] = [];
   rejectedDeals: any[] = [];
   pendingDeals: any[] = [];
+  activityLogs: any[] = [];
+  notesLogs: any[] = [];
+  showNoteDialog = false;
+  noteText = "";
 
   constructor(
     private api: Apiservice,
@@ -54,70 +63,111 @@ export class Deals implements OnInit {
   getAllDeals() {
     this.api.getOperationWithStatus(2).subscribe((res: any) => {
       this.deals = res;
-      console.log(res)
+      console.log(res);
 
       // تصنيف الصفقات حسب الحالة
-      this.openDeals = this.deals.filter(d => d.DealStatus === 1);
-      this.rejectedDeals = this.deals.filter(d => d.DealStatus === 3);
-      this.closedDeals = this.deals.filter(d => d.DealStatus === 2);
-      this.pendingDeals = this.deals.filter(d => d.DealStatus === 4);
+      this.openDeals = this.deals.filter((d) => d.DealStatus === 1);
+      this.rejectedDeals = this.deals.filter((d) => d.DealStatus === 3);
+      this.closedDeals = this.deals.filter((d) => d.DealStatus === 2);
+      this.pendingDeals = this.deals.filter((d) => d.DealStatus === 4);
 
       this.cdr.detectChanges();
     });
   }
 
-  
+  openNoteDialog() {
+    this.noteText = "";
+    this.showNoteDialog = true;
+  }
 
-onDrop(event: CdkDragDrop<any[]>, newStatus: number) {
-  if (event.previousContainer === event.container) {
-    // نفس العمود ⇒ ترتيب فقط
-    moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
-  } else {
-    // نقل من عمود لعمود آخر
-    transferArrayItem(
-      event.previousContainer.data,
-      event.container.data,
-      event.previousIndex,
-      event.currentIndex
-    );
+  addCommand() {
+    if (!this.noteText.trim() || !this.selectedDeal) return;
 
-    // الصفقة المنقولة
-    const movedDeal = event.container.data[event.currentIndex];
+    const body = {
+      Id: 0,
+      Text: this.noteText.trim(),
+      OpertionId: this.selectedDeal.Id,
+      IsNotes: true,
+    };
 
-    // ✅ تحديث الحالة الجديدة
-    movedDeal.DealStatus = newStatus;
 
-    // ✅ إرسالها كاملة إلى الـ API
-    this.api.updateOperation(movedDeal).subscribe({
-      next: () => {
+    // 🟢 إرسال إلى الـ API
+    this.api.addCommands(body).subscribe({
+    next: (res) => {
         this.messageService.add({
-          severity: "success",
-          summary: "تم التحديث",
-          detail: `تم نقل الصفقة رقم ${movedDeal.Id} بنجاح ✅`,
+          severity: 'success',
+          summary: 'تمت الإضافة ✅',
+          detail: 'تمت إضافة الملاحظة بنجاح',
         });
+        this.showNoteDialog = false;
+
+        // لو عندك list للملاحظات:
+        // this.notesLogs.push(body);
       },
       error: (err) => {
-        console.error("❌ خطأ أثناء تحديث الصفقة:", err);
+        console.error(err);
         this.messageService.add({
-          severity: "error",
-          summary: "خطأ",
-          detail: "تعذر تحديث حالة الصفقة ❌",
+          severity: 'error',
+          summary: 'خطأ ❌',
+          detail: 'حدث خطأ أثناء إضافة الملاحظة',
         });
-
-        // ⛔ في حالة الخطأ: نرجع الصفقة إلى العمود الأصلي
-        transferArrayItem(
-          event.container.data,
-          event.previousContainer.data,
-          event.currentIndex,
-          event.previousIndex
-        );
       },
     });
   }
 
-  this.cdr.detectChanges();
-}
+  onDrop(event: CdkDragDrop<any[]>, newStatus: number) {
+    if (event.previousContainer === event.container) {
+      // نفس العمود ⇒ ترتيب فقط
+      moveItemInArray(
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
+    } else {
+      // نقل من عمود لعمود آخر
+      transferArrayItem(
+        event.previousContainer.data,
+        event.container.data,
+        event.previousIndex,
+        event.currentIndex
+      );
 
+      // الصفقة المنقولة
+      const movedDeal = event.container.data[event.currentIndex];
+
+      // ✅ تحديث الحالة الجديدة
+      movedDeal.DealStatus = newStatus;
+
+      // ✅ إرسالها كاملة إلى الـ API
+      this.api.updateOperation(movedDeal).subscribe({
+        next: () => {
+          this.messageService.add({
+            severity: "success",
+            summary: "تم التحديث",
+            detail: `تم نقل الصفقة رقم ${movedDeal.Id} بنجاح ✅`,
+          });
+        },
+        error: (err) => {
+          console.error("❌ خطأ أثناء تحديث الصفقة:", err);
+          this.messageService.add({
+            severity: "error",
+            summary: "خطأ",
+            detail: "تعذر تحديث حالة الصفقة ❌",
+          });
+
+          // ⛔ في حالة الخطأ: نرجع الصفقة إلى العمود الأصلي
+          transferArrayItem(
+            event.container.data,
+            event.previousContainer.data,
+            event.currentIndex,
+            event.previousIndex
+          );
+        },
+      });
+    }
+
+    this.cdr.detectChanges();
+  }
 
   toggleRegisterForm() {
     this.showRegisterForm = !this.showRegisterForm;
@@ -128,11 +178,11 @@ onDrop(event: CdkDragDrop<any[]>, newStatus: number) {
   }
 
   /** ✅ عرض تفاصيل صفقة */
-viewDeal(deal: any): void {
-  this.selectedDeal = { ...deal };
-  this.showDealDialog = true;
-  this.cdr.detectChanges();
-}
+  viewDeal(deal: any): void {
+    this.selectedDeal = { ...deal };
+    this.showDealDialog = true;
+    this.cdr.detectChanges();
+  }
 
   /** ✅ تعديل صفقة */
   editDeal(deal: any): void {
@@ -191,18 +241,17 @@ viewDeal(deal: any): void {
   }
 
   getStatusName(status: number): string {
-  switch (status) {
-    case 1:
-      return 'مفتوحة';
-    case 2:
-      return 'معلقة';
-    case 3:
-      return 'مغلقة';
-    case 4:
-      return 'مرفوضة';
-    default:
-      return 'غير معروفة';
+    switch (status) {
+      case 1:
+        return "مفتوحة";
+      case 2:
+        return "معلقة";
+      case 3:
+        return "مغلقة";
+      case 4:
+        return "مرفوضة";
+      default:
+        return "غير معروفة";
+    }
   }
-}
-
 }

@@ -58,11 +58,11 @@ export class Login implements OnInit {
     { label: "قائمة الإنتظار", route: "/waiting", icon: "bi bi-clock-history" },
     { label: "الأرشيف", route: "/archive", icon: "bi bi-archive-fill" },
 
-    {
-      label: "خروج",
-      action: () => this.logout(),
-      icon: "bi bi-box-arrow-right",
-    },
+    // {
+    //   label: "خروج",
+    //   action: () => this.logout(),
+    //   icon: "bi bi-box-arrow-right",
+    // },
   ];
   constructor(
     private fb: FormBuilder,
@@ -128,7 +128,7 @@ export class Login implements OnInit {
           localStorage.setItem("fullName", res.FullName || "");
           localStorage.setItem("img", res.Img || "");
           localStorage.setItem("userType", res.UserType.toString());
-
+          localStorage.setItem("userId" , res.Id.toString())
           // localStorage.setItem("rank", res.UserId?.toString() || "");
           this.userFullName = res.FullName || "";
           this.userImg = res.Img || "assets/images/user.png";
@@ -154,15 +154,6 @@ export class Login implements OnInit {
         },
       });
   }
-
-  // logout() {
-  //   this.isLoggedIn = false;
-  //   this.loginForm.reset();
-  //   this.router.navigate(["/login"]);
-  //   localStorage.removeItem("token");
-  //   this.showSuccess("تم تسجيل الخروج بنجاح");
-  //   this.activePage = "home";
-  // }
 
   logout() {
     this.authService.logout();

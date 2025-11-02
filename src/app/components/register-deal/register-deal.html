@@ -24,26 +24,52 @@
             <!-- Client (with search) -->
             <div class="col-md-4">
               <label class="form-label">العميل</label>
-              <mat-form-field appearance="outline" class="w-100 custom-outline">
-                <mat-select
-                  formControlName="ClientId"
-                  (selectionChange)="onClientChange($event.value)"
-                  placeholder="اختر العميل"
+              <div class="d-flex align-items-center gap-2">
+                <!-- 🟢 Dropdown -->
+                <mat-form-field
+                  appearance="outline"
+                  class="flex-grow-1 custom-outline"
                 >
-                  <!-- مربع البحث -->
-                  <input
-                    type="text"
-                    placeholder="ابحث..."
-                    (keyup)="filterClients($event)"
-                    class="form-control px-2"
-                  />
+                  <mat-select
+                    formControlName="ClientId"
+                    (selectionChange)="onClientChange($event.value)"
+                    placeholder="اختر العميل"
+                  >
+                    <!-- مربع البحث -->
+                    <input
+                      type="text"
+                      placeholder="ابحث..."
+                      (keyup)="filterClients($event)"
+                      class="form-control px-2"
+                    />
 
-                  <!-- قائمة العملاء -->
-                  <mat-option *ngFor="let c of filteredClients" [value]="c.Id">
-                    {{ c.ClientName }}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+                    <!-- قائمة العملاء -->
+                    <mat-option
+                      *ngFor="let c of filteredClients"
+                      [value]="c.Id"
+                    >
+                      {{ c.ClientName }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <!-- 🟢 زر إضافة عميل جديد -->
+                <button
+                  class="btn btn-primary px-3 py-2 rounded-3 shadow-sm"
+                  (click)="addNewClient()"
+                >
+                  <i class="bi bi-person-plus"></i>
+                </button>
+              </div>
+              <!-- <div class="text-center mt-4">
+                <button
+                  class="btn btn-primary px-4 py-2 rounded-3 shadow-sm"
+                  (click)="addNewClient()"
+                >
+                  <i class="bi bi-person-plus me-2"></i>
+                  إضافة عميل جديد
+                </button>
+              </div> -->
             </div>
 
             <!-- Phone number -->

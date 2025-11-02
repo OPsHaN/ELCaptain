@@ -21,6 +21,7 @@ import { CommonModule } from "@angular/common";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { MatInputModule } from "@angular/material/input";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-register-deal",
@@ -64,7 +65,8 @@ export class RegisterDeal {
     private fb: FormBuilder,
     private api: Apiservice,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    public router: Router
   ) {}
 
   ngOnInit(): void {
@@ -151,14 +153,17 @@ export class RegisterDeal {
         FilesArray: selectedClient.FilesArray ?? [], // لو عايز تعرض الملفات كـ preview
         SalesId: selectedClient.SalesId ?? null, // الموظف المسؤول تلقائيًا
       });
-          this.isSalesAutoAssigned = true;
-  } else {
-    // إذا تم إلغاء اختيار العميل
-    this.dealForm.patchValue({ SalesId: null });
-    this.isSalesAutoAssigned = false;
-  }
+      this.isSalesAutoAssigned = true;
+    } else {
+      // إذا تم إلغاء اختيار العميل
+      this.dealForm.patchValue({ SalesId: null });
+      this.isSalesAutoAssigned = false;
     }
-  
+  }
+
+  addNewClient() {
+    this.router.navigate(["/client-register"]);
+  }
 
   onSalesChange(selectedId: number) {
     const selectedSales = this.salesList.find(
