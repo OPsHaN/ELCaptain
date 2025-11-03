@@ -99,44 +99,44 @@
   </div>
 
   <!-- 🚢 Container للإستيراد -->
-<div
-  class="container mt-4 text-end section-container"
-  dir="rtl"
-  *ngIf="activeContainer === 'import'"
->
-  <!-- <h4 class="mb-3">🚢 الإستيراد</h4>
-  <hr /> -->
-      <div
-      class="countries-grid d-flex flex-wrap justify-content-center gap-4 mt-4"
-    >
-      <div
-        *ngFor="let im of importTypes"
-        class="country-item text-center position-relative"
-        (click)="selectCar(im)"
-      >
-        <div
-          class="country-circle overflow-hidden"
-          [class.selected]="im.id === selectedCountryId"
-        >
-          <img
-            [src]="im.img || 'assets/no-flag.png'"
-            [alt]="im.name"
-            class="country-img"
-          />
-        </div>
-        <div class="country-name mt-2">
-          {{ im.name }}
-        </div>
+  <div class="container mt-4 text-end section-container" dir="rtl" *ngIf="activeContainer === 'import'">
 
-        <!-- ⬇️ السهم تحت الدولة المختارة -->
-        <i
-          *ngIf="im.id === selectedCountryId"
-          class="bi bi-caret-down-fill selected-arrow"
-        ></i>
+    <!-- أنواع الإستيراد -->
+    <div class="countries-grid d-flex flex-wrap justify-content-center gap-4 mt-4">
+      <div *ngFor="let im of importTypes" class="country-item text-center position-relative"
+           (click)="onSelectImportType(im.id)">
+        <div class="country-circle overflow-hidden" [class.selected]="im.id === selectedImportType">
+          <img [src]="im.img || 'assets/no-flag.png'" [alt]="im.name" class="country-img" />
+        </div>
+        <div class="country-name mt-2">{{ im.name }}</div>
+        <i *ngIf="im.id === selectedImportType" class="bi bi-caret-down-fill selected-arrow"></i>
       </div>
     </div>
 
+    <!-- الدول -->
+    <div *ngIf="selectedImportType" class="countries-grid d-flex flex-wrap justify-content-center gap-4 mt-4">
+      <div *ngFor="let country of filteredCountries" class="country-item text-center position-relative"
+           (click)="selectImportCountry(country)">
+        <div class="country-circle overflow-hidden" [class.selected]="country.Id === selectedCountryId">
+          <img [src]="country.Img || 'assets/no-flag.png'" [alt]="country.CountryName" class="country-img" />
+        </div>
+        <div class="country-name mt-2">{{ country.CountryName }}</div>
+        <i *ngIf="country.Id === selectedCountryId" class="bi bi-caret-down-fill selected-arrow"></i>
+      </div>
+    </div>
+
+    <!-- البراندات -->
+    <div *ngIf="selectedCountryId && filteredBrands.length > 0" class="brands-grid d-flex flex-wrap justify-content-center gap-4 mt-4">
+      <div *ngFor="let brand of filteredBrands" class="brand-item text-center" (click)="selectImportBrand(brand)">
+        <div class="brand-circle overflow-hidden">
+          <img [src]="brand.Img || 'assets/no-car.png'" [alt]="brand.BrandName" class="brand-img" />
+        </div>
+        <div class="brand-name mt-2">{{ brand.BrandName }}</div>
+      </div>
+    </div>
+
+  </div>
 </div>
-</div>
+
 
 

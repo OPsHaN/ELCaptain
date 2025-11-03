@@ -21,7 +21,7 @@ export class NotificationService {
   }
 
   private startPolling() {
-    timer(0, 30000)
+    timer(0, 100000)
       .pipe(switchMap(() => this.api.getNotification()))
       .subscribe({
         next: (res: any) => {

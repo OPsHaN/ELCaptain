@@ -56,15 +56,10 @@
       </div>
 
               <!-- ✅ الحالة (متصل / غير متصل) -->
-        <span
-          class="status-badge"
-          [ngClass]="{
-            'online': e.loggedIn === 'متصل',
-            'offline': e.loggedIn === 'غير متصل'
-          }"
-        >
-          {{ e.loggedIn }}
-        </span>
+<span class="status-badge" [ngClass]="getStatusClass(e.LastSeen)">
+  {{ getStatusText(e.LastSeen) }}
+</span>
+
 
       <div class="card-body">
         <h3 class="emp-name">{{ e?.displayName }}</h3>

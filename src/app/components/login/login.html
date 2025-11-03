@@ -130,47 +130,56 @@
         </h4>
 
         <!-- 🧍‍♂️ بيانات المستخدم -->
-    <div class="user-box d-flex justify-content-between align-items-center my-2 py-2 w-100 mx-auto" dir="rtl">
-  <!-- الصورة على اليمين -->
-  <div class="text-center me-2">
-    <img
-      *ngIf="userImg; else defaultIcon"
-      [src]="userImg"
-      alt="User Image"
-      class="user-img rounded-pill"
-      style="width: 100px; height: 100px; object-fit: cover"
-    />
-    <ng-template #defaultIcon>
-      <i class="bi bi-person-circle fs-1 text-secondary"></i>
-    </ng-template>
-  </div>
+        <div
+          class="user-box d-flex justify-content-between align-items-center my-3 py-2 w-100 mx-auto"
+          dir="rtl"
+        >
+          <!-- الصورة على اليمين -->
+          <div class="text-center me-2">
+            <img
+              *ngIf="userImg; else defaultIcon"
+              [src]="userImg"
+              alt="User Image"
+              class="user-img rounded-pill"
+              style="width: 100px; height: 100px; object-fit: cover"
+            />
+            <ng-template #defaultIcon>
+              <i class="bi bi-person-circle fs-1 text-secondary"></i>
+            </ng-template>
+          </div>
 
-  <!-- الاسم والرنك في المنتصف -->
-  <div class="text-center flex-grow-1">
-    <h5 class="user-name mb-1">{{ userFullName }}</h5>
-    <small class="user-title text-white bg-dark rounded-pill fw-bold px-2 py-1">
-      {{ rankProfile }}
-    </small>
-  </div>
+          <!-- الاسم والرنك في المنتصف -->
+          <div class="text-center flex-grow-1">
+            <h5 class="user-name mb-1">{{ userFullName }}</h5>
+            <small
+              class="user-title text-white bg-dark rounded-pill fw-bold px-2 py-1"
+            >
+              {{ rankProfile }}
+            </small>
+          </div>
 
-  <!-- الأزرار على اليسار -->
-  <div class="d-flex flex-column align-items-start ms-2">
-    <button
-      class="btn btn-outline-secondary btn-sm position-relative mb-1 rounded-circle"
-      [routerLink]="['/notifications']"
-    >
-      <i class="bi bi-bell"></i>
-      <span class="position-absolute top-0 start-100 translate-middle badge bg-danger">
-        {{ unreadCount }}
-      </span>
-    </button>
+          <!-- الأزرار على اليسار -->
+          <div class="d-flex flex-column align-items-start ms-2">
+            <button
+              class="btn btn-outline-secondary btn-sm position-relative mb-1 rounded-circle"
+              [routerLink]="['/notifications']"
+            >
+              <i class="bi bi-bell"></i>
+              <span
+                class="position-absolute top-0 start-100 translate-middle badge bg-danger"
+              >
+                {{ unreadCount }}
+              </span>
+            </button>
 
-    <button class="btn btn-danger btn-sm rounded-circle" (click)="logout()">
-      <i class="bi bi-box-arrow-right"></i>
-    </button>
-  </div>
-</div>
-
+            <button
+              class="btn btn-danger btn-sm rounded-circle"
+              (click)="logout()"
+            >
+              <i class="bi bi-box-arrow-right"></i>
+            </button>
+          </div>
+        </div>
 
         <!-- 🟦 الأزرار -->
         <div
@@ -178,24 +187,26 @@
           [ngClass]="isSidebarExpanded ? 'expanded' : 'collapsed'"
           dir="rtl"
         >
-          <div
-            *ngFor="let b of buttons"
-            (click)="router.navigate([b.route])"
-            class="button-item d-flex justify-content-center align-items-center transition-all"
-          >
-            <button
-              class="btn d-flex flex-column align-items-center justify-content-center text-nowrap transition-all"
-              [routerLink]="b.route"
-              routerLinkActive="btn-light text-dark"
-              [routerLinkActiveOptions]="{ exact: true }"
+          <ng-container *ngFor="let b of buttons">
+            <div
+              *ngIf="b.roles.includes(userType)"
+              (click)="router.navigate([b.route])"
+              class="button-item d-flex justify-content-center align-items-center transition-all"
             >
-              <i
-                class="{{ b.icon }} mb-1"
-                [ngClass]="isSidebarExpanded ? 'fs-5' : 'fs-6'"
-              ></i>
-              <span *ngIf="isSidebarExpanded">{{ b.label }}</span>
-            </button>
-          </div>
+              <button
+                class="btn d-flex flex-column align-items-center justify-content-center text-nowrap transition-all"
+                [routerLink]="b.route"
+                routerLinkActive="btn-light text-dark"
+                [routerLinkActiveOptions]="{ exact: true }"
+              >
+                <i
+                  class="{{ b.icon }} mb-1"
+                  [ngClass]="isSidebarExpanded ? 'fs-5' : 'fs-6'"
+                ></i>
+                <span *ngIf="isSidebarExpanded">{{ b.label }}</span>
+              </button>
+            </div>
+          </ng-container>
         </div>
 
         <div class="footer-text text-center small opacity-75 bg-dark rounded">

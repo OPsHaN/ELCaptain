@@ -18,8 +18,7 @@ import { FormsModule } from "@angular/forms";
 @Component({
   selector: "app-employees",
   standalone: true,
-  imports: [CommonModule, Register, DialogModule, ConfirmDialog ,     FormsModule,
-],
+  imports: [CommonModule, Register, DialogModule, ConfirmDialog, FormsModule],
   templateUrl: "./employees.html",
   styleUrl: "./employees.scss",
   providers: [ConfirmationService],
@@ -35,6 +34,7 @@ export class Employees implements OnInit {
   showEmployeeDialog: boolean = false;
   searchQuery: string = "";
   filteredEmployees: any[] = [];
+  now = new Date();
 
   daysOfWeek = [
     { key: "SatShift", label: "السبت" },
@@ -68,56 +68,85 @@ export class Employees implements OnInit {
     this.loadEmployees();
   }
 
-  /** ✅ تحميل الموظفين من الـ API */
-loadEmployees() {
-  this.isLoading = true;
+  isOnline(lastSeen: string): boolean {
+    if (!lastSeen) return false;
 
-  this.api
-    .getAllEmployee()
-    .pipe(finalize(() => (this.isLoading = false)))
-    .subscribe({
-      next: (res: any) => {
-        // ✅ تجهيز البيانات
-        this.employees = (res || []).map((emp: any) => ({
-          ...emp,
-          displayName: emp.FullName || `${emp.FirstName} ${emp.SecondName} ${emp.ThirdName}`,
-          roleText:
-            this.ranks.find((r) => r.code === emp.UserType)?.name || "غير معروف",
-          avatar: emp.Img && emp.Img !== "string" ? emp.Img : this.defaultAvatar,
-          loggedIn: emp.IsLoggedIn ? "متصل" : "غير متصل",
-        }));
+    const lastSeenDate = new Date(lastSeen);
+    const diffMs = this.now.getTime() - lastSeenDate.getTime();
+    const diffMinutes = diffMs / (1000 * 60);
 
-        // ✅ أول تحميل يعرض الكل
-        this.filteredEmployees = [...this.employees];
-
-
-        // لو في نص مكتوب في البحث، فلتر على طول (مفيدة عند الرجوع من صفحة تانية)
-        if (this.searchQuery?.trim()) {
-          this.onSearchChange();
-        }
-
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error("Error loading employees", err);
-        this.showError("حدث خطأ أثناء تحميل الموظفين");
-      },
-    });
-}
-
-onSearchChange() {
-  const search = this.searchQuery?.toLowerCase().trim();
-
-  if (!search) {
-    this.filteredEmployees = [...this.employees];
-    return;
+    return diffMinutes <= 5; // متصل لو آخر نشاط خلال 5 دقائق
   }
 
-  this.filteredEmployees = this.employees.filter((emp: any) =>
-    [emp.FullName, emp.FirstName, emp.SecondName, emp.ThirdName, emp.Phone, emp.Phone2, emp.Email, emp.NationalId]
-      .some((field) => field?.toString().toLowerCase().includes(search))
-  );
-}
+  getStatusClass(lastSeen: string) {
+    return this.isOnline(lastSeen) ? "online" : "offline";
+  }
+
+  getStatusText(lastSeen: string) {
+    return this.isOnline(lastSeen) ? "متصل" : "غير متصل";
+  }
+
+  /** ✅ تحميل الموظفين من الـ API */
+  loadEmployees() {
+    this.isLoading = true;
+
+    this.api
+      .getAllEmployee()
+      .pipe(finalize(() => (this.isLoading = false)))
+      .subscribe({
+        next: (res: any) => {
+          // ✅ تجهيز البيانات
+          this.employees = (res || []).map((emp: any) => ({
+            ...emp,
+            displayName:
+              emp.FullName ||
+              `${emp.FirstName} ${emp.SecondName} ${emp.ThirdName}`,
+            roleText:
+              this.ranks.find((r) => r.code === emp.UserType)?.name ||
+              "غير معروف",
+            avatar:
+              emp.Img && emp.Img !== "string" ? emp.Img : this.defaultAvatar,
+            loggedIn: emp.IsLoggedIn ? "متصل" : "غير متصل",
+          }));
+
+          // ✅ أول تحميل يعرض الكل
+          this.filteredEmployees = [...this.employees];
+
+          // لو في نص مكتوب في البحث، فلتر على طول (مفيدة عند الرجوع من صفحة تانية)
+          if (this.searchQuery?.trim()) {
+            this.onSearchChange();
+          }
+
+          this.cdr.detectChanges();
+        },
+        error: (err) => {
+          console.error("Error loading employees", err);
+          this.showError("حدث خطأ أثناء تحميل الموظفين");
+        },
+      });
+  }
+
+  onSearchChange() {
+    const search = this.searchQuery?.toLowerCase().trim();
+
+    if (!search) {
+      this.filteredEmployees = [...this.employees];
+      return;
+    }
+
+    this.filteredEmployees = this.employees.filter((emp: any) =>
+      [
+        emp.FullName,
+        emp.FirstName,
+        emp.SecondName,
+        emp.ThirdName,
+        emp.Phone,
+        emp.Phone2,
+        emp.Email,
+        emp.NationalId,
+      ].some((field) => field?.toString().toLowerCase().includes(search))
+    );
+  }
   /** ✅ إظهار أو إخفاء فورم التسجيل */
   toggleTable(type: string) {
     this.activeTable = this.activeTable === type ? null : type;

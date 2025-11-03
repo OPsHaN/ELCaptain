@@ -46,22 +46,68 @@ export class Login implements OnInit {
   isSidebarExpanded: boolean = true;
   unreadCount = 0;
   notifications: any[] = [];
-
+  userType: number = 0;
   ranks = [
     { name: "عضو مجلس إدارة", code: 1 },
     { name: "مدير فرع", code: 2 },
     { name: "موظف", code: 3 },
+    { name: "ماركتينج", code: 4 },
   ];
   buttons = [
-    { label: "الرئيسية", route: "home", icon: "bi bi-house" },
-    { label: "السيارات ", route: "./cars", icon: "bi bi-car-front" },
-    { label: "الموظفين", route: "/employees", icon: "bi bi-people" },
-    { label: "العملاء ", route: "./clients", icon: "bi bi-person-lines-fill" },
-    { label: "الصفقات", route: "/deals", icon: "bi bi-briefcase" },
-    { label: "الرسائل", route: "/messages", icon: "bi bi-envelope" },
-    { label: "الإضافات", route: "/adds", icon: "bi bi-bookmark-plus" },
-    { label: "قائمة الإنتظار", route: "/waiting", icon: "bi bi-clock-history" },
-    { label: "الأرشيف", route: "/archive", icon: "bi bi-archive-fill" },
+    {
+      label: "الرئيسية",
+      route: "home",
+      icon: "bi bi-house",
+      roles: [1, 2, 3, 4],
+    },
+    {
+      label: "السيارات",
+      route: "./cars",
+      icon: "bi bi-car-front",
+      roles: [1, 2, 3],
+    },
+    {
+      label: "الموظفين",
+      route: "/employees",
+      icon: "bi bi-people",
+      roles: [1, 2],
+    },
+    {
+      label: "العملاء",
+      route: "./clients",
+      icon: "bi bi-person-lines-fill",
+      roles: [1, 2, 3],
+    },
+    {
+      label: "الصفقات",
+      route: "/deals",
+      icon: "bi bi-briefcase",
+      roles: [1, 2, 3],
+    },
+    {
+      label: "الرسائل",
+      route: "/messages",
+      icon: "bi bi-envelope",
+      roles: [1, 2, 3],
+    },
+    {
+      label: "الإضافات",
+      route: "/adds",
+      icon: "bi bi-bookmark-plus",
+      roles: [1, 2],
+    },
+    {
+      label: "قائمة الإنتظار",
+      route: "/waiting",
+      icon: "bi bi-clock-history",
+      roles: [1, 2, 3, 4],
+    },
+    {
+      label: "الأرشيف",
+      route: "/archive",
+      icon: "bi bi-archive-fill",
+      roles: [1, 2, 3],
+    },
 
     // {
     //   label: "خروج",
@@ -114,7 +160,10 @@ export class Login implements OnInit {
     const userInfo = this.getUserInfoFromLocalStorage();
     this.userFullName = userInfo.FullName;
     this.userImg = userInfo.Img;
-
+    this.authService.userType$.subscribe((type) => {
+      this.userType = type; // يتحدث تلقائيًا بعد login
+    });
+    console.log(this.userType);
     this.authService.isLoggedIn$.subscribe((status) => {
       this.isLoggedIn = status;
     });
@@ -143,22 +192,31 @@ export class Login implements OnInit {
       .subscribe({
         next: (res) => {
           console.log("Login response:", res);
+
+          // حفظ البيانات في localStorage
           localStorage.setItem("token", res.Token);
           localStorage.setItem("fullName", res.FullName || "");
           localStorage.setItem("img", res.Img || "");
           localStorage.setItem("userType", res.UserType.toString());
           localStorage.setItem("userId", res.Id.toString());
-          // localStorage.setItem("rank", res.UserId?.toString() || "");
-          this.userFullName = res.FullName || "";
-          this.userImg = res.Img || "assets/images/user.png";
           const rank =
             this.ranks.find((r) => r.code === res.UserType)?.name ||
             "غير معروف";
           localStorage.setItem("rank", rank);
+
+          // تحديث المتغيرات في الكمبوننت مباشرة
+          this.userFullName = res.FullName || "";
+          this.userImg = res.Img || "assets/images/user.png";
           this.rankProfile = rank;
+          this.userType = res.UserType; // ⬅️ مهم للتحديث الفوري للزرار
+
+          // تحديث AuthService BehaviorSubject (لو مفعّل)
+          this.authService.setUserType(res.UserType);
+
           this.notification.loadNotifications();
 
           this.authService.onLoginSuccess(res.Token);
+
           this.showSuccess("تم تسجيل الدخول بنجاح");
           this.router.navigate(["/home"]);
           this.activePage = "home";

@@ -52,6 +52,7 @@ export class Cars implements OnInit {
   countries: Country[] = [];
   brands: Brand[] = [];
   branchs: any[] = [];
+ 
 
   colorsList = [
     { name: "أحمر", code: "#FF0000" },
@@ -90,34 +91,61 @@ export class Cars implements OnInit {
   ) {}
 
   ngOnInit() {
-    // ✅ قراءة البرامترات من الرابط
-    this.route.queryParams.subscribe((params) => {
-      const countryId = params["countryId"];
-      const brandId = params["brandId"];
-
-      if (brandId) {
-        // 📡 جلب السيارات الخاصة بالبراند
-        this.api.getCarsInBrands(brandId).subscribe({
-          next: (data: any) => {
-            // cast response to any[] to satisfy TypeScript array assignment
-            this.cars = data as any[];
-            this.filteredCars = [...this.cars];
-            console.log("✅ Cars for selected brand:", this.cars);
-            this.cdr.detectChanges();
-          },
-          error: (err) => {
-            console.error("❌ خطأ في جلب السيارات:", err);
-          },
-        });
-      } else {
-        // 📡 لو مفيش فلترة، اعرض كل السيارات
-        this.loadCars();
-      }
-    });
-
     this.loadBranches();
-    this.loadBrands();
     this.loadCountries();
+    this.loadBrands();
+
+    this.route.queryParams.subscribe((params) => {
+      // لو مفيش أي باراميتر → اعرض كل العربيات مباشرة
+      if (!params || Object.keys(params).length === 0) {
+        this.loadCars(); // يعرض كل العربيات بدون فلترة
+        return;
+      }
+
+      // لو فيه باراميتر → طبق الفلترة
+      const instantDelivery = params["InstantDelivery"] === "true";
+      const importType = params["importType"] ? +params["importType"] : null;
+      const countryId = params["countryId"] ? +params["countryId"] : null;
+      const brandId = params["brandId"] ? +params["brandId"] : null;
+
+      this.api.getAllCars().subscribe({
+        next: (data: any[]) => {
+          let filtered = data;
+
+          // فلترة حسب المخزن / استيراد
+          filtered = filtered.filter(
+            (c) => c.InstantDelivery === instantDelivery
+          );
+
+          // فلترة حسب النوع لو استيراد
+          if (instantDelivery && importType) {
+            filtered = filtered.filter((c) => c.InitiativeType === importType);
+          }
+
+          // فلترة حسب الدولة
+          if (countryId) {
+            filtered = filtered.filter((c) => c.Brand?.CountryId === countryId);
+          }
+
+          // فلترة حسب البراند
+          if (brandId) {
+            filtered = filtered.filter((c) => c.Brand?.Id === brandId);
+          }
+
+          // نص العرض
+          filtered.forEach((c) => {
+            c.importTypeText = !c.InstantDelivery
+              ? "مخزن"
+              : c.InitiativeType === 1
+              ? "مبادرة"
+              : "استيراد شخصي";
+          });
+
+          this.filteredCars = filtered;
+          this.cdr.detectChanges();
+        },
+      });
+    });
   }
 
   //ريفريش بعد الاضافة او التعديل
@@ -221,9 +249,9 @@ export class Cars implements OnInit {
   }
 
   getBranchName(branchId: number): string {
-  const branch = this.branchs.find((b: any) => b.Id === branchId);
-  return branch ? branch.BranchName : 'غير محدد';
-}
+    const branch = this.branchs.find((b: any) => b.Id === branchId);
+    return branch ? branch.BranchName : "غير محدد";
+  }
 
   loadCountries(): void {
     this.api.getAllCountry().subscribe({
@@ -267,7 +295,36 @@ export class Cars implements OnInit {
     });
   }
 
-  onSearch() {
-    console.log("بحث عن:", this.searchText);
+  applyFilters() {
+  let filtered = [...this.cars];
+
+  // فلترة حسب الدولة
+  if (this.selectedCountry) {
+    filtered = filtered.filter(c => c.Brand?.CountryId === +this.selectedCountry);
   }
+
+  // فلترة حسب البراند
+  if (this.selectedBrand) {
+    filtered = filtered.filter(c => c.Brand?.Id === +this.selectedBrand);
+  }
+
+  // فلترة حسب الفرع
+  if (this.selectedBranch) {
+    filtered = filtered.filter(c => c.BranchId === +this.selectedBranch);
+  }
+
+  // فلترة حسب البحث
+  if (this.searchText) {
+    const search = this.searchText.toLowerCase().trim();
+    filtered = filtered.filter(c => {
+      const brandName = c.Brand?.BrandName?.toLowerCase() || '';
+      const model = c.Model?.toLowerCase() || '';
+      return brandName.includes(search) || model.includes(search);
+    });
+  }
+
+  this.filteredCars = filtered;
+  this.cdr.detectChanges();
+}
+
 }

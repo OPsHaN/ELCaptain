@@ -21,6 +21,8 @@ export class AuthService {
   private _isLoggedIn = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this._isLoggedIn.asObservable();
   activePage: string = "home";
+  private _userType = new BehaviorSubject<number>(0); // ⬅️ رقم الدور
+  userType$ = this._userType.asObservable(); // للاشتراك في الكمبوننتات
 
   constructor(
     private http: HttpClient,
@@ -28,8 +30,10 @@ export class AuthService {
     private messageService: MessageService
   ) {
     const token = localStorage.getItem("token");
+    const type = +(localStorage.getItem("userType") ?? 0);
+    this._userType.next(type); // تعيين الدور من localStorage
     if (token) {
-      this._isLoggedIn.next(true); // 👈 لو فيه توكن خلي الحالة True
+      this._isLoggedIn.next(true);
     }
   }
 
@@ -50,38 +54,41 @@ export class AuthService {
     this._isLoggedIn.next(true);
   }
 
-logout() {
-  const token = localStorage.getItem("token");
-
-  // ✅ لو المستخدم مش داخل أصلاً، اكتفي بتسجيل الخروج المحلي
-  if (!token) {
-    this.handleLocalLogout();
-    return;
+    setUserType(type: number) {
+    this._userType.next(type);
   }
 
-  // 👇 إرسال طلب الخروج للسيرفر (بدون تأثير من الـ interceptor)
-  this.http.post(`${this.baseUrl}logout`, {}).subscribe({
-    next: () => {
+  logout() {
+    const token = localStorage.getItem("token");
+
+    // ✅ لو المستخدم مش داخل أصلاً، اكتفي بتسجيل الخروج المحلي
+    if (!token) {
       this.handleLocalLogout();
-    },
-    error: (err) => {
-      console.warn("Logout API error:", err);
-      // حتى لو حصل خطأ، نكمل تسجيل الخروج محليًا
-      this.handleLocalLogout();
-    },
-  });
-}
+      return;
+    }
 
-/** ✅ دالة واحدة تنفذ تسجيل الخروج المحلي بالكامل */
-private handleLocalLogout() {
-  localStorage.clear();
-  this._isLoggedIn.next(false);
-  this.activePage = "home";
+    // 👇 إرسال طلب الخروج للسيرفر (بدون تأثير من الـ interceptor)
+    this.http.post(`${this.baseUrl}logout`, {}).subscribe({
+      next: () => {
+        this.handleLocalLogout();
+      },
+      error: (err) => {
+        console.warn("Logout API error:", err);
+        // حتى لو حصل خطأ، نكمل تسجيل الخروج محليًا
+        this.handleLocalLogout();
+      },
+    });
+  }
 
-  // استخدم navigateByUrl لتفادي أي مشاكل في إعادة التوجيه
-  this.router.navigateByUrl("/login");
-}
+  /** ✅ دالة واحدة تنفذ تسجيل الخروج المحلي بالكامل */
+  private handleLocalLogout() {
+    localStorage.clear();
+    this._isLoggedIn.next(false);
+    this.activePage = "home";
 
+    // استخدم navigateByUrl لتفادي أي مشاكل في إعادة التوجيه
+    this.router.navigateByUrl("/login");
+  }
 
   showSuccess(msg: string) {
     this.messageService.add({
