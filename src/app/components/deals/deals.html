@@ -228,7 +228,7 @@
 
       <!-- زر إضافة الملاحظة على اليمين -->
      <div class="d-flex justify-content-end" >
-        <button class="btn btn-sm btn-outline-primary" (click)="openNoteDialog()">
+        <button class="btn btn-sm btn-outline-primary" (click)="openReminderDialog(selectedDeal.Id)">
           <i class="bi bi-chat-dots me-1"></i>
           إضافة تذكير
         </button>
@@ -364,7 +364,7 @@
 >
   <div class="p-fluid">
     <div class="field">
-      <label for="noteText" class="fw-bold text-end">لملاحظة:</label>
+      <label for="noteText" class="fw-bold text-start">الملاحظة:</label>
       <textarea
         id="noteText"
         rows="4"
@@ -388,5 +388,57 @@
     </button>
   </ng-template>
 </p-dialog>
+
+<!-- 🔹 مودال إضافة التذكير -->
+
+
+<p-dialog
+  header="إضافة تذكير"
+  [(visible)]="showReminderDialog"
+  [modal]="true"
+  [style]="{ width: '400px' }"
+  [closable]="true"
+  dir="rtl"
+>
+  <div class="p-fluid">
+    <!-- نص التذكير -->
+    <div class="field mb-2">
+      <label for="notificationText" class="fw-bold text-start">التذكير:</label>
+      <textarea
+        id="notificationText"
+        rows="4"
+        [(ngModel)]="notificationText"
+        class="form-control"
+        placeholder="اكتب الملاحظة هنا..."
+      ></textarea>
+    </div>
+
+    <!-- التاريخ والوقت -->
+    <div class="field">
+      <label for="validFrom" class="fw-bold text-start">التاريخ والوقت:</label>
+      <input
+        id="validFrom"
+        type="datetime-local"
+        [(ngModel)]="validFrom"
+        class="form-control"
+      />
+    </div>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button class="btn btn-secondary btn-sm" (click)="showReminderDialog = false">
+      إلغاء
+    </button>
+    <button
+      class="btn btn-primary btn-sm"
+      (click)="addReminder()"
+      [disabled]="!notificationText.trim() || !validFrom"
+    >
+      حفظ
+    </button>
+  </ng-template>
+</p-dialog>
+
+
 
 <p-confirmDialog></p-confirmDialog>

@@ -1,6 +1,12 @@
 <div class="container py-3">
   <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="position-relative">
+      <button class="btn btn-primary btn-sm" (click)="markAsRead()">
+        قراءة الكل
+      </button>
+    </div>
     <h4 class="fw-bold">🔔 الإشعارات</h4>
+
     <div class="position-relative">
       <button class="btn btn-primary btn-sm" (click)="toggleAddReminder()">
         <i class="bi bi-plus-circle"></i> إضافة تذكير
@@ -12,30 +18,28 @@
   </div>
 
   <!-- نموذج إضافة تذكير -->
-  <div
-    *ngIf="showAddReminder"
-    class="card p-3 mb-4 border-0 shadow-sm rounded-4"
-    dir="rtl"
-  >
+  <div *ngIf="showAddReminder" class="card p-3 my-4 border-0" dir="rtl">
     <form [formGroup]="addReminderForm" (ngSubmit)="addReminder()">
       <div class="row g-2 align-items-center">
-        <div class="col-md-6 my-auto" >
+        <div class="col-md-6 my-auto text-end">
+          <label>الوقت و التاريخ</label>
           <input
             type="datetime-local"
-            class="form-control"
+            class="form-control my-1"
             formControlName="ValidFrom"
-            style="height:62px"
+            style="height: 62px"
           />
         </div>
 
         <div class="col-md-6">
           <mat-form-field appearance="outline" class="w-100">
             <mat-label>💬 الرسالة</mat-label>
-            <input
+            <textarea
               matInput
               formControlName="NotificationText"
               placeholder="اكتب التذكير هنا"
-            />
+              rows="3"
+            ></textarea>
           </mat-form-field>
         </div>
       </div>
@@ -55,26 +59,32 @@
   </div>
 
   <!-- قائمة الإشعارات -->
-  <div *ngIf="notifications.length > 0; else noNotifications">
-    <div class="list-group">
-      <div
-        *ngFor="let n of notifications"
-        class="list-group-item list-group-item-action d-flex justify-content-between align-items-start border-0 shadow-sm mb-2 rounded-3"
-      >
-        <div class="ms-2 me-auto">
-          <div class="fw-bold">{{ n.NotificationText }}</div>
-          <small class="text-muted">{{ n.Message }}</small>
-        </div>
-        <span class="badge bg-primary rounded-pill">
-          {{ n.ValidFrom | date : "short" }}
-        </span>
+<div *ngIf="(notifications$ | async)?.length; else noNotifications" dir="rtl">
+  <div class="list-group">
+    <div
+      *ngFor="let n of (notifications$ | async) || []"
+      class="list-group-item list-group-item-action d-flex justify-content-between align-items-start border-0 shadow-sm mb-2 rounded-3"
+    >
+      <div class="ms-2 ms-auto">
+        <div class="fw-bold">{{ n.NotificationText }}</div>
+        <small class="text-muted">
+          <ng-container *ngIf="n.OperationId && n.OperationId !== 0">
+            على صفقة رقم {{ n.OperationId }}
+          </ng-container>
+          {{ n.Message }}
+        </small>
       </div>
+      <span class="badge bg-primary rounded-pill">
+        {{ n.ValidFrom | date : "short" }}
+      </span>
     </div>
   </div>
+</div>
 
-  <ng-template #noNotifications>
-    <div class="alert alert-light text-center border rounded-3">
-      لا توجد إشعارات حالياً 😴
-    </div>
-  </ng-template>
+<ng-template #noNotifications>
+  <div class="alert alert-light text-center border rounded-3">
+    لا توجد إشعارات حالياً 😴
+  </div>
+</ng-template>
+
 </div>

@@ -51,24 +51,35 @@ export class AuthService {
   }
 
 logout() {
-  // 👇 إرسال طلب الخروج للسيرفر أولاً
+  const token = localStorage.getItem("token");
+
+  // ✅ لو المستخدم مش داخل أصلاً، اكتفي بتسجيل الخروج المحلي
+  if (!token) {
+    this.handleLocalLogout();
+    return;
+  }
+
+  // 👇 إرسال طلب الخروج للسيرفر (بدون تأثير من الـ interceptor)
   this.http.post(`${this.baseUrl}logout`, {}).subscribe({
-    next: (res) => {
-      // ✅ لو الخروج نجح، نحذف التوكن ونغيّر الحالة
-      localStorage.removeItem("token");
-      this._isLoggedIn.next(false);
-      this.activePage = "home";
-      this.router.navigate(["/login"]);
+    next: () => {
+      this.handleLocalLogout();
     },
     error: (err) => {
-      console.error("Logout error:", err);
-      // حتى لو حصل خطأ في الـ API، نعمل تسجيل خروج محلي
-      localStorage.removeItem("token");
-      this._isLoggedIn.next(false);
-      this.activePage = "home";
-      this.router.navigate(["/login"]);
+      console.warn("Logout API error:", err);
+      // حتى لو حصل خطأ، نكمل تسجيل الخروج محليًا
+      this.handleLocalLogout();
     },
   });
+}
+
+/** ✅ دالة واحدة تنفذ تسجيل الخروج المحلي بالكامل */
+private handleLocalLogout() {
+  localStorage.clear();
+  this._isLoggedIn.next(false);
+  this.activePage = "home";
+
+  // استخدم navigateByUrl لتفادي أي مشاكل في إعادة التوجيه
+  this.router.navigateByUrl("/login");
 }
 
 

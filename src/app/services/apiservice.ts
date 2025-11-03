@@ -264,6 +264,14 @@ export class Apiservice {
     return this.http.get(`${this.baseUrl}SystemNotification/GetNotifications`)
   }
 
+  deletetNotification(id:number){
+   return this.http.delete(`${this.baseUrl}SystemNotification/Delete?id=${id}`)
+  }
+
+  updateSeenNotification(body:any){
+    return this.http.put(`${this.baseUrl}SystemNotification/UpdateSeen` , body)
+  }
+
   // updateNotification(){
   //   return this.http.post(`${this.baseUrl}SystemNotification/UpdateSeen`)
   // }

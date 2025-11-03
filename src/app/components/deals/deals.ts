@@ -14,6 +14,7 @@ import { Apiservice } from "../../services/apiservice";
 import { FormsModule } from "@angular/forms";
 import { NotesOnlyPipe } from "../../shared/pipe/notes-only-pipe";
 import { MatTabsModule } from "@angular/material/tabs";
+import { NotificationService } from "../../services/notification";
 
 @Component({
   selector: "app-deals",
@@ -48,12 +49,17 @@ export class Deals implements OnInit {
   pendingDeals: any[] = [];
   showNoteDialog = false;
   noteText = "";
+  showReminderDialog = false;
+  notificationText = "";
+  validFrom = "";
+  currentOperationId = 0; // Id الصفقة الحالية
 
   constructor(
     private api: Apiservice,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private notification:NotificationService
   ) {}
 
   ngOnInit() {
@@ -79,6 +85,13 @@ export class Deals implements OnInit {
   openNoteDialog() {
     this.noteText = "";
     this.showNoteDialog = true;
+  }
+
+  openReminderDialog(operationId: number) {
+    this.currentOperationId = operationId;
+    this.notificationText = "";
+    this.validFrom = "";
+    this.showReminderDialog = true;
   }
 
   addCommand() {
@@ -118,6 +131,34 @@ export class Deals implements OnInit {
       },
     });
   }
+
+addReminder() {
+  const userId = Number(localStorage.getItem("userId")) || 0;
+
+  const body = {
+    Id: 0,
+    UserId: userId,
+    OperationId: this.currentOperationId,
+    NotificationText: this.notificationText,
+    Seen: false,
+    IsReminder: true,
+    ValidFrom: this.validFrom, // التاريخ والوقت
+  };
+
+  this.api.addReminder(body).subscribe({
+    next: () => {
+      this.showReminderDialog = false;
+      this.noteText = "";
+      this.validFrom = "";
+      this.notification.loadNotifications(); // تحديث الإشعارات والعداد
+      this.showSuccess("تم إضافة التذكير بنجاح");
+    },
+    error: (err) => {
+      console.error(err);
+      this.showError("حدث خطأ أثناء إضافة التذكير");
+    },
+  });
+}
 
   onDrop(event: CdkDragDrop<any[]>, newStatus: number) {
     if (event.previousContainer === event.container) {
@@ -259,5 +300,23 @@ export class Deals implements OnInit {
       default:
         return "غير معروفة";
     }
+  }
+
+    showError(msg: string) {
+    this.messageService.add({
+      severity: "error",
+      // summary: "خطأ",
+      detail: msg,
+      life: 2000,
+    });
+  }
+
+  showSuccess(msg: string) {
+    this.messageService.add({
+      severity: "success",
+      // summary: "تم بنجاح",
+      detail: msg,
+      life: 3000,
+    });
   }
 }

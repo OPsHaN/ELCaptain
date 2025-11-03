@@ -11,10 +11,14 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
   const loader = inject(LoadingService);
 
-  // 🟡 شغّل spinner
+  // ✅ استثناء login و logout من الـ interceptor
+  const skipAuth = req.url.includes("login") || req.url.includes("logout");
+  if (skipAuth) {
+    return next(req);
+  }
+
   loader.show();
 
-  // 🟢 استنساخ الطلب لو فيه token
   let clonedReq = req;
   if (token) {
     clonedReq = req.clone({
@@ -25,14 +29,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   return next(clonedReq).pipe(
-    // 👇 التعامل مع أي خطأ
     catchError((error) => {
       if (error.status === 401) {
-        authService.logout();
+        // 🔥 فقط لو مش طلب login/logout
+        if (!skipAuth) {
+          authService.logout();
+        }
       }
       return throwError(() => error);
     }),
-    // 👇 اخفاء spinner بعد انتهاء الطلب سواء بالنجاح أو الفشل
     finalize(() => loader.hide())
   );
 };

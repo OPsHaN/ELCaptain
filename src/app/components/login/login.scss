@@ -72,7 +72,7 @@ input::placeholder {
 
 .user-box {
   display: flex;
-  flex-direction: column;
+  // flex-direction: column;
   align-items: center;
   background: rgb(255, 255, 255);
   border: 1px solid #ffb300;
@@ -132,3 +132,68 @@ input::placeholder {
 }
 
 
+.transition-all {
+  transition: all 0.3s ease-in-out;
+}
+
+.collapsed-menu button {
+  transition: 0.2s;
+   border: 1px solid white;
+  color: white;
+    backdrop-filter: blur(10px);
+
+}
+
+.collapsed-menu button:hover {
+  background: rgba(255, 255, 255, 0.2);
+    border: #ffb300 solid 1px;
+
+}
+
+.buttons-grid.expanded {
+  flex-direction: row;
+  gap: 12px;
+}
+
+/* 🌙 زر الطيّ */
+.toggle-btn {
+  position: absolute;
+  top: 50%;
+  right: -15px;
+  transform: translateY(-50%);
+  background-color: #343a40;
+  border: none;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.toggle-btn i {
+  font-size: 1rem;
+}
+
+.toggle-btn:hover {
+  background-color: #333;
+  color: #00bcd4;
+}
+
+
+.footer-text {
+  position: absolute;
+  bottom: 10px;           /* يثبّت العنصر أسفل القائمة */
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;             /* عشان يكون عرضه متناسق */
+  margin-top: 20px;       /* مسافة فوقية للفصل عن المحتوى */
+  padding: 6px 0;
+  font-size: 0.85rem;
+  background-color: #212529;
+  border-radius: 12px;
+  text-align: center;
+}

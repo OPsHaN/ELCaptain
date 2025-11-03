@@ -1,22 +1,29 @@
 import { Component, OnInit } from "@angular/core";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from "@angular/forms";
 import { Apiservice } from "../../services/apiservice";
 import { CommonModule, DatePipe } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { MatNativeDateModule } from "@angular/material/core";
+import { NotificationService } from "../../services/notification";
+import { MessageService } from "primeng/api";
+import { Observable, of } from "rxjs";
 
 @Component({
   selector: "app-notification",
   standalone: true,
   templateUrl: "./notification.html",
-  styleUrl: "./notification.scss",
+  styleUrls: ["./notification.scss"],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     DatePipe,
-    // Angular Material
     MatFormFieldModule,
     MatInputModule,
     MatDatepickerModule,
@@ -24,29 +31,28 @@ import { MatNativeDateModule } from "@angular/material/core";
   ],
 })
 export class Notification implements OnInit {
-  notifications: any[] = [];
   addReminderForm!: FormGroup;
   showAddReminder = false;
+  notifications$: Observable<any[]> = of([]); // 👈 قيمة افتراضية
 
-  constructor(private api: Apiservice, private fb: FormBuilder) {}
+  constructor(
+    private api: Apiservice,
+    private fb: FormBuilder,
+    private notification: NotificationService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit() {
-    this.loadNotifications();
+    this.initForm();
+this.notifications$ = this.notification.notifications$ || of([]);
 
-    this.addReminderForm = this.fb.group({
-      ValidFrom: [""], // تاريخ التذكير
-      NotificationText: [""], // نص الرسالة
-    });
-
-
+    this.notification.loadNotifications(); // تحميل أولي للإشعارات
   }
 
-  loadNotifications() {
-    this.api.getNotification().subscribe({
-      next: (res: any) => {
-        this.notifications = res;
-      },
-      error: (err) => console.error(err),
+  private initForm() {
+    this.addReminderForm = this.fb.group({
+      ValidFrom: ["", Validators.required],
+      NotificationText: ["", [Validators.required, Validators.minLength(3)]],
     });
   }
 
@@ -55,8 +61,7 @@ export class Notification implements OnInit {
   }
 
   addReminder() {
-    const usrId= localStorage.getItem("userId")
-
+    const usrId = localStorage.getItem("userId");
     const formValue = this.addReminderForm.value;
 
     const body = {
@@ -65,15 +70,42 @@ export class Notification implements OnInit {
       NotificationText: formValue.NotificationText,
       Seen: false,
       ValidFrom: formValue.ValidFrom,
+      IsReminder: true,
+      OperationId: 0, // لو هتحددها على صفقة معينة ممكن تعديل هنا
     };
 
     this.api.addReminder(body).subscribe({
       next: () => {
-        this.loadNotifications();
+        this.notification.loadNotifications(); // تحديث الإشعارات
         this.showAddReminder = false;
         this.addReminderForm.reset();
+        this.showSuccess("تم إضافة التذكير بنجاح");
       },
-      error: (err) => console.error(err),
+      error: (err) => this.showError("خطأ أثناء إضافة التذكير"),
+    });
+  }
+
+  markAsRead() {
+    this.notification.markAllAsRead(); // تعليم كل الإشعارات كمقروءة
+  }
+
+  deleteNotification(notificationId: number) {
+    this.notification.deleteNotification(notificationId); // حذف الإشعار + تحديث العداد
+  }
+
+  showError(msg: string) {
+    this.messageService.add({
+      severity: "error",
+      detail: msg,
+      life: 3000,
+    });
+  }
+
+  showSuccess(msg: string) {
+    this.messageService.add({
+      severity: "success",
+      detail: msg,
+      life: 3000,
     });
   }
 }

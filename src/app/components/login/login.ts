@@ -17,6 +17,7 @@ import { finalize } from "rxjs";
 import { MessageService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
 import { UserInfo } from "../../shared/tokenpayload";
+import { NotificationService } from "../../services/notification";
 
 @Component({
   selector: "app-login",
@@ -42,6 +43,10 @@ export class Login implements OnInit {
   userFullName: string = "";
   rankProfile: string = "غير معروف";
   userImg: string = "assets/images/user.png";
+  isSidebarExpanded: boolean = true;
+  unreadCount = 0;
+  notifications: any[] = [];
+
   ranks = [
     { name: "عضو مجلس إدارة", code: 1 },
     { name: "مدير فرع", code: 2 },
@@ -68,7 +73,8 @@ export class Login implements OnInit {
     private fb: FormBuilder,
     public router: Router,
     private authService: AuthService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private notification: NotificationService
   ) {
     this.loginForm = this.fb.group({
       username: ["", [Validators.required]],
@@ -80,6 +86,15 @@ export class Login implements OnInit {
     const token = localStorage.getItem("token");
     const lastRoute = localStorage.getItem("lastRoute");
     this.rankProfile = localStorage.getItem("rank") || "غير معروف";
+    this.notification.unreadCount$.subscribe(
+      (count) => (this.unreadCount = count)
+    );
+
+    this.notification.notifications$.subscribe(
+      (res) => (this.notifications = res)
+    );
+
+    this.notification.loadNotifications();
 
     if (token) {
       this.isLoggedIn = true;
@@ -109,6 +124,10 @@ export class Login implements OnInit {
     this.showPassword = !this.showPassword;
   }
 
+  toggleSidebar() {
+    this.isSidebarExpanded = !this.isSidebarExpanded;
+  }
+
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
@@ -128,7 +147,7 @@ export class Login implements OnInit {
           localStorage.setItem("fullName", res.FullName || "");
           localStorage.setItem("img", res.Img || "");
           localStorage.setItem("userType", res.UserType.toString());
-          localStorage.setItem("userId" , res.Id.toString())
+          localStorage.setItem("userId", res.Id.toString());
           // localStorage.setItem("rank", res.UserId?.toString() || "");
           this.userFullName = res.FullName || "";
           this.userImg = res.Img || "assets/images/user.png";
@@ -137,6 +156,7 @@ export class Login implements OnInit {
             "غير معروف";
           localStorage.setItem("rank", rank);
           this.rankProfile = rank;
+          this.notification.loadNotifications();
 
           this.authService.onLoginSuccess(res.Token);
           this.showSuccess("تم تسجيل الدخول بنجاح");

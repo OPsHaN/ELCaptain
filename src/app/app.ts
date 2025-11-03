@@ -5,12 +5,18 @@ import { NavigationEnd, Router } from "@angular/router";
 import { SpinnerComponent } from "./shared/spinner/spinner.component";
 import { CommonModule } from "@angular/common";
 import { LoadingService } from "./services/loadingservice";
+import { MessageService } from 'primeng/api';
+import { GlobalNotifications } from "./shared/global-notifications/global-notifications";
 
 @Component({
   selector: "app-root",
-  imports: [Login, Toast, SpinnerComponent, CommonModule],
+    standalone: true,
+
+  imports: [Login, Toast, SpinnerComponent, CommonModule , GlobalNotifications ],
   templateUrl: "./app.html",
   styleUrl: "./app.scss",
+    providers: [MessageService] // ✅ هنا مكانها الصحيح
+
 })
 export class App {
   loading = false;
