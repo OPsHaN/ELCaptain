@@ -15,6 +15,7 @@ import { FormsModule } from "@angular/forms";
 import { NotesOnlyPipe } from "../../shared/pipe/notes-only-pipe";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NotificationService } from "../../services/notification";
+import { switchMap, timer } from "rxjs";
 
 @Component({
   selector: "app-deals",
@@ -53,19 +54,26 @@ export class Deals implements OnInit {
   notificationText = "";
   validFrom = "";
   currentOperationId = 0; // Id الصفقة الحالية
+  private subscription: any;
 
   constructor(
     private api: Apiservice,
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
     private cdr: ChangeDetectorRef,
-    private notification:NotificationService
+    private notification: NotificationService
   ) {}
 
   ngOnInit() {
     // Initialization logic can be added here
-    this.getAllDeals();
+    this.subscription = timer(0, 10000)
+      .pipe(switchMap(async () => this.getAllDeals()))
+      .subscribe();
   }
+
+  ngOnDestroy(): void {
+  if (this.subscription) this.subscription.unsubscribe();
+}
 
   getAllDeals() {
     this.api.getOperationWithStatus(2).subscribe((res: any) => {
@@ -132,33 +140,33 @@ export class Deals implements OnInit {
     });
   }
 
-addReminder() {
-  const userId = Number(localStorage.getItem("userId")) || 0;
+  addReminder() {
+    const userId = Number(localStorage.getItem("userId")) || 0;
 
-  const body = {
-    Id: 0,
-    UserId: userId,
-    OperationId: this.currentOperationId,
-    NotificationText: this.notificationText,
-    Seen: false,
-    IsReminder: true,
-    ValidFrom: this.validFrom, // التاريخ والوقت
-  };
+    const body = {
+      Id: 0,
+      UserId: userId,
+      OperationId: this.currentOperationId,
+      NotificationText: this.notificationText,
+      Seen: false,
+      IsReminder: true,
+      ValidFrom: this.validFrom, // التاريخ والوقت
+    };
 
-  this.api.addReminder(body).subscribe({
-    next: () => {
-      this.showReminderDialog = false;
-      this.noteText = "";
-      this.validFrom = "";
-      this.notification.loadNotifications(); // تحديث الإشعارات والعداد
-      this.showSuccess("تم إضافة التذكير بنجاح");
-    },
-    error: (err) => {
-      console.error(err);
-      this.showError("حدث خطأ أثناء إضافة التذكير");
-    },
-  });
-}
+    this.api.addReminder(body).subscribe({
+      next: () => {
+        this.showReminderDialog = false;
+        this.noteText = "";
+        this.validFrom = "";
+        this.notification.loadNotifications(); // تحديث الإشعارات والعداد
+        this.showSuccess("تم إضافة التذكير بنجاح");
+      },
+      error: (err) => {
+        console.error(err);
+        this.showError("حدث خطأ أثناء إضافة التذكير");
+      },
+    });
+  }
 
   onDrop(event: CdkDragDrop<any[]>, newStatus: number) {
     if (event.previousContainer === event.container) {
@@ -292,17 +300,17 @@ addReminder() {
       case 1:
         return "مفتوحة";
       case 2:
-        return "معلقة";
+        return "منتهية";
       case 3:
-        return "مغلقة";
-      case 4:
         return "مرفوضة";
+      case 4:
+        return "معلقة";
       default:
         return "غير معروفة";
     }
   }
 
-    showError(msg: string) {
+  showError(msg: string) {
     this.messageService.add({
       severity: "error",
       // summary: "خطأ",

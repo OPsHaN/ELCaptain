@@ -24,6 +24,7 @@
           (ngSubmit)="onSubmit()"
           novalidate
           dir="rtl"
+          *ngIf="!showUploadSection"
         >
           <div class="row g-3 text-end">
             <!-- اسم العميل -->
@@ -44,22 +45,42 @@
               >
             </div>
 
-            <!-- رقم الهاتف -->
             <div class="col-md-4">
               <label class="form-label">رقم الهاتف</label>
-              <input
-                type="text"
-                class="form-control custom-input"
-                formControlName="PhoneNumber"
-              />
+              <div class="input-group flex-row-reverse">
+                <!-- كود الدولة -->
+                <select
+                  class="form-select"
+                  formControlName="CountryCode"
+                  style="max-width: 120px; direction: ltr"
+                >
+                  <option
+                    *ngFor="let country of countryCodes"
+                    [value]="country.dial_code"
+                  >
+                    {{ country.flag }} {{ country.dial_code }}
+                  </option>
+                </select>
+
+                <!-- رقم الهاتف -->
+                <input
+                  type="text"
+                  class="form-control custom-input text-end"
+                  formControlName="PhoneNumber"
+                  maxlength="10"
+                  placeholder="اكتب رقم الهاتف"
+                />
+              </div>
+
               <small
                 class="text-danger"
                 *ngIf="
                   clientForm.get('PhoneNumber')?.touched &&
                   clientForm.get('PhoneNumber')?.invalid
                 "
-                >مطلوب</small
               >
+                رقم الهاتف مطلوب ويجب أن يكون 10 رقم
+              </small>
             </div>
 
             <!-- التصنيف -->
@@ -123,28 +144,17 @@
             </div> -->
 
             <!-- رسالة -->
-            <div class="col-md-8">
+
+            <!-- <div class="col-md-8">
               <label class="form-label">ملاحظات</label>
               <textarea
                 class="form-control custom-input"
                 rows="2"
                 formControlName="Message"
               ></textarea>
-            </div>
+            </div> -->
 
             <!-- رفع الملفات -->
-            <div class="col-12 mt-2">
-              <label class="form-label d-block">📎 رفع ملفات</label>
-              <input
-                type="file"
-                multiple
-                (change)="onFileSelected($event)"
-                class="form-control"
-              />
-              <ul class="mt-2" *ngIf="selectedFiles.length > 0">
-                <li *ngFor="let f of selectedFiles">{{ f.name }}</li>
-              </ul>
-            </div>
 
             <!-- زر التسجيل -->
             <div class="col-12 text-center mt-3">
@@ -152,11 +162,28 @@
                 class="btn btn-warning btn-lg py-0"
                 [disabled]="isSubmitting"
               >
-                {{ isEditMode ? "📝 تعديل" : "➕ تسجيل" }}
+                {{ isEditMode ? "📝 متابعة التعديل" : "➕ متابعة التسجيل" }}
               </button>
             </div>
           </div>
         </form>
+        <div class="col-12 mt-2" *ngIf="showUploadSection">
+          <label class="form-label d-block">📎 رفع ملف</label>
+          <input
+            type="file"
+            multiple
+            (change)="onFileSelected($event)"
+            class="form-control"
+          />
+          <ul class="mt-2" *ngIf="selectedFiles.length > 0">
+            <li *ngFor="let f of selectedFiles">{{ f.name }}</li>
+          </ul>
+          <div class="my-2">
+            <button class="btn btn-warning my-0" (click)="uploadFiles()">
+              رفع الملفات
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

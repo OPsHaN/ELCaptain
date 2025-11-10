@@ -44,7 +44,7 @@ export class Cars implements OnInit {
   defaultCarImage = "./photos/default-car.jpg";
   car: any[] = [];
   filteredCars: any[] = []; // اللي هيتعرض في الجدول أو الصفحة
-
+  role: number = 0;
   selectedCountry: number | "" = "";
   selectedBrand: number | "" = "";
   selectedBranch: number | "" = "";
@@ -52,7 +52,6 @@ export class Cars implements OnInit {
   countries: Country[] = [];
   brands: Brand[] = [];
   branchs: any[] = [];
- 
 
   colorsList = [
     { name: "أحمر", code: "#FF0000" },
@@ -146,6 +145,11 @@ export class Cars implements OnInit {
         },
       });
     });
+
+    const storedRole = localStorage.getItem("userType");
+    if (storedRole) {
+      this.role = +storedRole; // نحولها لرقم
+    }
   }
 
   //ريفريش بعد الاضافة او التعديل
@@ -274,20 +278,15 @@ export class Cars implements OnInit {
   }
 
   onFilterChange() {
-    const countryId = this.selectedCountry || 0;
-    const brandId = this.selectedBrand || 0;
-    const branchId = this.selectedBranch || 0;
-
-    // لو كله فاضي → رجّع كل العربيات
-    if (!countryId && !brandId && !branchId) {
-      this.loadCars();
-      return;
-    }
+    // لو المستخدم ما اختارش حاجة، نبعت null
+    const countryId = this.selectedCountry || null;
+    const brandId = this.selectedBrand || null;
+    const branchId = this.selectedBranch || null;
 
     this.api.filterCars(countryId, brandId, branchId).subscribe({
       next: (res: any) => {
         console.log("Filter result:", res);
-        this.filteredCars = res; // أو res.data حسب شكل الـ response
+        this.filteredCars = res;
       },
       error: (err) => {
         console.error("Error loading filtered cars:", err);
@@ -296,35 +295,36 @@ export class Cars implements OnInit {
   }
 
   applyFilters() {
-  let filtered = [...this.cars];
+    let filtered = [...this.cars];
 
-  // فلترة حسب الدولة
-  if (this.selectedCountry) {
-    filtered = filtered.filter(c => c.Brand?.CountryId === +this.selectedCountry);
+    // فلترة حسب الدولة
+    if (this.selectedCountry) {
+      filtered = filtered.filter(
+        (c) => c.Brand?.CountryId === +this.selectedCountry
+      );
+    }
+
+    // فلترة حسب البراند
+    if (this.selectedBrand) {
+      filtered = filtered.filter((c) => c.Brand?.Id === +this.selectedBrand);
+    }
+
+    // فلترة حسب الفرع
+    if (this.selectedBranch) {
+      filtered = filtered.filter((c) => c.BranchId === +this.selectedBranch);
+    }
+
+    // فلترة حسب البحث
+    if (this.searchText) {
+      const search = this.searchText.toLowerCase().trim();
+      filtered = filtered.filter((c) => {
+        const brandName = c.Brand?.BrandName?.toLowerCase() || "";
+        const model = c.Model?.toLowerCase() || "";
+        return brandName.includes(search) || model.includes(search);
+      });
+    }
+
+    this.filteredCars = filtered;
+    this.cdr.detectChanges();
   }
-
-  // فلترة حسب البراند
-  if (this.selectedBrand) {
-    filtered = filtered.filter(c => c.Brand?.Id === +this.selectedBrand);
-  }
-
-  // فلترة حسب الفرع
-  if (this.selectedBranch) {
-    filtered = filtered.filter(c => c.BranchId === +this.selectedBranch);
-  }
-
-  // فلترة حسب البحث
-  if (this.searchText) {
-    const search = this.searchText.toLowerCase().trim();
-    filtered = filtered.filter(c => {
-      const brandName = c.Brand?.BrandName?.toLowerCase() || '';
-      const model = c.Model?.toLowerCase() || '';
-      return brandName.includes(search) || model.includes(search);
-    });
-  }
-
-  this.filteredCars = filtered;
-  this.cdr.detectChanges();
-}
-
 }

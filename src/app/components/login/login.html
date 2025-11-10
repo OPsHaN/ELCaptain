@@ -13,7 +13,7 @@
         <img
           src="/photos/logo.png"
           alt="Logo"
-          class="img-fluid m-0 w-50 w-md-75 w-lg-100"
+          class="img-fluid m-0 w-75 w-md-75 w-lg-100"
         />
 
         <!-- <h2 class="mb-1">تسجيل دخول</h2> -->
@@ -72,10 +72,10 @@
 
           <div class="d-grid">
             <button
-              class="btn btn-warning btn-lg m-0 w-25 mx-auto py-0"
+              class="btn btn-warning btn-lg m-0 w-50 mx-auto py-0"
               type="submit"
             >
-              دخول
+              {{ isLoading ? "...جاري الدخول" : "دخول" }}
             </button>
           </div>
         </form>
@@ -234,7 +234,7 @@
         </div>
 
         <!-- الأزرار تحت الصورة -->
-        <div *ngFor="let b of buttons">
+        <!-- <div *ngFor="let b of buttons">
           <button
             class="btn btn-outline-light rounded-circle p-2"
             [routerLink]="b.route"
@@ -245,7 +245,30 @@
           >
             <i class="{{ b.icon }}"></i>
           </button>
-        </div>
+        </div> -->
+
+        <ng-container *ngFor="let b of buttons">
+          <div
+            *ngIf="b.roles.includes(userType)"
+            (click)="router.navigate([b.route])"
+            class="button-item d-flex justify-content-center align-items-center transition-all"
+          >
+            <button
+              class="btn btn-outline-light rounded-circle p-2"
+              [routerLink]="b.route"
+              routerLinkActive="btn-light text-dark"
+              [routerLinkActiveOptions]="{ exact: true }"
+              [title]="b.label"
+              style="width: 45px; height: 45px"
+            >
+              <i
+                class="{{ b.icon }} mb-1"
+                [ngClass]="isSidebarExpanded ? 'fs-5' : 'fs-6'"
+              ></i>
+              <span *ngIf="isSidebarExpanded">{{ b.label }}</span>
+            </button>
+          </div>
+        </ng-container>
 
         <!-- أزرار الإشعارات والخروج -->
         <div class="mt-3 d-flex flex-column align-items-center gap-2">

@@ -151,6 +151,13 @@ export class Login implements OnInit {
         this.router.navigate([localStorage.getItem("lastRoute") || "/home"]);
       }
     }
+
+    const storedState = localStorage.getItem("isSidebarExpanded");
+    if (storedState !== null) {
+      this.isSidebarExpanded = JSON.parse(storedState);
+    } else {
+      this.isSidebarExpanded = true; // الوضع الافتراضي لو مفيش حاجة مخزنة
+    }
     // const userInfo = this.getUserInfoFromToken();
     // if (userInfo) {
     //   this.fullName = userInfo.FullName;
@@ -175,6 +182,10 @@ export class Login implements OnInit {
 
   toggleSidebar() {
     this.isSidebarExpanded = !this.isSidebarExpanded;
+    localStorage.setItem(
+      "isSidebarExpanded",
+      JSON.stringify(this.isSidebarExpanded)
+    );
   }
 
   onSubmit() {
@@ -206,7 +217,7 @@ export class Login implements OnInit {
 
           // تحديث المتغيرات في الكمبوننت مباشرة
           this.userFullName = res.FullName || "";
-          this.userImg = res.Img || "assets/images/user.png";
+          this.userImg = res.Img;
           this.rankProfile = rank;
           this.userType = res.UserType; // ⬅️ مهم للتحديث الفوري للزرار
 
@@ -214,6 +225,7 @@ export class Login implements OnInit {
           this.authService.setUserType(res.UserType);
 
           this.notification.loadNotifications();
+          this.notification.startPolling();
 
           this.authService.onLoginSuccess(res.Token);
 
@@ -284,7 +296,11 @@ export class Login implements OnInit {
 
   getUserInfoFromLocalStorage(): { FullName: string; Img: string } {
     const fullName = localStorage.getItem("fullName") || "";
-    const img = localStorage.getItem("img") || "assets/images/user.png";
+    let img = localStorage.getItem("img");
+    // لو مفيش صورة أو القيمة فاضية → نحط الصورة الافتراضية
+    if (!img || img.trim() === "") {
+      img = "photos/user.jpg";
+    }
     return { FullName: fullName, Img: img };
   }
 }

@@ -1,6 +1,7 @@
 <!-- ✅ شريط الأزرار -->
 <div
-  class="toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 position-relative mt-2" dir="rtl"
+  class="toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 position-relative mt-2"
+  dir="rtl"
 >
   <div class="position-relative">
     <button class="btn btn-outline-primary" (click)="toggleRegisterForm()">
@@ -11,14 +12,14 @@
     </div>
   </div>
 
-      <div class="search-box position-relative" *ngIf="!showRegisterForm">
+  <div class="search-box position-relative" *ngIf="!showRegisterForm">
     <input
       type="text"
       class="form-control ps-5"
-      placeholder="🔍 ابحث عن عميل..."
+      placeholder="🔍 ابحث عن موظف..."
       [(ngModel)]="searchQuery"
       (input)="onSearchChange()"
-      style="min-width: 250px;"
+      style="min-width: 250px"
     />
     <i
       class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
@@ -55,11 +56,10 @@
         />
       </div>
 
-              <!-- ✅ الحالة (متصل / غير متصل) -->
-<span class="status-badge" [ngClass]="getStatusClass(e.LastSeen)">
-  {{ getStatusText(e.LastSeen) }}
-</span>
-
+      <!-- ✅ الحالة (متصل / غير متصل) -->
+      <span class="status-badge" [ngClass]="getStatusClass(e.LastSeen)">
+        {{ getStatusText(e.LastSeen) }}
+      </span>
 
       <div class="card-body">
         <h3 class="emp-name">{{ e?.displayName }}</h3>
@@ -67,7 +67,7 @@
 
         <div class="card-actions">
           <button
-          class="btn btn-sm btn-success rounded-circle px-1"
+            class="btn btn-sm btn-success rounded-circle px-1"
             (click)="editEmployee(e); $event.stopPropagation()"
           >
             ✏️
@@ -95,13 +95,13 @@
   dir="rtl"
 >
   <ng-container *ngIf="selectedEmployee">
-    <div class="p-3 text-center">
+    <div class="p-0 text-center">
       <img
         [src]="selectedEmployee.avatar || 'assets/img/default-user.png'"
         alt="Avatar"
-        class="rounded-circle mb-3 shadow-sm"
-        width="100"
-        height="100"
+        class="rounded-pill  mb-3 shadow-sm"
+        width="300"
+        height="300"
       />
       <h4 class="fw-bold text-primary mb-1">
         {{ selectedEmployee.displayName }}
@@ -130,11 +130,11 @@
             <td>
               <span
                 [ngClass]="{
-                  'text-success fw-bold': selectedEmployee.loggedIn,
-                  'text-danger fw-bold': !selectedEmployee.loggedIn
+                  'text-success fw-bold': isOnline(selectedEmployee.LastSeen),
+                  'text-danger fw-bold': !isOnline(selectedEmployee.LastSeen)
                 }"
               >
-                {{ selectedEmployee.loggedIn ? 'متصل الآن ✅' : 'غير متصل ❌' }}
+                {{ getStatusText(selectedEmployee.LastSeen) }}
               </span>
             </td>
           </tr>
@@ -144,9 +144,7 @@
           </tr>
         </tbody>
       </table>
-
-      <hr />
-
+      
       <h6 class="fw-bold text-center mb-2">📅 أيام العمل:</h6>
       <ul
         class="list-unstyled d-flex flex-wrap justify-content-center gap-2 m-0"
@@ -163,9 +161,7 @@
           <i
             class="pi me-1"
             [ngClass]="
-              selectedEmployee[day.key]
-                ? 'pi-check-circle'
-                : 'pi-times-circle'
+              selectedEmployee[day.key] ? 'pi-check-circle' : 'pi-times-circle'
             "
           ></i>
           {{ day.label }}
@@ -174,9 +170,5 @@
     </div>
   </ng-container>
 </p-dialog>
-
-
-
-
 
 <p-confirmDialog></p-confirmDialog>

@@ -555,9 +555,6 @@ export class CarRegister {
               ...imagesToAdd.map((i) => i.Img),
             ];
 
-            console.log("🚀 الصور بعد الرفع:", this.carImagesPreview);
-            console.log("🚀 الفورم:", this.carForm.value);
-
             this.cdr.detectChanges();
             this.refreshCars.emit();
             this.closeForm.emit();

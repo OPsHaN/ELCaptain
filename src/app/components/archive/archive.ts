@@ -53,6 +53,7 @@ export class Archive implements OnInit {
   selectedSalesId: number | null = null;
   salesList: any[] = []; // هتحملها من API
   originalOperations: any[] = [];
+  role: number = 0;
 
   contactMethods = [
     { name: "مكالمة", value: "call" },
@@ -76,6 +77,11 @@ export class Archive implements OnInit {
   ngOnInit(): void {
     this.getAllOperarions();
     this.loadCountries();
+
+      const storedRole = localStorage.getItem("userType");
+    if (storedRole) {
+      this.role = +storedRole; // نحولها لرقم
+    }
   }
 
   getAllOperarions() {
@@ -124,13 +130,13 @@ export class Archive implements OnInit {
 
   onSelectDeal(deal: any) {
     // تحديث البيانات محليًا فقط بدون أي استدعاء API
-    deal.status = 2; // غير جاد
+    deal.status = 3; // غير جاد
     deal.active = false; // إلغاء التفعيل محليًا
 
     // لو حابب تحتفظ بالـ body للعرض أو اللوج فقط
     const body = {
       Id: deal.id,
-      Status: 2,
+      Status: 3,
       OperationType: deal.OperationType ?? 2,
       CallDuration: deal.CallDuration ?? "0",
       Notes: deal.Notes ?? "",
@@ -344,7 +350,6 @@ export class Archive implements OnInit {
       Message: "Updated SalesId",
     };
 
-    console.log("📤 إرسال Body للـ API:", body);
 
     this.api.updateOperation(body).subscribe({
       next: () => {

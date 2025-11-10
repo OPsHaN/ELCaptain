@@ -13,6 +13,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { MatInputModule } from "@angular/material/input";
 import { RegisterDeal } from "../register-deal/register-deal";
 import { Apiservice, Country } from "../../services/apiservice";
+import { switchMap, timer } from "rxjs";
 
 @Component({
   selector: "app-waiting-list",
@@ -57,9 +58,11 @@ export class WaitingList implements OnInit {
     { name: "واتساب", value: "whatsapp" },
     { name: "آخرى", value: "visit" },
   ];
+  role: number = 0;
 
   selectedContactMethod: any = null;
   callDuration: number | null = null;
+  private subscription: any;
 
   constructor(
     private fb: FormBuilder,
@@ -72,9 +75,20 @@ export class WaitingList implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.getAllOperarions();
+    this.subscription = timer(0, 10000)
+      .pipe(switchMap(async () => this.getAllOperarions()))
+      .subscribe();
     this.loadCountries();
+
+    const storedRole = localStorage.getItem("userType");
+    if (storedRole) {
+      this.role = +storedRole; // نحولها لرقم
+    }
   }
+
+  ngOnDestroy(): void {
+  if (this.subscription) this.subscription.unsubscribe();
+}
 
   getAllOperarions() {
     this.api.getOperationWithStatus(1).subscribe({
@@ -114,21 +128,19 @@ export class WaitingList implements OnInit {
         this.cdr.detectChanges();
         console.log(this.countries);
       },
-      error: (err) => {
-        console.error("خطأ أثناء جلب الدول:", err);
-      },
+      error: (err) => {},
     });
   }
 
   onSelectDeal(deal: any) {
     // تحديث البيانات محليًا فقط بدون أي استدعاء API
-    deal.status = 2; // غير جاد
+    deal.status = 3; // غير جاد
     deal.active = false; // إلغاء التفعيل محليًا
 
     // لو حابب تحتفظ بالـ body للعرض أو اللوج فقط
     const body = {
       Id: deal.id,
-      Status: 2,
+      Status: 3,
       OperationType: deal.OperationType ?? 2,
       CallDuration: deal.CallDuration ?? "0",
       Notes: deal.Notes ?? "",

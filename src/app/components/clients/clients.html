@@ -61,7 +61,7 @@
         <p class="client-phone">{{ c.PhoneNumber }} 📞</p>
         <p class="client-classification">🏷 {{ c.Classification }}</p>
 
-        <div class="card-actions my-0">
+        <div class="card-actions my-0" *ngIf="role === 1 || role === 2">
           <button
             class="btn btn-sm btn-success rounded-circle px-1"
             (click)="editClient(c); $event.stopPropagation()"

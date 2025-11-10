@@ -156,6 +156,7 @@ export class Employees implements OnInit {
   viewEmployee(emp: any) {
     this.selectedEmployee = emp;
     this.showEmployeeDialog = true;
+    console.log(emp)
   }
 
   closeDialog() {
@@ -182,10 +183,12 @@ export class Employees implements OnInit {
       acceptLabel: "نعم",
       rejectLabel: "لا",
       accept: () => {
-        this.api.deleteEmployee(e.id).subscribe({
+        this.api.deleteEmployee(e.Id).subscribe({
           next: () => {
-            this.employees = this.employees.filter((emp) => emp.id !== e.id);
+            this.employees = this.employees.filter((emp) => emp.id !== e.Id);
             this.showSuccess("✅ تم حذف الموظف بنجاح");
+                this.cdr.detectChanges();
+
           },
           error: (err) => {
             console.error("❌ Error deleting employee:", err);
@@ -201,7 +204,7 @@ export class Employees implements OnInit {
 
   /** 🔁 تحسين الأداء */
   trackById(index: number, item: any) {
-    return item.id;
+    return item.Id;
   }
 
   toggleRegisterForm() {

@@ -204,7 +204,7 @@
       <div class="car-price-box">{{ car.Price | number }} جنية</div>
 
       <!-- أزرار الإجراءات -->
-      <div class="card-actions d-flex justify-content-center gap-2 p-2">
+      <div class="card-actions d-flex justify-content-center gap-2 p-2" *ngIf="role === 1 || role === 2">
         <button
           class="btn btn-sm btn-success rounded-circle"
           (click)="editCar(car); $event.stopPropagation()"
@@ -258,11 +258,11 @@
 
       <!-- 🧾 بيانات السيارة -->
       <h4 class="fw-bold text-primary mb-2">
-        {{ selectedCar.Brand.BrandName }} - {{ selectedCar.Model }}
+        {{ selectedCar.Model }}
       </h4>
-      <p class="text-muted mb-3">
+      <!-- <p class="text-muted mb-3">
         {{ selectedCar.YearOfManufacture }} | {{ selectedCar.Color }}
-      </p>
+      </p> -->
 
       <table class="table table-bordered align-middle text-center shadow-sm">
         <tbody>

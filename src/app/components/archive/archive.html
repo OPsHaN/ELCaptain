@@ -1,4 +1,4 @@
-<div class="container my-3" *ngIf="!showRegisterForm">
+<div class="container-fluid my-3" *ngIf="!showRegisterForm">
   <div class="table-responsive rounded-5">
     <p-table
       [value]="deals"
@@ -17,10 +17,10 @@
               binary="true"
               (onChange)="toggleAll($event)"
             ></p-checkbox> -->
-            #
+            التواصل
           </th>
           <th>رقم العملية</th>
-          <th>إسم العميل</th>
+          <th class="w-25">إسم العميل</th>
           <th class="w-25">رقم التواصل</th>
           <th>الإهتمام</th>
           <th>الميزانية</th>
@@ -85,18 +85,21 @@
           <td>
             <div class="py-1 d-flex flex-column gap-2 align-items-stretch">
               <button
+                *ngIf="role === 1 || role === 2"
                 class="btn btn-warning my-0 py-0"
                 (click)="editModal(deal)"
               >
                 تعديل
               </button>
               <button
+                *ngIf="role === 1 || role === 2 || role === 3"
                 class="btn btn-success my-0 py-0"
                 (click)="openModal(deal)"
               >
                 حفظ
               </button>
               <button
+                *ngIf="role === 1 || role === 2"
                 class="btn btn-info my-0 py-0"
                 (click)="openDetails(deal)"
               >

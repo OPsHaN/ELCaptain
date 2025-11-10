@@ -54,7 +54,6 @@ export class Register implements OnInit {
   employeeIdToUpdate: number | null = null;
   countries: any[] = [];
   countryMap: { [key: number]: string } = {};
-
   @Output() closeForm = new EventEmitter<void>();
   @Output() refreshEmployees = new EventEmitter<void>();
 
@@ -129,12 +128,12 @@ export class Register implements OnInit {
       ThirdName: ["", Validators.required],
       UserType: ["", Validators.required],
       FullName: [""],
-      NationalId: ["", [Validators.minLength(14)]],
+      NationalId: ["", [Validators.required, Validators.pattern(/^\d{14}$/)]],
       UserName: ["", Validators.required],
-      Password: ["", [Validators.required, Validators.minLength(6)]],
+      Password: ["", [Validators.required, Validators.minLength(5)]],
       Email: [""],
-      Phone: ["", Validators.required],
-      Phone2: [""],
+      Phone: ["", [Validators.required, Validators.pattern(/^\d{11}$/)]],
+      Phone2: ["", Validators.pattern(/^\d{11}$/)],
       BranchId: ["", Validators.required],
       Classification: ["", Validators.required],
       FromTime: ["", Validators.required],
@@ -174,7 +173,7 @@ export class Register implements OnInit {
       FullName: emp.FullName,
       NationalId: emp.NationalId,
       UserName: emp.UserName,
-      Password: emp.Password,
+      Password: "",
       Email: emp.Email,
       Phone: emp.Phone,
       Phone2: emp.Phone2,
@@ -205,6 +204,22 @@ export class Register implements OnInit {
 
     // 🟡 عرض صورة الموظف
     this.profilePreview = emp.Img ? emp.Img : this.defaultAvatar;
+
+    // 🟢 هنا نحط كود الباسورد
+    if (this.isEditMode) {
+      // في التعديل: كلمة المرور اختيارية فقط للتحقق من الحد الأدنى
+      this.registerForm.get("Password")?.clearValidators();
+      this.registerForm
+        .get("Password")
+        ?.setValidators([Validators.minLength(8)]);
+      this.registerForm.get("Password")?.updateValueAndValidity();
+    } else {
+      // في الإضافة: كلمة المرور مطلوبة
+      this.registerForm
+        .get("Password")
+        ?.setValidators([Validators.required, Validators.minLength(8)]);
+      this.registerForm.get("Password")?.updateValueAndValidity();
+    }
   }
 
   private formatTime(timeString: string | null): string | null {
@@ -268,6 +283,15 @@ export class Register implements OnInit {
 
     const formValue = this.registerForm.value;
 
+    // 🟢 تجهيز الباسورد حسب الحالة (إضافة أو تعديل)
+    let passwordToUse = formValue.Password;
+    if (this.isEditMode && this.employee) {
+      // لو تعديل وماكتبش باسورد جديد → استخدم الباسورد القديم
+      if (!formValue.Password || formValue.Password.trim() === "") {
+        passwordToUse = this.employee.Password;
+      }
+    }
+
     // 🕒 معالجة أيام الأسبوع وتحويلها إلى Boolean
     const daysBooleans = formValue.Days.map((checked: boolean) => checked);
     const selectedBranch = this.branches.find(
@@ -285,7 +309,7 @@ export class Register implements OnInit {
       NationalId: formValue.NationalId,
       BranchId: formValue.BranchId,
       UserName: formValue.UserName,
-      Password: formValue.Password,
+      Password: passwordToUse, // ✅ استخدم الباسورد المناسب
       Email: formValue.Email,
       Phone: formValue.Phone,
       Phone2: formValue.Phone2,

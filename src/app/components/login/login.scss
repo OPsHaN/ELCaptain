@@ -172,6 +172,11 @@ input::placeholder {
   justify-content: center;
   cursor: pointer;
   transition: all 0.3s ease;
+
+  .bi::before {
+    line-height: 2 !important;
+}
+
 }
 
 .toggle-btn i {

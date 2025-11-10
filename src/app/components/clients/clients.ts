@@ -33,6 +33,8 @@ export class Clients implements OnInit {
   countries: any[] = [];
   searchQuery: string = "";
   filteredClients: any[] = [];
+  role: number = 0;
+
   constructor(
     private api: Apiservice,
     private confirmationService: ConfirmationService,
@@ -43,15 +45,17 @@ export class Clients implements OnInit {
   ngOnInit() {
     this.getAllClients();
     this.loadCountries();
-    
+
+    const storedRole = localStorage.getItem("userType");
+    if (storedRole) {
+      this.role = +storedRole; // نحولها لرقم
+    }
   }
 
-
-
-    getAllClients() {
+  getAllClients() {
     this.api.getAllClients().subscribe({
       next: (res) => {
-         this.clients = res as any[];
+        this.clients = res as any[];
         this.filteredClients = [...this.clients]; // نسخة مبدئية
 
         console.log("✅ Cars loaded:", this.filteredClients);
@@ -65,31 +69,32 @@ export class Clients implements OnInit {
     if (!this.showRegisterForm) {
       this.selectedClient = null;
       this.isEditMode = false;
+      this.getAllClients();
     }
   }
 
-onSearchChange() {
-  const search = this.searchQuery.toLowerCase().trim();
+  onSearchChange() {
+    const search = this.searchQuery.toLowerCase().trim();
 
-  if (!search) {
-    this.filteredClients = [...this.clients]; // لو مفيش كتابة، رجّع كل العملاء
-    return;
+    if (!search) {
+      this.filteredClients = [...this.clients]; // لو مفيش كتابة، رجّع كل العملاء
+      return;
+    }
+
+    this.filteredClients = this.clients.filter((client: any) => {
+      return (
+        client.ClientName?.toLowerCase().includes(search) ||
+        client.Phone?.toLowerCase().includes(search) ||
+        client.Email?.toLowerCase().includes(search)
+      );
+    });
   }
-
-  this.filteredClients = this.clients.filter((client: any) => {
-    return (
-      client.ClientName?.toLowerCase().includes(search) ||
-      client.Phone?.toLowerCase().includes(search) ||
-      client.Email?.toLowerCase().includes(search)
-    );
-  });
-}
-
 
   editClient(client: any) {
     this.selectedClient = client;
     this.isEditMode = true;
     this.showRegisterForm = true;
+    console.log(this.selectedClient);
   }
 
   deleteClient(client: any) {
@@ -142,7 +147,6 @@ onSearchChange() {
       next: (res: any) => {
         this.countries = res;
         this.cdr.detectChanges();
-        console.log(this.countries);
       },
       error: (err) => {
         console.error("خطأ أثناء جلب الدول:", err);
@@ -152,7 +156,6 @@ onSearchChange() {
 
   getCountryName(countryId: number): string {
     const country = this.countries.find((c) => c.id === countryId);
-    console.log(country);
     return country ? country.name : "غير محددة";
   }
 

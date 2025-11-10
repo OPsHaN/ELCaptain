@@ -1,11 +1,22 @@
-<div class="container py-3">
+<div class="container-fluid py-3">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <div class="position-relative">
       <button class="btn btn-primary btn-sm" (click)="markAsRead()">
         قراءة الكل
       </button>
     </div>
-    <h4 class="fw-bold">🔔 الإشعارات</h4>
+    <!-- 🔹 التبويبات بدل العنوان -->
+    <div class="flex-grow-1 text-center" dir="rtl">
+      <mat-tab-group
+        [(selectedIndex)]="selectedTabIndex"
+        animationDuration="300ms"
+        class="d-inline-block w-auto"
+      >
+        <mat-tab label="🔔 الإشعارات"></mat-tab>
+
+        <mat-tab label="⏰ التذكيرات"></mat-tab>
+      </mat-tab-group>
+    </div>
 
     <div class="position-relative">
       <button class="btn btn-primary btn-sm" (click)="toggleAddReminder()">
@@ -59,7 +70,7 @@
   </div>
 
   <!-- قائمة الإشعارات -->
-<div *ngIf="(notifications$ | async)?.length; else noNotifications" dir="rtl">
+  <!-- <div *ngIf="(notifications$ | async)?.length; else noNotifications" dir="rtl">
   <div class="list-group">
     <div
       *ngFor="let n of (notifications$ | async) || []"
@@ -79,12 +90,82 @@
       </span>
     </div>
   </div>
-</div>
+</div> -->
 
-<ng-template #noNotifications>
-  <div class="alert alert-light text-center border rounded-3">
-    لا توجد إشعارات حالياً 😴
+  <ng-container [ngSwitch]="selectedTabIndex">
+
+       <!-- 🔔 تبويب الإشعارات -->
+    <div *ngSwitchCase="0">
+      <div *ngIf="(notifications$ | async)?.length; else noNotifications" dir="rtl">
+  <div class="list-group">
+    <div
+      *ngFor="let n of (notifications$ | async) || []"
+      class="list-group-item list-group-item-action d-flex justify-content-between align-items-start border-0 shadow-sm mb-2 rounded-3"
+    >
+      <div class="ms-2 ms-auto">
+        <div class="fw-bold">{{ n.NotificationText }}</div>
+        <small class="text-muted">
+          <ng-container *ngIf="n.OperationId && n.OperationId !== 0">
+            على صفقة رقم {{ n.OperationId }}
+          </ng-container>
+          {{ n.Message }}
+        </small>
+      </div>
+  <div class="d-flex justify-content-between align-items-center mt-2">
+    <span class="badge bg-primary rounded-pill">
+      {{ n.ValidFrom | date : "short" }}
+    </span>
+    <button class="btn btn-sm btn-danger rounded-pill mx-2 py-0" (click)="remove(n.Id)">
+      🗑 
+    </button>
   </div>
-</ng-template>
+    </div>
+  </div>
+      </div>
 
+      <ng-template #noNotifications>
+        <div class="alert alert-light text-center border rounded-3">
+          لا توجد إشعارات حالياً 😴
+        </div>
+      </ng-template>
+    </div>
+    <!-- ⏰ تبويب التذكيرات -->
+    <div *ngSwitchCase="1">
+      <div *ngIf="(reminders$ | async)?.length; else noReminders" dir="rtl">
+    <div class="list-group">
+    <div
+      *ngFor="let n of (reminders$ | async) || []"
+      class="list-group-item list-group-item-action d-flex justify-content-between align-items-start border-0 shadow-sm mb-2 rounded-3"
+    >
+      <div class="ms-2 ms-auto">
+        <div class="fw-bold">{{ n.NotificationText }}</div>
+        <small class="text-muted">
+          <ng-container *ngIf="n.OperationId && n.OperationId !== 0">
+            على صفقة رقم {{ n.OperationId }}
+          </ng-container>
+          {{ n.Message }}
+        </small>
+      </div>
+  <div class="d-flex justify-content-between align-items-center mt-2">
+    <span class="badge bg-primary rounded-pill">
+      {{ n.ValidFrom | date : "short" }}
+    </span>
+    <button class="btn btn-sm btn-danger rounded-pill mx-2 py-0" (click)="remove(n.Id)">
+      🗑 
+    </button>
+  </div>
+
+    </div>
+  </div>
+      </div>
+
+      <ng-template #noReminders>
+        <div class="alert alert-light text-center border rounded-3">
+          لا توجد تذكيرات حالياً 😴
+        </div>
+      </ng-template>
+    </div>
+
+ 
+  </ng-container>
 </div>

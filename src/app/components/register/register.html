@@ -118,6 +118,8 @@
                 type="text"
                 class="form-control custom-input"
                 formControlName="NationalId"
+                maxlength="14"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
               />
               <small
                 class="text-danger"
@@ -126,7 +128,7 @@
                   registerForm.get('NationalId')?.invalid
                 "
               >
-                يجب أن يكون 14 رقم
+                يجب أن يكون 14 رقمًا بالضبط
               </small>
             </div>
 
@@ -151,20 +153,41 @@
 
             <!-- كلمة المرور -->
             <div class="col-md-4">
-              <label class="form-label">كلمة المرور</label>
+              <label class="form-label">
+                كلمة المرور
+                <span *ngIf="!isEditMode" class="text-danger">*</span>
+              </label>
+
               <input
                 type="text"
                 class="form-control custom-input"
                 formControlName="Password"
+                [placeholder]="
+                  isEditMode
+                    ? 'اتركها فارغة إذا لا تريد تغييرها'
+                    : 'أدخل كلمة المرور (الحد الأدنى 6 أحرف)'
+                "
               />
+
               <small
                 class="text-danger"
                 *ngIf="
                   registerForm.get('Password')?.touched &&
-                  registerForm.get('Password')?.invalid
+                  registerForm.get('Password')?.hasError('minlength')
                 "
               >
-                الحد الأدنى 8 أحرف
+                الحد الأدنى 6 أحرف
+              </small>
+
+              <small
+                class="text-danger"
+                *ngIf="
+                  !isEditMode &&
+                  registerForm.get('Password')?.touched &&
+                  registerForm.get('Password')?.hasError('required')
+                "
+              >
+                كلمة المرور مطلوبة
               </small>
             </div>
 
@@ -188,6 +211,8 @@
                 type="text"
                 class="form-control custom-input"
                 formControlName="Phone"
+                maxlength="11"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
               />
               <small
                 class="text-danger"
@@ -196,7 +221,7 @@
                   registerForm.get('Phone')?.invalid
                 "
               >
-                يجب أن يكون 11 رقم
+                يجب أن يكون 11 رقمًا بالضبط
               </small>
             </div>
 

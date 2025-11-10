@@ -126,7 +126,7 @@
     </div>
 
     <!-- البراندات -->
-    <div *ngIf="selectedCountryId && filteredBrands.length > 0" class="brands-grid d-flex flex-wrap justify-content-center gap-4 mt-4">
+    <div *ngIf="selectedCountryId && filteredBrands.length > 0" class="brands-grid d-flex flex-wrap justify-content-center gap-4 my-4">
       <div *ngFor="let brand of filteredBrands" class="brand-item text-center" (click)="selectImportBrand(brand)">
         <div class="brand-circle overflow-hidden">
           <img [src]="brand.Img || 'assets/no-car.png'" [alt]="brand.BrandName" class="brand-img" />

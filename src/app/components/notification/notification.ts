@@ -14,6 +14,7 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { NotificationService } from "../../services/notification";
 import { MessageService } from "primeng/api";
 import { Observable, of } from "rxjs";
+import { MatTabsModule } from "@angular/material/tabs";
 
 @Component({
   selector: "app-notification",
@@ -28,12 +29,15 @@ import { Observable, of } from "rxjs";
     MatInputModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatTabsModule,
   ],
 })
 export class Notification implements OnInit {
   addReminderForm!: FormGroup;
   showAddReminder = false;
   notifications$: Observable<any[]> = of([]); // 👈 قيمة افتراضية
+  reminders$:Observable<any[]> = of([]);
+  selectedTabIndex = 0; // 0 = الإشعارات, 1 = التذكيرات
 
   constructor(
     private api: Apiservice,
@@ -44,10 +48,13 @@ export class Notification implements OnInit {
 
   ngOnInit() {
     this.initForm();
-this.notifications$ = this.notification.notifications$ || of([]);
+    this.notifications$ = this.notification.notifications$ || of([]);
+    this.notification.loadNotifications();
 
-    this.notification.loadNotifications(); // تحميل أولي للإشعارات
-  }
+    // تذكيرات
+    this.reminders$ = this.notification.reminders$ || of([]); // 👈 نفس الفكرة
+    this.notification.loadReminders();
+    }
 
   private initForm() {
     this.addReminderForm = this.fb.group({
@@ -71,12 +78,12 @@ this.notifications$ = this.notification.notifications$ || of([]);
       Seen: false,
       ValidFrom: formValue.ValidFrom,
       IsReminder: true,
-      OperationId: 0, // لو هتحددها على صفقة معينة ممكن تعديل هنا
     };
 
     this.api.addReminder(body).subscribe({
       next: () => {
         this.notification.loadNotifications(); // تحديث الإشعارات
+        this.notification.loadReminders();
         this.showAddReminder = false;
         this.addReminderForm.reset();
         this.showSuccess("تم إضافة التذكير بنجاح");
@@ -87,6 +94,10 @@ this.notifications$ = this.notification.notifications$ || of([]);
 
   markAsRead() {
     this.notification.markAllAsRead(); // تعليم كل الإشعارات كمقروءة
+  }
+
+  remove(id:number){
+    this.notification.deleteNotification(id);
   }
 
   deleteNotification(notificationId: number) {
