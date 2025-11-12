@@ -376,15 +376,12 @@
               </fieldset>
             </div> -->
 
-             <!-- مكان الفرع -->
+            <!-- مكان الفرع -->
             <div class="col-md-4">
               <label class="form-label">مكان الفرع</label>
               <mat-form-field appearance="outline" class="w-100 custom-outline">
                 <mat-select formControlName="BranchId">
-                  <mat-option
-                    *ngFor="let b of branchs"
-                    [value]="b.Id"
-                  >
+                  <mat-option *ngFor="let b of branchs" [value]="b.Id">
                     {{ b.BranchName }}
                   </mat-option>
                 </mat-select>
@@ -400,7 +397,7 @@
               </small>
             </div>
 
-                        <!-- الاستيراد -->
+            <!-- الاستيراد -->
             <div class="col-md-4">
               <div class="d-flex flex-column gap-3">
                 <!-- ✅ تسجيل السيارة في -->
@@ -464,22 +461,6 @@
               <label class="form-label d-block mb-2 fw-bold">المميزات</label>
               <div class="d-flex flex-wrap gap-3">
                 <div *ngFor="let feature of features">
-                  <ng-container *ngIf="feature.key === 'IsForSale'">
-                    <input
-                      type="checkbox"
-                      class="form-check-input ms-1"
-                      [id]="feature.key"
-                      [checked]="carForm.get('IsForSale')?.value"
-                      (click)="confirmIsForSale($event)"
-                    />
-                    <label
-                      [for]="feature.key"
-                      class="badge bg-warning text-dark px-2 py-2 rounded-pill"
-                    >
-                      {{ feature.label }}
-                    </label>
-                  </ng-container>
-
                   <ng-container *ngIf="feature.key !== 'IsForSale'">
                     <input
                       type="checkbox"
@@ -489,6 +470,22 @@
                     />
                     <label [for]="feature.key">{{ feature.label }}</label>
                   </ng-container>
+                </div>
+
+                <div class="w-100 my-3 d-flex justify-content-center">
+                  <input
+                    type="checkbox"
+                    class="form-check-input ms-2"
+                    id="IsForSale"
+                    [checked]="carForm.get('IsForSale')?.value"
+                    (click)="confirmIsForSale($event)"
+                  />
+                  <label
+                    for="IsForSale"
+                    class="badge bg-warning text-dark px-3 py-2 rounded-pill"
+                  >
+                    إعرضها للبيع
+                  </label>
                 </div>
               </div>
             </div>

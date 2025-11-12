@@ -196,3 +196,26 @@
 .mat-select-panel {
   z-index: 1200 !important;
 }
+
+::ng-deep .p-paginator {
+  --p-primary-color: #ff7a00; 
+  --p-highlight-bg: #ff7a00;  
+  --p-highlight-text-color: #fff;
+  --p-button-primary-hover-bg: #ff9933; 
+  --p-button-primary-border: #ff7a00;
+}
+
+::ng-deep .p-paginator .p-paginator-page.p-highlight {
+  background-color: var(--p-highlight-bg) !important;
+  border-color: var(--p-highlight-bg) !important;
+  color: #fff !important;
+}
+
+::ng-deep .p-paginator .p-paginator-page:not(.p-highlight):hover {
+  background-color: rgba(255, 122, 0, 0.15);
+  color: #ff7a00
+}
+::ng-deep.p-paginator-page.p-paginator-page-selected {
+  background-color : #e1a267 !important;
+  color: #fff !important;
+}

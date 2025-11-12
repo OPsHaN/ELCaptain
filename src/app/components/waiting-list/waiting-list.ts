@@ -75,7 +75,7 @@ export class WaitingList implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.subscription = timer(0, 10000)
+    this.subscription = timer(0, 100000)
       .pipe(switchMap(async () => this.getAllOperarions()))
       .subscribe();
     this.loadCountries();
@@ -87,8 +87,8 @@ export class WaitingList implements OnInit {
   }
 
   ngOnDestroy(): void {
-  if (this.subscription) this.subscription.unsubscribe();
-}
+    if (this.subscription) this.subscription.unsubscribe();
+  }
 
   getAllOperarions() {
     this.api.getOperationWithStatus(1).subscribe({
@@ -141,6 +141,7 @@ export class WaitingList implements OnInit {
     const body = {
       Id: deal.id,
       Status: 3,
+      IsDelivered: false,
       OperationType: deal.OperationType ?? 2,
       CallDuration: deal.CallDuration ?? "0",
       Notes: deal.Notes ?? "",
@@ -427,9 +428,9 @@ export class WaitingList implements OnInit {
         ? this.callDuration?.toString() || "0"
         : "0";
 
-    body.EditedAt = new Date().toISOString();
+    body.IsDelivered = this.selectedDeal.IsDelivered ?? false;
 
-    console.log("📦 Body النهائي قبل الإرسال:", body);
+    body.EditedAt = new Date().toISOString();
 
     // ✅ حفظ العملية
     this.api.updateOperation(body).subscribe({

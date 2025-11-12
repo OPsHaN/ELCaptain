@@ -15,6 +15,7 @@ import { NotificationService } from "../../services/notification";
 import { MessageService } from "primeng/api";
 import { Observable, of } from "rxjs";
 import { MatTabsModule } from "@angular/material/tabs";
+import { PaginatorModule } from "primeng/paginator";
 
 @Component({
   selector: "app-notification",
@@ -30,14 +31,21 @@ import { MatTabsModule } from "@angular/material/tabs";
     MatDatepickerModule,
     MatNativeDateModule,
     MatTabsModule,
+    PaginatorModule,
   ],
 })
 export class Notification implements OnInit {
   addReminderForm!: FormGroup;
   showAddReminder = false;
   notifications$: Observable<any[]> = of([]); // 👈 قيمة افتراضية
-  reminders$:Observable<any[]> = of([]);
+  reminders$: Observable<any[]> = of([]);
   selectedTabIndex = 0; // 0 = الإشعارات, 1 = التذكيرات
+  notificationsPage = 0;
+  remindersPage = 0;
+  rowsPerPage = 10;
+
+  public allNotifications: any[] = [];
+  public allReminders: any[] = [];
 
   constructor(
     private api: Apiservice,
@@ -48,13 +56,25 @@ export class Notification implements OnInit {
 
   ngOnInit() {
     this.initForm();
-    this.notifications$ = this.notification.notifications$ || of([]);
+    this.notification.notifications$.subscribe((data) => {
+      this.allNotifications = (data || []).sort(
+        (a, b) =>
+          new Date(b.ValidFrom).getTime() - new Date(a.ValidFrom).getTime()
+      ); // ✅ الأحدث أولاً
+      this.updateDisplayedNotifications();
+    });
     this.notification.loadNotifications();
 
-    // تذكيرات
-    this.reminders$ = this.notification.reminders$ || of([]); // 👈 نفس الفكرة
+    // تحميل التذكيرات
+this.notification.reminders$.subscribe((data) => {
+  this.allReminders = (data || []).sort(
+    (a, b) => new Date(b.ValidFrom).getTime() - new Date(a.ValidFrom).getTime()
+  ); // ✅ الأحدث أولاً
+  this.updateDisplayedReminders();
+});
+
     this.notification.loadReminders();
-    }
+  }
 
   private initForm() {
     this.addReminderForm = this.fb.group({
@@ -96,12 +116,38 @@ export class Notification implements OnInit {
     this.notification.markAllAsRead(); // تعليم كل الإشعارات كمقروءة
   }
 
-  remove(id:number){
+  remove(id: number) {
     this.notification.deleteNotification(id);
+    this.updateDisplayedNotifications();
+    this.updateDisplayedReminders();
   }
 
   deleteNotification(notificationId: number) {
     this.notification.deleteNotification(notificationId); // حذف الإشعار + تحديث العداد
+  }
+  // 🟢 Pagination methods
+  onNotificationsPageChange(event: any) {
+    this.notificationsPage = event.page;
+    this.updateDisplayedNotifications();
+  }
+
+  onRemindersPageChange(event: any) {
+    this.remindersPage = event.page;
+    this.updateDisplayedReminders();
+  }
+
+  updateDisplayedNotifications() {
+    const start = this.notificationsPage * this.rowsPerPage;
+    const end = start + this.rowsPerPage;
+    const sliced = this.allNotifications.slice(start, end);
+    this.notifications$ = of(sliced);
+  }
+
+  updateDisplayedReminders() {
+    const start = this.remindersPage * this.rowsPerPage;
+    const end = start + this.rowsPerPage;
+    const sliced = this.allReminders.slice(start, end);
+    this.reminders$ = of(sliced);
   }
 
   showError(msg: string) {

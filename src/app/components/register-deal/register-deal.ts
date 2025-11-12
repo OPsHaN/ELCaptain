@@ -84,6 +84,7 @@ export class RegisterDeal {
       InterstedInCountryId: [null],
       Budget: [""],
       PaymentMethod: [null],
+      RequestedCarModel: ["", Validators.required],
     });
 
     this.loadCountries();
@@ -170,7 +171,6 @@ export class RegisterDeal {
       (s) => s.value === selectedId
     )?.raw;
     if (selectedSales) {
-      // نخزن البيانات في الفورم
       this.dealForm.patchValue({
         SalesId: selectedSales.Id,
         SalesFullName: selectedSales.FullName,
@@ -181,6 +181,7 @@ export class RegisterDeal {
         SalesBranch: selectedSales.Branch ?? null,
         SalesExperiencedInCountryId:
           selectedSales.ExperiencedInCountryId ?? null,
+        RequestedCarModel: this.deal.RequestedCarModel ?? "", // ✅
       });
     }
   }
@@ -287,6 +288,7 @@ export class RegisterDeal {
       EditedBy: 0,
       EditedAt: nowIso,
       Message: "Created from RegisterDeal",
+      RequestedCarModel: form.RequestedCarModel, // 👈 تمت الإضافة هنا
     };
 
     return body;

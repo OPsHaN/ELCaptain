@@ -1,6 +1,7 @@
 <!-- ✅ شريط الأزرار -->
 <div
-  class="toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 position-relative mt-2" dir="rtl"
+  class="toolbar d-flex flex-wrap justify-content-between align-items-center gap-3 position-relative mt-2"
+  dir="rtl"
 >
   <div class="position-relative">
     <button class="btn btn-outline-primary" (click)="toggleRegisterForm()">
@@ -11,14 +12,14 @@
     </div>
   </div>
 
-    <div class="search-box position-relative" *ngIf="!showRegisterForm">
+  <div class="search-box position-relative" *ngIf="!showRegisterForm">
     <input
       type="text"
       class="form-control ps-5"
       placeholder="🔍 ابحث عن عميل..."
       [(ngModel)]="searchQuery"
       (input)="onSearchChange()"
-      style="min-width: 250px;"
+      style="min-width: 250px"
     />
     <i
       class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"
@@ -114,6 +115,10 @@
             <td>{{ getPaymentMethod(selectedClient.PaymentMethod) }}</td>
           </tr>
           <tr>
+            <th>🌐 مصدر العميل</th>
+            <td>{{ selectedClient.ReachOutMethod }}</td>
+          </tr>
+          <tr>
             <th>📍 الدولة</th>
             <td>
               <p>
@@ -123,7 +128,7 @@
           </tr>
           <tr>
             <th>📝 الملاحظات</th>
-            <td>{{ selectedClient.Message || "لا توجد ملاحظات" }}</td>
+            <td>{{ selectedClient.Notes || "لا توجد ملاحظات" }}</td>
           </tr>
         </tbody>
       </table>

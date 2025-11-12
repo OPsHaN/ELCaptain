@@ -54,8 +54,11 @@ export class Deals implements OnInit {
   notificationText = "";
   validFrom = "";
   currentOperationId = 0; // Id الصفقة الحالية
+  editEmployeeMode = false;
+  selectedEmployeeId: number | null = null;
+  allEmployees: any = [];
+  role = 0;
   private subscription: any;
-
   constructor(
     private api: Apiservice,
     private confirmationService: ConfirmationService,
@@ -66,14 +69,19 @@ export class Deals implements OnInit {
 
   ngOnInit() {
     // Initialization logic can be added here
-    this.subscription = timer(0, 10000)
+    this.subscription = timer(0, 100000)
       .pipe(switchMap(async () => this.getAllDeals()))
       .subscribe();
+
+    const storedRole = localStorage.getItem("userType");
+    if (storedRole) {
+      this.role = +storedRole; // نحولها لرقم
+    }
   }
 
   ngOnDestroy(): void {
-  if (this.subscription) this.subscription.unsubscribe();
-}
+    if (this.subscription) this.subscription.unsubscribe();
+  }
 
   getAllDeals() {
     this.api.getOperationWithStatus(2).subscribe((res: any) => {
@@ -83,10 +91,117 @@ export class Deals implements OnInit {
       // تصنيف الصفقات حسب الحالة
       this.openDeals = this.deals.filter((d) => d.DealStatus === 1);
       this.rejectedDeals = this.deals.filter((d) => d.DealStatus === 3);
-      this.closedDeals = this.deals.filter((d) => d.DealStatus === 2);
+      this.closedDeals = this.deals.filter(
+        (d) => d.DealStatus === 2 && d.IsDelivered === false
+      );
       this.pendingDeals = this.deals.filter((d) => d.DealStatus === 4);
 
       this.cdr.detectChanges();
+    });
+  }
+
+  /** 🧾 تحميل جميع الموظفين */
+  loadEmployees() {
+    this.api.getAllEmployee().subscribe({
+      next: (res) => {
+        this.allEmployees = res;
+      },
+      error: (err) => {
+        console.error("❌ خطأ في تحميل الموظفين:", err);
+        this.showError("تعذر تحميل الموظفين");
+      },
+    });
+  }
+
+  /** ✏️ تبديل وضع تعديل الموظف */
+  toggleEditEmployee() {
+    this.editEmployeeMode = !this.editEmployeeMode;
+
+    // تحميل الموظفين عند أول فتح
+    if (this.editEmployeeMode && this.allEmployees.length === 0) {
+      this.loadEmployees();
+    }
+  }
+
+  /** ✅ تحديث الموظف المسؤول */
+  updateEmployee(employeeId: number | null) {
+    if (!employeeId || !this.selectedDeal) return;
+
+    // نجيب النسخة الأصلية من الصفقة
+    const original = this.deals.find(
+      (op: any) => op.Id === this.selectedDeal.Id
+    );
+    if (!original) {
+      console.error("❌ لم يتم العثور على الصفقة الأصلية!");
+      return;
+    }
+
+    // نعمل نسخة عميقة لتجنب تعديل الأصل مباشرة
+    const body = JSON.parse(JSON.stringify(original));
+
+    // نعدل فقط SalesId
+    body.SalesId = employeeId;
+    body.EditedAt = new Date().toISOString(); // تحديث الوقت
+
+    this.api.updateOperation(body).subscribe({
+      next: () => {
+        // تحديث محلي
+        const newEmp = this.allEmployees.find((e: any) => e.Id === employeeId);
+        if (newEmp) {
+          this.selectedDeal.Sales = { ...newEmp };
+          const idx = this.deals.findIndex(
+            (d) => d.Id === this.selectedDeal.Id
+          );
+          if (idx !== -1) this.deals[idx].Sales = { ...newEmp };
+        }
+
+        this.editEmployeeMode = false;
+        this.showSuccess("تم تحديث الموظف بنجاح ✅");
+        this.getAllDeals();
+      },
+      error: (err) => {
+        console.error("❌ خطأ أثناء تحديث الموظف:", err);
+        this.showError("حدث خطأ أثناء تحديث الموظف");
+      },
+    });
+  }
+
+  /** 🚗 تبديل حالة تسليم العربية */
+  /** 🚗 تبديل حالة تسليم العربية */
+  toggleDelivered(deal: any) {
+    if (!deal) return;
+
+    // نجيب النسخة الأصلية من الصفقة
+    const original = this.deals.find((op: any) => op.Id === deal.Id);
+    if (!original) {
+      console.error("❌ لم يتم العثور على الصفقة الأصلية!");
+      return;
+    }
+
+    // نعمل نسخة عميقة لتجنب تعديل الأصل مباشرة
+    const body = JSON.parse(JSON.stringify(original));
+
+    // نعدل فقط IsDelivered
+    body.IsDelivered = deal.IsDelivered;
+    body.EditedAt = new Date().toISOString(); // تحديث الوقت
+
+    this.api.updateOperation(body).subscribe({
+      next: () => {
+        // تحديث محلي
+        const idx = this.deals.findIndex((d) => d.Id === deal.Id);
+        if (idx !== -1) this.deals[idx].IsDelivered = deal.IsDelivered;
+
+        this.selectedDeal.IsDelivered = deal.IsDelivered;
+
+        this.showSuccess(
+          deal.IsDelivered ? "تم تحديد التسليم ✅" : "تم إلغاء التسليم ❌"
+        );
+        this.getAllDeals();
+      },
+      error: (err) => {
+        console.error("❌ خطأ أثناء تحديث حالة التسليم:", err);
+        this.showError("حدث خطأ أثناء تحديث حالة التسليم");
+      },
     });
   }
 

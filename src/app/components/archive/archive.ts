@@ -28,6 +28,7 @@ import { Apiservice, Country } from "../../services/apiservice";
     MatSelectModule,
     MatInputModule,
     RegisterDeal,
+    
   ],
   templateUrl: "./archive.html",
   styleUrl: "./archive.scss",
@@ -423,6 +424,7 @@ export class Archive implements OnInit {
         : "0";
 
     body.EditedAt = new Date().toISOString();
+    body.IsDelivered = this.selectedDeal.IsDelivered ?? false;
 
     console.log("📦 Body النهائي قبل الإرسال:", body);
 

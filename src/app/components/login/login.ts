@@ -224,7 +224,7 @@ export class Login implements OnInit {
           // تحديث AuthService BehaviorSubject (لو مفعّل)
           this.authService.setUserType(res.UserType);
 
-          this.notification.loadNotifications();
+          // this.notification.loadNotifications();
           this.notification.startPolling();
 
           this.authService.onLoginSuccess(res.Token);
@@ -284,7 +284,6 @@ export class Login implements OnInit {
 
   getUserInfoFromToken(): { FullName: string; Img: string } | null {
     const decoded: UserInfo = this.getDecodedToken();
-    console.log("Decoded token:", decoded);
 
     if (!decoded) return null;
 

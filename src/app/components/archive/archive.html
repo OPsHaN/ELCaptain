@@ -2,12 +2,12 @@
   <div class="table-responsive rounded-5">
     <p-table
       [value]="deals"
-      [paginator]="false"
-      [rows]="10"
+      [paginator]="true"
+      [rows]="5"
+      [rowsPerPageOptions]="[10, 20, 50]"
       dir="rtl"
       stripedRows
       [tableStyle]="{ 'min-width': '50rem' }"
-      [rowsPerPageOptions]="[10, 20]"
     >
       <ng-template pTemplate="header">
         <tr>

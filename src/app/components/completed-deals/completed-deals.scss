@@ -1,0 +1,157 @@
+/* 🧍‍♂️ Clients wrap */
+.clients-wrap {
+  padding: 1rem;
+}
+
+/* 🧭 Grid */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+/* 🪪 Card */
+.client-card {
+  background: #ffffff;
+  box-shadow: 0px 0px 10px black;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+  min-height: 100px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  position: relative;
+  border-radius: 12px;
+}
+
+.client-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0px 0px 10px orange;
+}
+
+/* 🖼 صورة العميل */
+.card-media {
+  width: 180px;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin: 15px auto 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f3f3f3;
+}
+
+.card-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}
+
+/* 📝 تفاصيل العميل */
+.card-body {
+  padding: 1rem 0rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  text-align: center;
+}
+
+.client-name {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.client-phone {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.client-classification {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #ff9800;
+  font-weight: 500;
+}
+
+/* ⚡ أزرار الأكشن */
+.card-actions {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: auto;
+  justify-content: center;
+}
+
+/* 🟡 شكل الزرار */
+.btn-outline {
+  background: transparent;
+  border: 1px solid rgba(11, 95, 255, 0.12);
+  color: #0b5fff;
+}
+
+/* 🟢 البادج */
+.status-badge {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+  color: #fff;
+  font-weight: 600;
+}
+
+.status-badge.online {
+  background-color: #28a745;
+}
+
+.status-badge.offline {
+  background-color: #dc3545;
+}
+
+/* 🧭 Responsive */
+@media (max-width: 1200px) {
+  .cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 900px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 576px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 🖼 صورة العميل في الـ Dialog */
+.avatar-container {
+  width: 160px;
+  height: 160px;
+  overflow: hidden;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+}

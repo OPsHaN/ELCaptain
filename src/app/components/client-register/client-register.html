@@ -131,6 +131,35 @@
               </mat-form-field>
             </div>
 
+            <!-- مصدر العميل -->
+            <div class="col-md-4">
+              <label class="form-label">مصدر العميل</label>
+              <mat-form-field appearance="outline" class="w-100 custom-outline">
+                <mat-select
+                  formControlName="ReachOutMethod"
+                  placeholder="اختر المصدر"
+                >
+                  <mat-option
+                    *ngFor="let method of reachOutMethods"
+                    [value]="method"
+                  >
+                    {{ method }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </div>
+
+
+                        <!-- Notes -->
+            <div class="col-6">
+              <label class="form-label">الملاحظات</label>
+              <textarea
+                class="form-control"
+                rows="3"
+                formControlName="Notes"
+              ></textarea>
+            </div>
+
             <!-- Sales Id -->
             <!-- <div class="col-md-4">
               <label class="form-label">الموظف المسؤل</label>

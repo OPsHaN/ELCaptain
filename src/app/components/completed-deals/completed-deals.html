@@ -1,0 +1,31 @@
+<div class="clients-wrap">
+  <div class="cards-grid" dir="rtl">
+    <div
+      class="card client-card"
+      *ngFor="let c of completedDeals; trackBy: trackById"
+      (click)="viewDeal(c)"
+      role="button"
+      aria-label="Open client {{ c.ClientName }}"
+    >
+      <div class="card-body">
+        <h5 class="fw-bold">عملية رقم: {{ c.Id }}</h5>
+        <p>العميل: {{ c.ClientName }}</p>
+        <p>رقم تليفون العميل: {{ c.ClientPhone }} </p>
+        <p>السيارة: {{ c.RequestedCarModel }}</p>
+        <p>اسم الموظف: {{ c.EmployeeName }}</p>
+        <p>رقم تليفون الموظف: {{ c.EmployeePhone }}</p>
+        <p>الملاحظات: {{ c.Notes }}</p>
+        <p *ngIf="c.IsDelivered" class="text-success">
+          تم التسليم بتاريخ: {{ c.DeliveryDate | date: 'yyyy/MM/dd HH:mm' }}
+        </p>
+        <p *ngIf="!c.IsDelivered" class="text-danger">
+          🚗 لم يتم التسليم بعد
+        </p>
+      </div>
+    </div>
+
+    <div *ngIf="completedDeals.length === 0" class="text-center text-muted">
+      لا توجد صفقات منتهية
+    </div>
+  </div>
+</div>

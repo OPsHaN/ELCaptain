@@ -45,6 +45,16 @@ export class ClientRegister implements OnInit {
     { name: "A", code: "A" },
     { name: "A+", code: "A+" },
   ];
+  reachOutMethods: string[] = [
+    "فيس بوك",
+    "واتس آب",
+    "تويتر",
+    "إنستجرام",
+    "تيك توك",
+    "موقع",
+    "معرفة شخصية",
+    "سناب شات",
+  ];
 
   countryCodes = [
     { name: "Egypt", flag: "🇪🇬", dial_code: "+20" },
@@ -95,13 +105,12 @@ export class ClientRegister implements OnInit {
     this.clientForm = this.fb.group({
       ClientName: ["", Validators.required],
       CountryCode: ["", Validators.required],
-      PhoneNumber: [
-        "",
-        [Validators.required, Validators.pattern(/^\d{10}$/)],
-      ],
+      PhoneNumber: ["", [Validators.required, Validators.pattern(/^\d{10}$/)]],
       Classification: [""],
       InterstedInCountryId: [0],
       Budget: [""],
+      ReachOutMethod: [""],
+      Notes: "",
       PaymentMethod: [0],
       AddedBy: [0],
       FilePath: [""],
@@ -121,69 +130,70 @@ export class ClientRegister implements OnInit {
   // ✅ لو عايز يشتغل دايناميك بمجرد تغيير القيمة
 
   private patchClientData(client: any) {
-  let countryCode = '';
-  let phoneNumber = '';
+    let countryCode = "";
+    let phoneNumber = "";
 
-  if (client.PhoneNumber) {
-    // أولاً نطهر الرقم: نشيل مسافات، شرطات، أقواس
-    let raw = client.PhoneNumber.toString().replace(/[\s\-\(\)]/g, '');
+    if (client.PhoneNumber) {
+      // أولاً نطهر الرقم: نشيل مسافات، شرطات، أقواس
+      let raw = client.PhoneNumber.toString().replace(/[\s\-\(\)]/g, "");
 
-    // نضمن وجود + بالبداية لو موجود كود
-    // (لو الرقم محفوظ كـ "0020123..." ممكن تحول 00 -> +)
-    if (raw.startsWith('00')) {
-      raw = '+' + raw.slice(2);
-    }
+      // نضمن وجود + بالبداية لو موجود كود
+      // (لو الرقم محفوظ كـ "0020123..." ممكن تحول 00 -> +)
+      if (raw.startsWith("00")) {
+        raw = "+" + raw.slice(2);
+      }
 
-    // نبحث في countryCodes عن أطول كود يتطابق مع بداية الرقم
-    // نرتب الكودز نزولياً حسب الطول عشان نأخذ المطابقة الأطول أولاً
-    const sortedCodes = [...this.countryCodes].sort(
-      (a, b) => b.dial_code.length - a.dial_code.length
-    );
+      // نبحث في countryCodes عن أطول كود يتطابق مع بداية الرقم
+      // نرتب الكودز نزولياً حسب الطول عشان نأخذ المطابقة الأطول أولاً
+      const sortedCodes = [...this.countryCodes].sort(
+        (a, b) => b.dial_code.length - a.dial_code.length
+      );
 
-    const found = sortedCodes.find(c => raw.startsWith(c.dial_code));
+      const found = sortedCodes.find((c) => raw.startsWith(c.dial_code));
 
-    if (found) {
-      countryCode = found.dial_code;
-      phoneNumber = raw.slice(countryCode.length);
-    } else {
-      // لو ما لقيناش كود، ممكن نعامل الرقم كرقم محلي (بدون كود)
-      // أو نحاول فصل علامة + وكله بعد كده
-      if (raw.startsWith('+')) {
-        // حاول تاخذ أول جزئين: +ddd وباقي
-        const m = raw.match(/^(\+\d{1,4})(\d+)$/);
-        if (m) {
-          countryCode = m[1];
-          phoneNumber = m[2];
-        } else {
-          phoneNumber = raw.replace(/^\+/, '');
-        }
+      if (found) {
+        countryCode = found.dial_code;
+        phoneNumber = raw.slice(countryCode.length);
       } else {
-        phoneNumber = raw;
+        // لو ما لقيناش كود، ممكن نعامل الرقم كرقم محلي (بدون كود)
+        // أو نحاول فصل علامة + وكله بعد كده
+        if (raw.startsWith("+")) {
+          // حاول تاخذ أول جزئين: +ddd وباقي
+          const m = raw.match(/^(\+\d{1,4})(\d+)$/);
+          if (m) {
+            countryCode = m[1];
+            phoneNumber = m[2];
+          } else {
+            phoneNumber = raw.replace(/^\+/, "");
+          }
+        } else {
+          phoneNumber = raw;
+        }
+      }
+
+      // اختياري: لو الرقم المحلي بدأ بصفر (مثل 012345...), وشايف انك عايز تخزّن بدون الصفر
+      // شيل الصفر الأول لو موجود (تعتمد اذا النمط اللي بتستخدمه في التسجيل بيحتفظ بالصفر أو لا)
+      if (phoneNumber.startsWith("0")) {
+        phoneNumber = phoneNumber.slice(1);
       }
     }
 
-    // اختياري: لو الرقم المحلي بدأ بصفر (مثل 012345...), وشايف انك عايز تخزّن بدون الصفر
-    // شيل الصفر الأول لو موجود (تعتمد اذا النمط اللي بتستخدمه في التسجيل بيحتفظ بالصفر أو لا)
-    if (phoneNumber.startsWith('0')) {
-      phoneNumber = phoneNumber.slice(1);
-    }
+    // الآن نحدّث الفورم
+    this.clientForm.patchValue({
+      ClientName: client.ClientName,
+      CountryCode: countryCode || "", // ممكن تضع قيمة افتراضية لو حبيت
+      PhoneNumber: phoneNumber || "",
+      Classification: client.Classification,
+      InterstedInCountryId: client.InterstedInCountryId,
+      ReachOutMethod: client.ReachOutMethod || "", // ✅ أُضيف هنا
+      Budget: client.Budget,
+      PaymentMethod: client.PaymentMethod,
+      SalesId: 0,
+      Notes: client.Notes,
+    });
+
+    this.clientId = client.Id;
   }
-
-  // الآن نحدّث الفورم
-  this.clientForm.patchValue({
-    ClientName: client.ClientName,
-    CountryCode: countryCode || '', // ممكن تضع قيمة افتراضية لو حبيت
-    PhoneNumber: phoneNumber || '',
-    Classification: client.Classification,
-    InterstedInCountryId: client.InterstedInCountryId,
-    Budget: client.Budget,
-    PaymentMethod: client.PaymentMethod,
-    SalesId: 0,
-  });
-
-  this.clientId = client.Id;
-}
-
 
   loadEmployees() {
     this.api.getAllEmployee().subscribe({
@@ -207,88 +217,90 @@ export class ClientRegister implements OnInit {
     });
   }
 
-onFileSelected(event: any): void {
-  this.selectedFiles = Array.from(event.target.files);
-}
-
-uploadFiles(): void {
-  if (!this.clientId || this.selectedFiles.length === 0) {
-    this.showError("يجب تسجيل العميل أولًا واختيار ملفات 📎");
-    return;
+  onFileSelected(event: any): void {
+    this.selectedFiles = Array.from(event.target.files);
   }
 
-  this.selectedFiles.forEach((file) => {
-    this.api.uploadFile(this.clientId!, file).subscribe({
-      next: () => {
-        console.log("✅ File uploaded successfully:", file.name);
-        this.showSuccess(`تم رفع الملف ${file.name} بنجاح`);
-        this.closeForm.emit()
-      },
-      error: (err) => {
-        console.error("❌ Error uploading file:", err);
-        this.showError(`فشل رفع الملف ${file.name}`);
-      },
-    });
-  });
-}
+  uploadFiles(): void {
+    if (!this.clientId || this.selectedFiles.length === 0) {
+      this.showError("يجب تسجيل العميل أولًا واختيار ملفات 📎");
+      return;
+    }
 
+    this.selectedFiles.forEach((file) => {
+      this.api.uploadFile(this.clientId!, file).subscribe({
+        next: () => {
+          console.log("✅ File uploaded successfully:", file.name);
+          this.showSuccess(`تم رفع الملف ${file.name} بنجاح`);
+          this.closeForm.emit();
+        },
+        error: (err) => {
+          console.error("❌ Error uploading file:", err);
+          this.showError(`فشل رفع الملف ${file.name}`);
+        },
+      });
+    });
+  }
 
   onSubmit(): void {
-  if (this.clientForm.invalid) {
-    this.clientForm.markAllAsTouched();
-    return;
+    if (this.clientForm.invalid) {
+      this.clientForm.markAllAsTouched();
+      return;
+    }
+
+    this.isSubmitting = true;
+    this.clientId = this.client ? this.client.Id : 0;
+
+    const fullPhone =
+      this.clientForm.value.CountryCode + this.clientForm.value.PhoneNumber;
+
+    // 📝 تجهيز جسم البيانات للإرسال
+    const body = {
+      Id: this.clientId || 0,
+      ClientName: this.clientForm.value.ClientName,
+      PhoneNumber: fullPhone,
+      Classification: this.clientForm.value.Classification,
+      InterstedInCountryId: this.clientForm.value.InterstedInCountryId,
+      Budget: this.clientForm.value.Budget,
+      PaymentMethod: this.clientForm.value.PaymentMethod,
+      ReachOutMethod: this.clientForm.value.ReachOutMethod,
+      Notes: this.clientForm.value.Notes,
+      AddedBy: 0,
+      AddedAt: new Date().toISOString(),
+      EditedBy: 0,
+      SalesId: 0,
+      EditedAt: new Date().toISOString(),
+    };
+
+    // ✨ لو تعديل استدعاء update ولو إضافة استدعاء add
+    const savePromise =
+      this.isEditMode && this.clientId > 0
+        ? this.api.updateClient(body).toPromise()
+        : this.api.addClient(body).toPromise();
+
+    savePromise
+      .then((res: any) => {
+        // ⏳ حفظ ناجح → إظهار رفع الملفات
+        this.isSubmitting = false;
+        this.showUploadSection = true; // ✅ هنا المكان الصح لعرض الرفع
+
+        // لو السيرفر رجع ID جديد نحفظه لاستخدامه في رفع الملفات
+        if (!this.clientId && res?.id) {
+          this.clientId = res.id;
+        }
+
+        if (this.isEditMode) {
+          this.showSuccess("✅ تم تعديل بيانات العميل بنجاح");
+        } else {
+          this.showSuccess("✅ تم تسجيل العميل بنجاح");
+        }
+      })
+      .catch((err) => {
+        console.error("❌ خطأ أثناء حفظ البيانات", err);
+        this.showError("حدث خطأ أثناء حفظ البيانات");
+        this.isSubmitting = false;
+      });
   }
-
-  this.isSubmitting = true;
-  this.clientId = this.client ? this.client.Id : 0;
-
-  const fullPhone =
-    this.clientForm.value.CountryCode + this.clientForm.value.PhoneNumber;
-
-  // 📝 تجهيز جسم البيانات للإرسال
-  const body = {
-    Id: this.clientId || 0,
-    ClientName: this.clientForm.value.ClientName,
-    PhoneNumber: fullPhone,
-    Classification: this.clientForm.value.Classification,
-    InterstedInCountryId: this.clientForm.value.InterstedInCountryId,
-    Budget: this.clientForm.value.Budget,
-    PaymentMethod: this.clientForm.value.PaymentMethod,
-    AddedBy: 0,
-    AddedAt: new Date().toISOString(),
-    EditedBy: 0,
-    SalesId: 0,
-    EditedAt: new Date().toISOString(),
-  };
-
-  // ✨ لو تعديل استدعاء update ولو إضافة استدعاء add
-  const savePromise = this.isEditMode && this.clientId > 0
-    ? this.api.updateClient(body).toPromise()
-    : this.api.addClient(body).toPromise();
-
-  savePromise
-    .then((res: any) => {
-      // ⏳ حفظ ناجح → إظهار رفع الملفات
-      this.isSubmitting = false;
-      this.showUploadSection = true; // ✅ هنا المكان الصح لعرض الرفع
-
-      // لو السيرفر رجع ID جديد نحفظه لاستخدامه في رفع الملفات
-      if (!this.clientId && res?.id) {
-        this.clientId = res.id;
-      }
-
-      if (this.isEditMode) {
-        this.showSuccess("✅ تم تعديل بيانات العميل بنجاح");
-      } else {
-        this.showSuccess("✅ تم تسجيل العميل بنجاح");
-      }
-    })
-    .catch((err) => {
-      console.error("❌ خطأ أثناء حفظ البيانات", err);
-      this.showError("حدث خطأ أثناء حفظ البيانات");
-      this.isSubmitting = false;
-    });
-}
 
   uploadFile(file: File) {
     const formData = new FormData();

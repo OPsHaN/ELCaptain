@@ -89,7 +89,62 @@ export class CarRegister {
     { key: "HasMassageChairs", label: "مقاعد مساج" },
     { key: "HasTirbo", label: "تيربو" },
     { key: "HasExtraEngine", label: "محرك إضافي" },
-    { key: "IsForSale", label: "إعرضها  للبيع" },
+    { key: "prop_Headlamp_HID_LED", label: "مصابيح HID / LED" },
+    { key: "prop_Power_electric_trunk", label: "شنطة كهربائية" },
+    { key: "prop_Ghost_door_closing", label: "إغلاق الأبواب الناعم" },
+    {
+      key: "prop_Power_folding_side_mirrors",
+      label: "مرايات جانبية كهربائية قابلة للطي",
+    },
+    { key: "prop_aluminum_wheels", label: "جنوط ألومنيوم" },
+    { key: "prop_Roof_rack", label: "حامل سقف" },
+    { key: "prop_heated_steering_wheel", label: "تدفئة عجلة القيادة" },
+    {
+      key: "prop_Power_adjustable_steering_wheel",
+      label: "تعديل عجلة القيادة كهربائياً",
+    },
+    { key: "prop_paddle_shift", label: "بدالات نقل السرعات" },
+    { key: "prop_steering_wheel_remote_control", label: "تحكم في المقود" },
+    { key: "prop_ECM_rearview_mirror", label: "مرآة تعتيم تلقائي" },
+    { key: "prop_Hi_pass", label: "نظام المرور الذكي" },
+    { key: "prop_Power_door_lock", label: "قفل الأبواب كهربائي" },
+    { key: "prop_Power_Windows", label: "نوافذ كهربائية" },
+    {
+      key: "prop_Airbag_drivers_seat_passengers_seat",
+      label: "وسائد هوائية للسائق والراكب",
+    },
+    { key: "prop_Airbag_side", label: "وسائد جانبية" },
+    { key: "prop_Airbag_curtain", label: "وسائد ستائرية" },
+    { key: "prop_Anti_lock_brakes_ABS", label: "نظام ABS" },
+    {
+      key: "prop_Tire_Pressure_Monitoring_System_TPMS",
+      label: "مراقبة ضغط الإطارات",
+    },
+    {
+      key: "prop_Lane_Departure_Warning_System_LDWS",
+      label: "تحذير الخروج من المسار",
+    },
+    { key: "prop_Electronic_Parking_Brake_EPB", label: "فرامل يد إلكترونية" },
+    { key: "prop_Cruise_control_standard_adaptive", label: "مثبّت السرعة" },
+    { key: "prop_Rear_camera", label: "كاميرا خلفية" },
+    { key: "prop_360_degree_surrounding_view", label: "رؤية محيطية 360°" },
+    { key: "prop_Bluetooth", label: "بلوتوث" },
+    { key: "prop_USB_port", label: "منفذ USB" },
+    { key: "prop_Navigation", label: "نظام الملاحة" },
+    { key: "prop_Android_Auto", label: "أندرويد أوتو" },
+    { key: "prop_Apple_CarPlay", label: "Apple CarPlay" },
+    { key: "prop_Leather_steering_wheel", label: "مقود جلد" },
+    { key: "prop_leather_seats", label: "مقاعد جلد" },
+    { key: "prop_Seat_ventilation", label: "مقاعد مهواة" },
+    { key: "prop_Heated_seats_front_and_rear_seats", label: "مقاعد مدفأة" },
+    { key: "prop_Panoramic_roof", label: "سقف بانورامي" },
+    { key: "prop_Sunroof", label: "فتحة سقف" },
+    { key: "prop_Ambient_lighting", label: "إضاءة داخلية محيطية" },
+    { key: "prop_Sound_system", label: "نظام صوتي مميز" },
+    { key: "prop_Touchscreen", label: "شاشة لمس" },
+    { key: "prop_Voice_control", label: "تحكم صوتي" },
+        { key: "IsForSale", label: "إعرضها  للبيع" },
+
   ];
 
   carTypes: string[] = [
@@ -177,6 +232,8 @@ export class CarRegister {
       IsElectricty: [false],
       InstantDelivery: [false],
       InitiativeType: ["0"],
+        ...this.features.reduce((acc, f) => ({ ...acc, [f.key]: [false] }), {}),
+
     });
 
     if (this.isEditMode && this.car) {

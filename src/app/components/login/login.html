@@ -1,6 +1,6 @@
 <div class="container-fluid vh-100 landing position-relative">
   <!-- ✅ قبل تسجيل الدخول -->
-  <div *ngIf="!isLoggedIn" class="row h-100 full-bg">
+  <div class="row h-100 full-bg">
     <div class="col-12 col-md-6 p-0 d-none d-md-block"></div>
 
     <div
@@ -81,218 +81,6 @@
         </form>
         <div class="mt-auto text-center pt-3 small opacity-75">
           جميع الحقوق محفوظة لمؤسسة الكابتن © 2025
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ✅ بعد تسجيل الدخول -->
-  <div *ngIf="isLoggedIn" class="row h-100">
-    <!-- 🟦 الشمال -->
-    <div
-      class="col"
-      [class.col-md-9]="isSidebarExpanded"
-      [class.col-md-11]="!isSidebarExpanded"
-      class="d-flex align-items-center justify-content-center bg-white transition-all"
-    >
-      <div class="content text-center p-0 w-100 mb-auto">
-        <router-outlet></router-outlet>
-      </div>
-    </div>
-
-    <!-- 🟧 القائمة الجانبية -->
-    <div
-      class="d-flex flex-column bg-side text-white p-3 justify-content-start align-content-start transition-all"
-      [class.col-md-3]="isSidebarExpanded"
-      [class.col-md-1]="!isSidebarExpanded"
-      style="overflow: hidden"
-    >
-      <!-- زر الطي / الفتح -->
-      <button
-        class="toggle-btn btn btn-outline-light rounded-circle position-fixed transition-all"
-        (click)="toggleSidebar()"
-        [ngStyle]="{
-          right: isSidebarExpanded ? '24%' : '7%',
-          top: '75px',
-          zIndex: 1050
-        }"
-      >
-        <i
-          class="bi text-center"
-          [ngClass]="isSidebarExpanded ? 'bi-chevron-right' : 'bi-chevron-left'"
-        ></i>
-      </button>
-
-      <!-- ✳️ المحتوى لما القائمة مفتوحة -->
-      <div *ngIf="isSidebarExpanded" class="sidebar-content transition-all">
-        <h4 class="text-center mb-2 p-1 opacity-75 bg-dark rounded-pill">
-          الكابتن للسيارات
-        </h4>
-
-        <!-- 🧍‍♂️ بيانات المستخدم -->
-        <div
-          class="user-box d-flex justify-content-between align-items-center my-3 py-2 w-100 mx-auto"
-          dir="rtl"
-        >
-          <!-- الصورة على اليمين -->
-          <div class="text-center me-2">
-            <img
-              *ngIf="userImg; else defaultIcon"
-              [src]="userImg"
-              alt="User Image"
-              class="user-img rounded-pill"
-              style="width: 100px; height: 100px; object-fit: cover"
-            />
-            <ng-template #defaultIcon>
-              <i class="bi bi-person-circle fs-1 text-secondary"></i>
-            </ng-template>
-          </div>
-
-          <!-- الاسم والرنك في المنتصف -->
-          <div class="text-center flex-grow-1">
-            <h5 class="user-name mb-1">{{ userFullName }}</h5>
-            <small
-              class="user-title text-white bg-dark rounded-pill fw-bold px-2 py-1"
-            >
-              {{ rankProfile }}
-            </small>
-          </div>
-
-          <!-- الأزرار على اليسار -->
-          <div class="d-flex flex-column align-items-start ms-2">
-            <button
-              class="btn btn-outline-secondary btn-sm position-relative mb-1 rounded-circle"
-              [routerLink]="['/notifications']"
-            >
-              <i class="bi bi-bell"></i>
-              <span
-                class="position-absolute top-0 start-100 translate-middle badge bg-danger"
-              >
-                {{ unreadCount }}
-              </span>
-            </button>
-
-            <button
-              class="btn btn-danger btn-sm rounded-circle"
-              (click)="logout()"
-            >
-              <i class="bi bi-box-arrow-right"></i>
-            </button>
-          </div>
-        </div>
-
-        <!-- 🟦 الأزرار -->
-        <div
-          class="buttons-grid d-flex flex-wrap justify-content-start transition-all"
-          [ngClass]="isSidebarExpanded ? 'expanded' : 'collapsed'"
-          dir="rtl"
-        >
-          <ng-container *ngFor="let b of buttons">
-            <div
-              *ngIf="b.roles.includes(userType)"
-              (click)="router.navigate([b.route])"
-              class="button-item d-flex justify-content-center align-items-center transition-all"
-            >
-              <button
-                class="btn d-flex flex-column align-items-center justify-content-center text-nowrap transition-all"
-                [routerLink]="b.route"
-                routerLinkActive="btn-light text-dark"
-                [routerLinkActiveOptions]="{ exact: true }"
-              >
-                <i
-                  class="{{ b.icon }} mb-1"
-                  [ngClass]="isSidebarExpanded ? 'fs-5' : 'fs-6'"
-                ></i>
-                <span *ngIf="isSidebarExpanded">{{ b.label }}</span>
-              </button>
-            </div>
-          </ng-container>
-        </div>
-
-        <div class="footer-text text-center small opacity-75 bg-dark rounded">
-          جميع الحقوق محفوظة لمؤسسة الكابتن © 2025
-        </div>
-      </div>
-
-      <!-- ✳️ المحتوى لما القائمة مطوية -->
-      <div
-        *ngIf="!isSidebarExpanded"
-        class="collapsed-menu d-flex flex-column align-items-center mt-3 gap-3"
-      >
-        <!-- 👤 صورة المستخدم -->
-        <div class="text-center">
-          <img
-            *ngIf="userImg; else defaultIconSmall"
-            [src]="userImg"
-            alt="User Image"
-            class="rounded-circle border border-light"
-            style="width: 60px; height: 60px; object-fit: cover"
-          />
-          <ng-template #defaultIconSmall>
-            <i class="bi bi-person-circle fs-2 text-secondary"></i>
-          </ng-template>
-        </div>
-
-        <!-- الأزرار تحت الصورة -->
-        <!-- <div *ngFor="let b of buttons">
-          <button
-            class="btn btn-outline-light rounded-circle p-2"
-            [routerLink]="b.route"
-            routerLinkActive="btn-light text-dark"
-            [routerLinkActiveOptions]="{ exact: true }"
-            [title]="b.label"
-            style="width: 45px; height: 45px"
-          >
-            <i class="{{ b.icon }}"></i>
-          </button>
-        </div> -->
-
-        <ng-container *ngFor="let b of buttons">
-          <div
-            *ngIf="b.roles.includes(userType)"
-            (click)="router.navigate([b.route])"
-            class="button-item d-flex justify-content-center align-items-center transition-all"
-          >
-            <button
-              class="btn btn-outline-light rounded-circle p-2"
-              [routerLink]="b.route"
-              routerLinkActive="btn-light text-dark"
-              [routerLinkActiveOptions]="{ exact: true }"
-              [title]="b.label"
-              style="width: 45px; height: 45px"
-            >
-              <i
-                class="{{ b.icon }} mb-1"
-                [ngClass]="isSidebarExpanded ? 'fs-5' : 'fs-6'"
-              ></i>
-              <span *ngIf="isSidebarExpanded">{{ b.label }}</span>
-            </button>
-          </div>
-        </ng-container>
-
-        <!-- أزرار الإشعارات والخروج -->
-        <div class="mt-3 d-flex flex-column align-items-center gap-2">
-          <button
-            class="btn btn-outline-secondary btn-sm rounded-circle position-relative"
-            [routerLink]="['/notifications']"
-            style="width: 40px; height: 40px"
-          >
-            <i class="bi bi-bell"></i>
-            <span
-              class="position-absolute top-0 start-100 translate-middle badge bg-danger"
-              style="font-size: 0.6rem"
-            >
-              {{ unreadCount }}
-            </span>
-          </button>
-
-          <button
-            class="btn btn-danger btn-sm rounded-circle"
-            (click)="logout()"
-            style="width: 40px; height: 40px"
-          >
-            <i class="bi bi-box-arrow-right"></i>
-          </button>
         </div>
       </div>
     </div>

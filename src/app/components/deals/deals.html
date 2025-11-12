@@ -56,93 +56,18 @@
               <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
               <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
               <p class="mb-0 text-muted">
-                رقم الهاتف: {{ deal.Client?.PhoneNumber }}
+                <a
+                  [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
+                  target="_blank"
+                  class="text-success text-decoration-none fw-bold"
+                >
+                  {{ deal?.Client?.PhoneNumber }}
+                  <i class="bi bi-whatsapp ms-1"></i>
+                </a>
               </p>
             </div>
             <div *ngIf="openDeals.length === 0" class="text-center text-muted">
               لا توجد صفقات مفتوحة
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🔴 مرفوضة -->
-      <div class="col-md-3 mt-0">
-        <div class="card shadow-sm border-danger">
-          <div class="card-header bg-danger text-white text-center fw-bold">
-            مرفوضة
-          </div>
-          <div
-            class="card-body"
-            id="rejectedDeals"
-            cdkDropList
-            [cdkDropListData]="rejectedDeals"
-            [cdkDropListConnectedTo]="[
-              'openDeals',
-              'closedDeals',
-              'pendingDeals'
-            ]"
-            (cdkDropListDropped)="onDrop($event, 3)"
-          >
-            <div
-              class="my-2 p-2 border rounded deal"
-              *ngFor="let deal of rejectedDeals; trackBy: trackById"
-              cdkDrag
-              (click)="viewDeal(deal)"
-              style="cursor: pointer"
-            >
-              <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
-              <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
-              <p class="mb-0 text-muted">
-                رقم الهاتف: {{ deal.Client?.PhoneNumber }}
-              </p>
-            </div>
-            <div
-              *ngIf="rejectedDeals.length === 0"
-              class="text-center text-muted"
-            >
-              لا توجد صفقات مرفوضة
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 🔵 منتهية -->
-      <div class="col-md-3 mt-0">
-        <div class="card shadow-sm border-primary">
-          <div class="card-header bg-primary text-white text-center fw-bold">
-            منتهية
-          </div>
-          <div
-            class="card-body"
-            id="closedDeals"
-            cdkDropList
-            [cdkDropListData]="closedDeals"
-            [cdkDropListConnectedTo]="[
-              'openDeals',
-              'rejectedDeals',
-              'pendingDeals'
-            ]"
-            (cdkDropListDropped)="onDrop($event, 2)"
-          >
-            <div
-              class="my-2 p-2 border rounded deal"
-              *ngFor="let deal of closedDeals; trackBy: trackById"
-              cdkDrag
-              (click)="viewDeal(deal)"
-              style="cursor: pointer"
-            >
-              <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
-              <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
-              <p class="mb-0 text-muted">
-                رقم الهاتف: {{ deal.Client?.PhoneNumber }}
-              </p>
-            </div>
-            <div
-              *ngIf="closedDeals.length === 0"
-              class="text-center text-muted"
-            >
-              لا توجد صفقات منتهية
             </div>
           </div>
         </div>
@@ -182,7 +107,7 @@
                   target="_blank"
                   class="text-success text-decoration-none fw-bold"
                 >
-                  {{ selectedDeal?.Client?.phone }}
+                  {{ deal?.Client?.PhoneNumber }}
                   <i class="bi bi-whatsapp ms-1"></i>
                 </a>
               </p>
@@ -192,6 +117,102 @@
               class="text-center text-muted"
             >
               لا توجد صفقات معلقة
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔴 مرفوضة -->
+      <div class="col-md-3 mt-0">
+        <div class="card shadow-sm border-danger">
+          <div class="card-header bg-danger text-white text-center fw-bold">
+            مرفوضة
+          </div>
+          <div
+            class="card-body"
+            id="rejectedDeals"
+            cdkDropList
+            [cdkDropListData]="rejectedDeals"
+            [cdkDropListConnectedTo]="[
+              'openDeals',
+              'closedDeals',
+              'pendingDeals'
+            ]"
+            (cdkDropListDropped)="onDrop($event, 3)"
+          >
+            <div
+              class="my-2 p-2 border rounded deal"
+              *ngFor="let deal of rejectedDeals; trackBy: trackById"
+              cdkDrag
+              (click)="viewDeal(deal)"
+              style="cursor: pointer"
+            >
+              <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
+              <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
+              <p class="mb-0 text-muted">
+                <a
+                  [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
+                  target="_blank"
+                  class="text-success text-decoration-none fw-bold"
+                >
+                  {{ deal?.Client?.PhoneNumber }}
+                  <i class="bi bi-whatsapp ms-1"></i>
+                </a>
+              </p>
+            </div>
+            <div
+              *ngIf="rejectedDeals.length === 0"
+              class="text-center text-muted"
+            >
+              لا توجد صفقات مرفوضة
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 🔵 منتهية -->
+      <div class="col-md-3 mt-0">
+        <div class="card shadow-sm border-primary">
+          <div class="card-header bg-primary text-white text-center fw-bold">
+            مابعد البيع
+          </div>
+          <div
+            class="card-body"
+            id="closedDeals"
+            cdkDropList
+            [cdkDropListData]="closedDeals"
+            [cdkDropListConnectedTo]="[
+              'openDeals',
+              'rejectedDeals',
+              'pendingDeals'
+            ]"
+            (cdkDropListDropped)="onDrop($event, 2)"
+          >
+            <div
+              class="my-2 p-2 border rounded deal"
+              *ngFor="let deal of closedDeals; trackBy: trackById"
+              cdkDrag
+              (click)="viewDeal(deal)"
+              style="cursor: pointer"
+            >
+              <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
+              <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
+              <p class="mb-0 text-muted">
+                <a
+                  [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
+                  target="_blank"
+                  class="text-success text-decoration-none fw-bold"
+                >
+                  {{ deal?.Client?.PhoneNumber }}
+                  <i class="bi bi-whatsapp ms-1"></i>
+                </a>
+              </p>
+            </div>
+            <div
+              *ngIf="closedDeals.length === 0"
+              class="text-center text-muted"
+            >
+              لا توجد صفقات منتهية
             </div>
           </div>
         </div>
@@ -211,12 +232,14 @@
   dir="rtl"
 >
   <ng-container *ngIf="selectedDeal">
-
     <!-- ✅ العنوان وزر إضافة الملاحظة -->
-    <div class="d-flex justify-content-between align-items-center mb-3" >
+    <div class="d-flex justify-content-between align-items-center mb-3">
       <!-- مكان فارغ على الشمال -->
-      <div class="d-flex justify-content-start" >
-        <button class="btn btn-sm btn-outline-primary" (click)="openNoteDialog()">
+      <div class="d-flex justify-content-start">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          (click)="openNoteDialog()"
+        >
           <i class="bi bi-chat-dots me-1"></i>
           إضافة ملاحظة
         </button>
@@ -227,8 +250,11 @@
       </h4>
 
       <!-- زر إضافة الملاحظة على اليمين -->
-     <div class="d-flex justify-content-end" >
-        <button class="btn btn-sm btn-outline-primary" (click)="openReminderDialog(selectedDeal.Id)">
+      <div class="d-flex justify-content-end">
+        <button
+          class="btn btn-sm btn-outline-primary"
+          (click)="openReminderDialog(selectedDeal.Id)"
+        >
           <i class="bi bi-chat-dots me-1"></i>
           إضافة تذكير
         </button>
@@ -236,9 +262,8 @@
     </div>
 
     <div class="p-0 d-flex gap-3">
-
       <!-- ✅ العمود الأيمن: تفاصيل الصفقة -->
-      <div class="flex-fill border rounded p-2" style="min-width: 50%;">
+      <div class="flex-fill border rounded p-2" style="min-width: 50%">
         <h6 class="fw-bold mb-2">📋 تفاصيل الصفقة</h6>
         <div class="table-responsive">
           <table class="table table-bordered align-middle text-center">
@@ -255,7 +280,9 @@
                 <th>📞 رقم الهاتف</th>
                 <td>
                   <a
-                    [href]="'https://wa.me/' + selectedDeal?.Client?.PhoneNumber"
+                    [href]="
+                      'https://wa.me/' + selectedDeal?.Client?.PhoneNumber
+                    "
                     target="_blank"
                     class="text-success text-decoration-none fw-bold"
                   >
@@ -266,31 +293,103 @@
               </tr>
               <tr>
                 <th>💰 الميزانية</th>
-                <td>{{ selectedDeal?.Client?.Budget | number }} جنيه {{ selectedDeal?.Currency }}</td>
+                <td>
+                  {{ selectedDeal?.Client?.Budget | number }} جنيه
+                  {{ selectedDeal?.Currency }}
+                </td>
               </tr>
               <tr>
                 <th>💳 طريقة الدفع</th>
-                <td>{{ getPaymentMethod(selectedDeal?.Client?.PaymentMethod) }}</td>
+                <td>
+                  {{ getPaymentMethod(selectedDeal?.Client?.PaymentMethod) }}
+                </td>
               </tr>
               <tr>
                 <th>📝 ملاحظات</th>
                 <td>{{ selectedDeal?.Notes || "لا توجد ملاحظات" }}</td>
               </tr>
               <tr>
+                <th>🚗 موديل السيارة</th>
+                <td>{{ selectedDeal?.RequestedCarModel }}</td>
+              </tr>
+              <tr>
                 <th>📅 تاريخ الإنشاء</th>
                 <td>{{ selectedDeal?.AddedAt | date : "medium" }}</td>
               </tr>
+              <!-- 💼 الموظف المسؤول -->
               <tr>
                 <th>💼 الموظف المسئول</th>
                 <td>
-                  <img
-                    [src]="selectedDeal?.Sales?.Img"
-                    width="40"
-                    height="40"
-                    class="rounded-circle me-2 border"
-                    alt="avatar"
-                  />
-                  {{ selectedDeal?.Sales?.FullName }}
+                  <div
+                    class="d-flex align-items-center justify-content-center ap-2 mx-auto"
+                  >
+                    <img
+                      [src]="selectedDeal?.Sales?.Img"
+                      width="40"
+                      height="40"
+                      class="rounded-circle border"
+                      alt="avatar"
+                    />
+                    <span class="fw-bold">{{
+                      selectedDeal?.Sales?.FullName
+                    }}</span>
+
+                    <!-- ✏️ زر التعديل -->
+                    <button *ngIf="role === 1 || role === 2"
+                      class="btn btn-sm btn-outline-warning py-0 px-2"
+                      (click)="toggleEditEmployee()"
+                    >
+                      <i class="bi bi-pencil-square"></i>
+                    </button>
+                  </div>
+
+                  <!-- 🔽 قائمة اختيار الموظفين -->
+                  <div *ngIf="editEmployeeMode" class="mt-2">
+                    <select
+                      class="form-select form-select-sm"
+                      [(ngModel)]="selectedEmployeeId"
+                      (change)="updateEmployee(selectedEmployeeId)"
+                    >
+                      <option [ngValue]="null">اختر الموظف...</option>
+                      <option
+                        *ngFor="let emp of allEmployees"
+                        [ngValue]="emp.Id"
+                      >
+                        {{ emp.FullName }}
+                      </option>
+                    </select>
+                  </div>
+                </td>
+              </tr>
+
+              <!-- 🚗 تم تسليم العربية (يظهر فقط في مابعد البيع) -->
+              <tr *ngIf="selectedDeal?.DealStatus === 2">
+                <th>🚗 تم تسليم العربية</th>
+                <td>
+                  <div
+                    class="switch-wrapper d-flex align-items-center justify-content-center gap-2"
+                    dir="rtl"
+                  >
+                    <span
+                      class="switch-label mx-1"
+                      [class.active]="!selectedDeal.IsDelivered"
+                      >نعم</span
+                    >
+                    <label class="custom-control ios-switch">
+                      <input
+                        type="checkbox"
+                        class="ios-switch-control-input"
+                        [(ngModel)]="selectedDeal.IsDelivered"
+                        (change)="toggleDelivered(selectedDeal)"
+                      />
+                      <span class="ios-switch-control-indicator"></span>
+                    </label>
+                    <span
+                      class="switch-label mx-1"
+                      [class.active]="selectedDeal.IsDelivered"
+                      >لا</span
+                    >
+                  </div>
                 </td>
               </tr>
             </tbody>
@@ -299,59 +398,83 @@
       </div>
 
       <!-- ✅ العمود الأيسر: الملاحظات + النشاطات -->
-      <div class="flex-fill d-flex flex-column gap-2 border rounded p-2" style="min-width: 50%;">
-<!-- ✅ العمود الأيسر: تبويبات Angular Material -->
-  <mat-tab-group>
-    <!-- 📝 سجل الملاحظات -->
-    <mat-tab label="📝 سجل الملاحظات">
-      <div class="table-responsive mt-2" style="max-height:200px; overflow:auto;">
-        <table class="table table-striped table-sm mb-0">
-          <thead class="table-light">
-            <tr><th>#</th><th>الملاحظة</th><th>التاريخ</th></tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let note of selectedDeal?.Commands | notesOnly:true; let i=index">
-              <td>{{ i+1 }}</td>
-              <td>{{ note.Text }}</td>
-              <td>{{ note.AddedAt | date:'short' }}</td>
-            </tr>
-            <tr *ngIf="!(selectedDeal?.Commands?.length)">
-              <td colspan="3" class="text-center text-muted">لا توجد ملاحظات</td>
-            </tr>
-          </tbody>
-        </table>
+      <div
+        class="flex-fill d-flex flex-column gap-2 border rounded p-2"
+        style="min-width: 50%"
+      >
+        <!-- ✅ العمود الأيسر: تبويبات Angular Material -->
+        <mat-tab-group>
+          <!-- 📝 سجل الملاحظات -->
+          <mat-tab label="📝 سجل الملاحظات">
+            <div
+              class="table-responsive mt-2"
+              style="max-height: 200px; overflow: auto"
+            >
+              <table class="table table-striped table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>الملاحظة</th>
+                    <th>التاريخ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let note of selectedDeal?.Commands | notesOnly : true;
+                      let i = index
+                    "
+                  >
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ note.Text }}</td>
+                    <td>{{ note.AddedAt | date : "short" }}</td>
+                  </tr>
+                  <tr *ngIf="!selectedDeal?.Commands?.length">
+                    <td colspan="3" class="text-center text-muted">
+                      لا توجد ملاحظات
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </mat-tab>
+
+          <!-- 🧾 سجل النشاطات -->
+          <mat-tab label="🧾 سجل النشاطات">
+            <div class="table-responsive mt-2" style="overflow: auto">
+              <table class="table table-striped table-sm mb-0">
+                <thead class="table-light">
+                  <tr>
+                    <th>#</th>
+                    <th>النص</th>
+                    <th>التاريخ</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="
+                      let cmd of selectedDeal?.Commands | notesOnly : false;
+                      let i = index
+                    "
+                  >
+                    <td>{{ i + 1 }}</td>
+                    <td>{{ cmd.Text }}</td>
+                    <td>{{ cmd.AddedAt | date : "short" }}</td>
+                  </tr>
+                  <tr *ngIf="!selectedDeal?.Commands?.length">
+                    <td colspan="3" class="text-center text-muted">
+                      لا يوجد نشاطات بعد
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
       </div>
-    </mat-tab>
-
-    <!-- 🧾 سجل النشاطات -->
-    <mat-tab label="🧾 سجل النشاطات">
-      <div class="table-responsive mt-2" style=" overflow:auto;">
-        <table class="table table-striped table-sm mb-0">
-          <thead class="table-light">
-            <tr><th>#</th><th>النص</th><th>التاريخ</th></tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cmd of selectedDeal?.Commands | notesOnly:false; let i=index">
-              <td>{{ i+1 }}</td>
-              <td>{{ cmd.Text }}</td>
-              <td>{{ cmd.AddedAt | date:'short' }}</td>
-            </tr>
-            <tr *ngIf="!(selectedDeal?.Commands?.length)">
-              <td colspan="3" class="text-center text-muted">لا يوجد نشاطات بعد</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </mat-tab>
-  </mat-tab-group>
-
-
-      </div>
-
     </div>
   </ng-container>
 </p-dialog>
-
 
 <!-- 🔹 مودال إضافة الملاحظة -->
 <p-dialog
@@ -391,7 +514,6 @@
 
 <!-- 🔹 مودال إضافة التذكير -->
 
-
 <p-dialog
   header="إضافة تذكير"
   [(visible)]="showReminderDialog"
@@ -426,7 +548,10 @@
   </div>
 
   <ng-template pTemplate="footer">
-    <button class="btn btn-secondary btn-sm" (click)="showReminderDialog = false">
+    <button
+      class="btn btn-secondary btn-sm"
+      (click)="showReminderDialog = false"
+    >
       إلغاء
     </button>
     <button
@@ -438,7 +563,5 @@
     </button>
   </ng-template>
 </p-dialog>
-
-
 
 <p-confirmDialog></p-confirmDialog>

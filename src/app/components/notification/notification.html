@@ -121,6 +121,12 @@
   </div>
     </div>
   </div>
+  <p-paginator
+  [rows]="rowsPerPage"
+  [totalRecords]="allNotifications.length"
+  (onPageChange)="onNotificationsPageChange($event)"
+  styleClass="mt-3"
+></p-paginator>
       </div>
 
       <ng-template #noNotifications>
@@ -157,6 +163,13 @@
 
     </div>
   </div>
+  <p-paginator
+  [rows]="rowsPerPage"
+  [totalRecords]="allReminders.length"
+  (onPageChange)="onRemindersPageChange($event)"
+  styleClass="mt-3"
+></p-paginator>
+
       </div>
 
       <ng-template #noReminders>

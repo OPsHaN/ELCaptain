@@ -95,6 +95,7 @@ export class Clients implements OnInit {
     this.isEditMode = true;
     this.showRegisterForm = true;
     console.log(this.selectedClient);
+    this.getAllClients();
   }
 
   deleteClient(client: any) {
@@ -109,6 +110,7 @@ export class Clients implements OnInit {
           next: () => {
             this.clients = this.clients.filter((c) => c.Id !== client.Id);
             this.showSuccess("✅ تم حذف العميل بنجاح");
+            this.getAllClients();
           },
           error: (err) => {
             console.error("❌ Error deleting client:", err);
@@ -125,6 +127,7 @@ export class Clients implements OnInit {
   viewClient(client: any) {
     this.selectedClient = client;
     this.showClientDialog = true;
+    console.log(client);
   }
 
   trackById(index: number, item: any) {
