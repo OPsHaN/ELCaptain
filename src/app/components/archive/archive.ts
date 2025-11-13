@@ -101,6 +101,7 @@ export class Archive implements OnInit {
           phone: item.Client?.PhoneNumber,
           intersted: item.Client?.InterstedInCountryId ?? "غير محدد",
           budget: item.Client?.Budget ?? "-",
+          model:item.RequestedCarModel ?? "-",
           empolyee: item.Sales?.FullName,
           salesId: item.Sales?.Id,
           status: item.Status,

@@ -4,12 +4,13 @@
       <div class="col-12">
         <p-toast position="top-right"></p-toast>
 
-        <app-login></app-login>
+        <!-- <app-login></app-login> -->
+        <router-outlet></router-outlet>
       </div>
     </div>
   </div>
 <ng-container *ngIf="loader.isLoading | async">
   <app-spinner></app-spinner>
 </ng-container>
-<app-global-notifications></app-global-notifications>
+<app-global-notifications ></app-global-notifications>
 </main>

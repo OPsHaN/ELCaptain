@@ -29,13 +29,13 @@
     <!-- 🟥 الأعمدة الأربعة -->
     <div class="row g-3">
       <!-- 🟢 مفتوحة -->
-      <div class="col-md-3 mt-0">
-        <div class="card shadow-sm border-success">
+      <div class="col-md-3 mt-0 full-height">
+        <div class="card shadow-sm border-success h-100">
           <div class="card-header bg-success text-white text-center fw-bold">
             مفتوحة
           </div>
           <div
-            class="card-body"
+            class="card-body scrollable-body"
             id="openDeals"
             cdkDropList
             [cdkDropListData]="openDeals"
@@ -47,24 +47,57 @@
             (cdkDropListDropped)="onDrop($event, 1)"
           >
             <div
-              class="my-2 p-2 border rounded deal"
+              class="my-2 p-0 border rounded deal"
               *ngFor="let deal of openDeals; trackBy: trackById"
               cdkDrag
               (click)="viewDeal(deal)"
               style="cursor: pointer"
             >
-              <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
-              <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
-              <p class="mb-0 text-muted">
-                <a
-                  [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
-                  target="_blank"
-                  class="text-success text-decoration-none fw-bold"
-                >
-                  {{ deal?.Client?.PhoneNumber }}
-                  <i class="bi bi-whatsapp ms-1"></i>
-                </a>
-              </p>
+              <h6
+                class="fw-bold my-1 mx-1 text-center p-1 opacity-75 border rounded-pill"
+              >
+                عملية رقم {{ deal.Id }}
+              </h6>
+              <table class="table table-borderless table-sm mb-0" dir="rtl">
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">العميل:</td>
+                    <td>{{ deal.Client?.ClientName }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">الهاتف:</td>
+                    <td>
+                      <a
+                        [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
+                        target="_blank"
+                        class="text-success text-decoration-none fw-bold"
+                      >
+                        {{ deal.Client?.PhoneNumber }}
+                        <i class="bi bi-whatsapp ms-1"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">الموظف:</td>
+                    <td>{{ deal.Sales?.FullName }}</td>
+                  </tr>
+                  <!-- <tr *ngIf="deal.Notes">
+                    <td class="fw-bold">ملاحظة:</td>
+                    <td>
+                      {{ deal.Notes | slice : 0 : 50
+                      }}{{ deal.Notes.length > 50 ? "..." : "" }}
+                    </td>
+                  </tr> -->
+                  <tr>
+                    <td class="fw-bold">آخر تعديل:</td>
+                    <td>
+                      <small class="text-secondary">{{
+                        deal.EditedAt | date : "short"
+                      }}</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div *ngIf="openDeals.length === 0" class="text-center text-muted">
               لا توجد صفقات مفتوحة
@@ -74,13 +107,13 @@
       </div>
 
       <!-- 🟡 معلقة -->
-      <div class="col-md-3 mt-0">
-        <div class="card shadow-sm border-warning">
+      <div class="col-md-3 mt-0 full-height">
+        <div class="card shadow-sm border-warning h-100">
           <div class="card-header bg-warning text-dark text-center fw-bold">
             معلقة
           </div>
           <div
-            class="card-body"
+            class="card-body scrollable-body"
             id="pendingDeals"
             cdkDropList
             [cdkDropListData]="pendingDeals"
@@ -92,25 +125,57 @@
             (cdkDropListDropped)="onDrop($event, 4)"
           >
             <div
-              class="my-2 p-2 border rounded deal"
+              class="my-2 p-0 border rounded deal"
               *ngFor="let deal of pendingDeals; trackBy: trackById"
               cdkDrag
               (click)="viewDeal(deal)"
               style="cursor: pointer"
             >
-              <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
-              <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
-              <p class="mb-0 text-muted">
-                رقم الهاتف:
-                <a
-                  [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
-                  target="_blank"
-                  class="text-success text-decoration-none fw-bold"
-                >
-                  {{ deal?.Client?.PhoneNumber }}
-                  <i class="bi bi-whatsapp ms-1"></i>
-                </a>
-              </p>
+              <h6
+                class="fw-bold my-1 mx-1 text-center p-1 opacity-75 border rounded-pill"
+              >
+                عملية رقم {{ deal.Id }}
+              </h6>
+              <table class="table table-borderless table-sm mb-0" dir="rtl">
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">العميل:</td>
+                    <td>{{ deal.Client?.ClientName }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">الهاتف:</td>
+                    <td>
+                      <a
+                        [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
+                        target="_blank"
+                        class="text-success text-decoration-none fw-bold"
+                      >
+                        {{ deal.Client?.PhoneNumber }}
+                        <i class="bi bi-whatsapp ms-1"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">الموظف:</td>
+                    <td>{{ deal.Sales?.FullName }}</td>
+                  </tr>
+                  <!-- <tr *ngIf="deal.Notes">
+                    <td class="fw-bold">ملاحظة:</td>
+                    <td>
+                      {{ deal.Notes | slice : 0 : 50
+                      }}{{ deal.Notes.length > 50 ? "..." : "" }}
+                    </td>
+                  </tr> -->
+                  <tr>
+                    <td class="fw-bold">آخر تعديل:</td>
+                    <td>
+                      <small class="text-secondary">{{
+                        deal.EditedAt | date : "short"
+                      }}</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div
               *ngIf="pendingDeals.length === 0"
@@ -123,13 +188,13 @@
       </div>
 
       <!-- 🔴 مرفوضة -->
-      <div class="col-md-3 mt-0">
-        <div class="card shadow-sm border-danger">
+      <div class="col-md-3 mt-0 full-height">
+        <div class="card shadow-sm border-danger h-100">
           <div class="card-header bg-danger text-white text-center fw-bold">
             مرفوضة
           </div>
           <div
-            class="card-body"
+            class="card-body scrollable-body"
             id="rejectedDeals"
             cdkDropList
             [cdkDropListData]="rejectedDeals"
@@ -141,24 +206,57 @@
             (cdkDropListDropped)="onDrop($event, 3)"
           >
             <div
-              class="my-2 p-2 border rounded deal"
+              class="my-2 p-0 border rounded deal"
               *ngFor="let deal of rejectedDeals; trackBy: trackById"
               cdkDrag
               (click)="viewDeal(deal)"
               style="cursor: pointer"
             >
-              <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
-              <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
-              <p class="mb-0 text-muted">
-                <a
-                  [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
-                  target="_blank"
-                  class="text-success text-decoration-none fw-bold"
-                >
-                  {{ deal?.Client?.PhoneNumber }}
-                  <i class="bi bi-whatsapp ms-1"></i>
-                </a>
-              </p>
+              <h6
+                class="fw-bold my-1 mx-1 text-center p-1 opacity-75 border rounded-pill"
+              >
+                عملية رقم {{ deal.Id }}
+              </h6>
+              <table class="table table-borderless table-sm mb-0" dir="rtl">
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">العميل:</td>
+                    <td>{{ deal.Client?.ClientName }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">الهاتف:</td>
+                    <td>
+                      <a
+                        [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
+                        target="_blank"
+                        class="text-success text-decoration-none fw-bold"
+                      >
+                        {{ deal.Client?.PhoneNumber }}
+                        <i class="bi bi-whatsapp ms-1"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">الموظف:</td>
+                    <td>{{ deal.Sales?.FullName }}</td>
+                  </tr>
+                  <!-- <tr *ngIf="deal.Notes">
+                    <td class="fw-bold">ملاحظة:</td>
+                    <td>
+                      {{ deal.Notes | slice : 0 : 50
+                      }}{{ deal.Notes.length > 50 ? "..." : "" }}
+                    </td>
+                  </tr> -->
+                  <tr>
+                    <td class="fw-bold">آخر تعديل:</td>
+                    <td>
+                      <small class="text-secondary">{{
+                        deal.EditedAt | date : "short"
+                      }}</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div
               *ngIf="rejectedDeals.length === 0"
@@ -171,13 +269,13 @@
       </div>
 
       <!-- 🔵 منتهية -->
-      <div class="col-md-3 mt-0">
-        <div class="card shadow-sm border-primary">
+      <div class="col-md-3 mt-0 full-height">
+        <div class="card shadow-sm border-primary h-100">
           <div class="card-header bg-primary text-white text-center fw-bold">
             مابعد البيع
           </div>
           <div
-            class="card-body"
+            class="card-body scrollable-body"
             id="closedDeals"
             cdkDropList
             [cdkDropListData]="closedDeals"
@@ -189,24 +287,57 @@
             (cdkDropListDropped)="onDrop($event, 2)"
           >
             <div
-              class="my-2 p-2 border rounded deal"
+              class="my-2 p-0 border rounded deal"
               *ngFor="let deal of closedDeals; trackBy: trackById"
               cdkDrag
               (click)="viewDeal(deal)"
               style="cursor: pointer"
             >
-              <h6 class="fw-bold mb-1">عملية رقم {{ deal.Id }}</h6>
-              <p class="mb-0 text-muted">عميل: {{ deal.Client?.ClientName }}</p>
-              <p class="mb-0 text-muted">
-                <a
-                  [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
-                  target="_blank"
-                  class="text-success text-decoration-none fw-bold"
-                >
-                  {{ deal?.Client?.PhoneNumber }}
-                  <i class="bi bi-whatsapp ms-1"></i>
-                </a>
-              </p>
+              <h6
+                class="fw-bold my-1 mx-1 text-center p-1 opacity-75 border rounded-pill"
+              >
+                عملية رقم {{ deal.Id }}
+              </h6>
+              <table class="table table-borderless table-sm mb-0" dir="rtl">
+                <tbody>
+                  <tr>
+                    <td class="fw-bold">العميل:</td>
+                    <td>{{ deal.Client?.ClientName }}</td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">الهاتف:</td>
+                    <td>
+                      <a
+                        [href]="'https://wa.me/' + deal.Client?.PhoneNumber"
+                        target="_blank"
+                        class="text-success text-decoration-none fw-bold"
+                      >
+                        {{ deal.Client?.PhoneNumber }}
+                        <i class="bi bi-whatsapp ms-1"></i>
+                      </a>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td class="fw-bold">الموظف:</td>
+                    <td>{{ deal.Sales?.FullName }}</td>
+                  </tr>
+                  <!-- <tr *ngIf="deal.Notes">
+                    <td class="fw-bold">ملاحظة:</td>
+                    <td>
+                      {{ deal.Notes | slice : 0 : 50
+                      }}{{ deal.Notes.length > 50 ? "..." : "" }}
+                    </td>
+                  </tr> -->
+                  <tr>
+                    <td class="fw-bold">آخر تعديل:</td>
+                    <td>
+                      <small class="text-secondary">{{
+                        deal.EditedAt | date : "short"
+                      }}</small>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </div>
             <div
               *ngIf="closedDeals.length === 0"
@@ -335,7 +466,8 @@
                     }}</span>
 
                     <!-- ✏️ زر التعديل -->
-                    <button *ngIf="role === 1 || role === 2"
+                    <button
+                      *ngIf="role === 1 || role === 2"
                       class="btn btn-sm btn-outline-warning py-0 px-2"
                       (click)="toggleEditEmployee()"
                     >

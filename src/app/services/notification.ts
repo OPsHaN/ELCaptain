@@ -1,7 +1,7 @@
 import { Injectable, inject } from "@angular/core";
 import { Apiservice } from "./apiservice";
-import { BehaviorSubject, Observable, timer } from "rxjs";
-import { switchMap } from "rxjs/operators";
+import { BehaviorSubject, timer, of } from "rxjs";
+import { switchMap, catchError } from "rxjs/operators";
 import { MessageService } from "primeng/api";
 
 @Injectable({
@@ -13,22 +13,41 @@ export class NotificationService {
   public notificationsSource = new BehaviorSubject<any[]>([]);
   public notifications$ = this.notificationsSource.asObservable();
 
+  public remindersSource = new BehaviorSubject<any[]>([]);
+  public reminders$ = this.remindersSource.asObservable();
+
   public unreadCountSource = new BehaviorSubject<number>(0);
   public unreadCount$ = this.unreadCountSource.asObservable();
 
+  private pollingStarted = false;
+
   constructor(private api: Apiservice) {
-    this.startPolling();
+    // ❌ شِل السطر اللي بيبدأ polling من هنا
   }
 
-  private startPolling() {
+  /** ✅ استدعِها بعد تسجيل الدخول فقط */
+  public startPolling() {
+    // ما تبدأش مرتين
+    if (this.pollingStarted) return;
+
+    const token = localStorage.getItem("token");
+    if (!token) {
+      return;
+    }
+
+    this.pollingStarted = true;
+
     timer(0, 100000)
-      .pipe(switchMap(() => this.api.getNotification()))
-      .subscribe({
-        next: (res: any) => {
-          this.notificationsSource.next(res || []);
-          this.updateUnreadCount(res || []);
-        },
-        error: (err) => console.error("Notification polling error:", err),
+      .pipe(
+        switchMap(() => this.api.getNotification(true)),
+        catchError((err) => {
+          console.error("Notification polling error:", err);
+          return of([]); // بدل ما يرمي Error
+        })
+      )
+      .subscribe((res: any) => {
+        this.notificationsSource.next(res || []);
+        this.updateUnreadCount(res || []);
       });
   }
 
@@ -38,17 +57,23 @@ export class NotificationService {
         this.notificationsSource.next(res || []);
         this.updateUnreadCount(res || []);
       },
-      error: (err) => {
-        console.error("Error loading notifications", err);
-        this.showError("حدث خطأ أثناء تحميل الإشعارات");
+      error: () => this.showError("حدث خطأ أثناء تحميل الإشعارات"),
+    });
+  }
+
+  loadReminders() {
+    this.api.getReminders().subscribe({
+      next: (res: any) => {
+        this.remindersSource.next(res || []);
+        this.updateUnreadCount(res || []);
       },
+      error: () => this.showError("حدث خطأ أثناء تحميل التذكيرات"),
     });
   }
 
   markAllAsRead() {
     const current = this.notificationsSource.value || [];
     const unread = current.filter((n) => !n.Seen);
-
     if (!unread.length) return;
 
     unread.forEach((n) => {
@@ -88,6 +113,7 @@ export class NotificationService {
   showError(msg: string) {
     this.messageService.add({ severity: "error", detail: msg, life: 3000 });
   }
+
   showSuccess(msg: string) {
     this.messageService.add({ severity: "success", detail: msg, life: 3000 });
   }

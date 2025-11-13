@@ -219,3 +219,19 @@
   background-color : #e1a267 !important;
   color: #fff !important;
 }
+
+.small-row td {
+  padding: 0.35rem 0.5rem !important;
+  vertical-align: middle;
+}
+
+.btn-group-sm .btn {
+  padding: 0.25rem 0.4rem !important;
+  font-size: 0.8rem !important;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.4em 0.6em;
+  border-radius: 0.5rem;
+}

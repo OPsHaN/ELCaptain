@@ -12,7 +12,10 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const loader = inject(LoadingService);
 
   // ✅ استثناء login و logout من الـ interceptor
-  const skipAuth = req.url.includes("login") || req.url.includes("logout");
+  const skipAuth =
+    req.url.includes("login") ||
+    req.url.includes("logout");
+    
   if (skipAuth) {
     return next(req);
   }
@@ -31,9 +34,8 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   return next(clonedReq).pipe(
     catchError((error) => {
       if (error.status === 401) {
-        // 🔥 فقط لو مش طلب login/logout
         if (!skipAuth) {
-          authService.logout();
+          authService.logout(); // هنا redirect لل login
         }
       }
       return throwError(() => error);

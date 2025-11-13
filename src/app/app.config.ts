@@ -3,6 +3,7 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
   importProvidersFrom,
+  inject,
 } from "@angular/core";
 import { provideRouter } from "@angular/router";
 import { MessageService } from "primeng/api";
@@ -14,6 +15,8 @@ import { provideHttpClient, withInterceptors } from "@angular/common/http";
 
 import { routes } from "./app.routes";
 import { authInterceptor } from "./shared/interceptor/auth.interceptor";
+import { LoadingService } from "./services/loadingservice";
+import { loadingInterceptor } from "./shared/interceptor/loading.interceptor";
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -25,8 +28,9 @@ export const appConfig: ApplicationConfig = {
     }),
 
     // 🟢 HTTP client مع auth + spinner + 401 handling
-    provideHttpClient(withInterceptors([authInterceptor])),
-    
+    provideHttpClient(
+      withInterceptors([authInterceptor, loadingInterceptor])
+    ),    
 
     provideRouter(routes),
     importProvidersFrom(ToastModule),

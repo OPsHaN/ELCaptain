@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { CardModule } from "primeng/card";
 import { CarouselModule } from "primeng/carousel";
-
+import { PaginatorModule } from "primeng/paginator";
 import { OnInit } from "@angular/core";
 import { CarRegister } from "../car-register/car-register";
 import { Apiservice, Brand, Country } from "../../services/apiservice";
@@ -26,6 +26,7 @@ import { MatInputModule } from "@angular/material/input";
     MatSelectModule,
     FormsModule,
     MatInputModule,
+    PaginatorModule,
   ],
   templateUrl: "./cars.html",
   styleUrl: "./cars.scss",
@@ -52,6 +53,9 @@ export class Cars implements OnInit {
   countries: Country[] = [];
   brands: Brand[] = [];
   branchs: any[] = [];
+  page: number = 0;
+  pageSize: number = 8;
+  totalRecords: number = 0;
 
   colorsList = [
     { name: "أحمر", code: "#FF0000" },
@@ -158,13 +162,26 @@ export class Cars implements OnInit {
     this.api.getAllCars().subscribe({
       next: (data) => {
         this.cars = data as any[];
-        this.filteredCars = [...this.cars]; // نسخة مبدئية
+        this.filteredCars = [...this.cars].reverse(); // نسخة مبدئية
+      this.totalRecords = this.filteredCars.length;
 
         console.log("✅ Cars loaded:", this.cars);
         this.cdr.detectChanges();
       },
     });
   }
+
+  get paginatedCars() {
+  const start = this.page * this.pageSize;
+  const end = start + this.pageSize;
+  return this.filteredCars.slice(start, end);
+}
+
+onPageChange(event: any) {
+  this.page = event.page;
+  this.pageSize = event.rows;
+}
+
 
   trackById(index: number, item: any) {
     return item.id;

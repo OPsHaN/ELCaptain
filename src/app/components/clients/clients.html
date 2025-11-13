@@ -43,7 +43,7 @@
   <div class="cards-grid" dir="rtl">
     <div
       class="card client-card"
-      *ngFor="let c of filteredClients; trackBy: trackById"
+      *ngFor="let c of paginatedClients; trackBy: trackById"
       (click)="viewClient(c)"
       role="button"
       aria-label="Open client {{ c.ClientName }}"
@@ -79,6 +79,14 @@
       </div>
     </div>
   </div>
+    <p-paginator
+    [rows]="pageSize"
+    dir="rtl"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[8, 12]"
+    (onPageChange)="onPageChange($event)"
+    class="mt-3"
+  ></p-paginator>
 </div>
 
 <!-- ✅ Dialog عرض بيانات العميل -->

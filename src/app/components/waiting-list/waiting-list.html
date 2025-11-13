@@ -107,28 +107,32 @@
               >
             </div>
           </td>
-          <td>
-            <div class="py-1 d-flex flex-column gap-2 align-items-stretch">
+          <td class="text-center">
+            <div class="btn-group btn-group-sm" role="group" dir="ltr">
               <button
                 *ngIf="role === 1 || role === 2"
-                class="btn btn-warning my-0 py-0"
-                (click)="editModal(deal)"
+                class="btn btn-outline-info"
+                pTooltip="تفاصيل"
+                (click)="openDetails(deal)"
               >
-                تعديل
+                <i class="bi bi-info-circle"></i>
               </button>
               <button
                 *ngIf="role === 1 || role === 2 || role === 3"
-                class="btn btn-success my-0 py-0"
+                class="btn btn-outline-success mx-2"
+                pTooltip="حفظ"
                 (click)="openModal(deal)"
               >
-                حفظ
+                <i class="bi bi-save"></i>
               </button>
+
               <button
                 *ngIf="role === 1 || role === 2"
-                class="btn btn-info my-0 py-0"
-                (click)="openDetails(deal)"
+                class="btn btn-outline-warning"
+                pTooltip="تعديل"
+                (click)="editModal(deal)"
               >
-                تفاصيل
+                <i class="bi bi-pencil"></i>
               </button>
             </div>
           </td>

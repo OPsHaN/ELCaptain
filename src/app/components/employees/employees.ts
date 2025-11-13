@@ -7,18 +7,19 @@ import { ConfirmationService, MessageService } from "primeng/api";
 import { DialogModule } from "primeng/dialog";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { FormsModule } from "@angular/forms";
-
-// interface Employee {
-//   id: number;
-//   name: string;
-//   role: string;
-//   avatar?: string;
-// }
+import { PaginatorModule } from "primeng/paginator";
 
 @Component({
   selector: "app-employees",
   standalone: true,
-  imports: [CommonModule, Register, DialogModule, ConfirmDialog, FormsModule],
+  imports: [
+    CommonModule,
+    Register,
+    DialogModule,
+    ConfirmDialog,
+    FormsModule,
+    PaginatorModule,
+  ],
   templateUrl: "./employees.html",
   styleUrl: "./employees.scss",
   providers: [ConfirmationService],
@@ -35,7 +36,9 @@ export class Employees implements OnInit {
   searchQuery: string = "";
   filteredEmployees: any[] = [];
   now = new Date();
-
+  page: number = 0;
+  pageSize: number = 8;
+  totalRecords: number = 0;
   daysOfWeek = [
     { key: "SatShift", label: "السبت" },
     { key: "SunShift", label: "الأحد" },
@@ -110,7 +113,8 @@ export class Employees implements OnInit {
           }));
 
           // ✅ أول تحميل يعرض الكل
-          this.filteredEmployees = [...this.employees];
+          this.filteredEmployees = [...this.employees].reverse();
+          this.totalRecords = this.filteredEmployees.length;
 
           // لو في نص مكتوب في البحث، فلتر على طول (مفيدة عند الرجوع من صفحة تانية)
           if (this.searchQuery?.trim()) {
@@ -125,6 +129,17 @@ export class Employees implements OnInit {
         },
       });
   }
+
+  get paginatedEmpolyees() {
+  const start = this.page * this.pageSize;
+  const end = start + this.pageSize;
+  return this.filteredEmployees.slice(start, end);
+}
+
+onPageChange(event: any) {
+  this.page = event.page;
+  this.pageSize = event.rows;
+}
 
   onSearchChange() {
     const search = this.searchQuery?.toLowerCase().trim();
@@ -156,7 +171,7 @@ export class Employees implements OnInit {
   viewEmployee(emp: any) {
     this.selectedEmployee = emp;
     this.showEmployeeDialog = true;
-    console.log(emp)
+    console.log(emp);
   }
 
   closeDialog() {
@@ -187,8 +202,7 @@ export class Employees implements OnInit {
           next: () => {
             this.employees = this.employees.filter((emp) => emp.id !== e.Id);
             this.showSuccess("✅ تم حذف الموظف بنجاح");
-                this.cdr.detectChanges();
-
+            this.cdr.detectChanges();
           },
           error: (err) => {
             console.error("❌ Error deleting employee:", err);

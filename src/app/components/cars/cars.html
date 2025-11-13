@@ -93,7 +93,7 @@
   <div class="cards-grid" dir="rtl">
     <div
       class="card car-card dome-card text-center position-relative"
-      *ngFor="let car of filteredCars; trackBy: trackById"
+      *ngFor="let car of paginatedCars; trackBy: trackById"
       (click)="viewCar(car)"
       role="button"
       aria-label="Open car {{ car.Brand.BrandName }} {{ car.Model }}"
@@ -220,6 +220,14 @@
       </div>
     </div>
   </div>
+        <p-paginator
+    [rows]="pageSize"
+    dir="rtl"
+    [totalRecords]="totalRecords"
+    [rowsPerPageOptions]="[8, 12]"
+    (onPageChange)="onPageChange($event)"
+    class="mt-3"
+  ></p-paginator>
 </div>
 
 <!-- ✅ Dialog عرض بيانات السيارة مع Carousel -->

@@ -89,12 +89,12 @@ export class Deals implements OnInit {
       console.log(res);
 
       // تصنيف الصفقات حسب الحالة
-      this.openDeals = this.deals.filter((d) => d.DealStatus === 1);
-      this.rejectedDeals = this.deals.filter((d) => d.DealStatus === 3);
+      this.openDeals = this.deals.filter((d) => d.DealStatus === 1).reverse();
+      this.rejectedDeals = this.deals.filter((d) => d.DealStatus === 3).reverse();
       this.closedDeals = this.deals.filter(
         (d) => d.DealStatus === 2 && d.IsDelivered === false
-      );
-      this.pendingDeals = this.deals.filter((d) => d.DealStatus === 4);
+      ).reverse();
+      this.pendingDeals = this.deals.filter((d) => d.DealStatus === 4).reverse();
 
       this.cdr.detectChanges();
     });

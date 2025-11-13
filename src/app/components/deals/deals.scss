@@ -141,3 +141,24 @@
 .switch-label.active {
   color: #4caf50;
 }
+
+.full-height {
+  height: 90vh; /* ارتفاع الشاشة بالكامل */
+}
+
+.scrollable-body {
+  max-height: calc(100vh - 60px); /* ناقص ارتفاع الهيدر */
+  overflow-y: auto;
+  direction: ltr; /* يجعل السحب ناحية اليمين */
+}
+
+.deal {
+  transition: box-shadow 0.2s ease;
+}
+.deal:hover {
+  box-shadow: 0 2px 8px rgba(0, 128, 0, 0.2);
+}
+.table td {
+  padding: 0.25rem 0.5rem;
+  vertical-align: middle;
+}

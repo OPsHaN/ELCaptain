@@ -1,4 +1,4 @@
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { map, Observable } from "rxjs";
 import { UserResponse } from "../shared/tokenpayload";
@@ -53,7 +53,7 @@ export class Apiservice {
 
   updateCountry(body: any): Observable<Country> {
     return this.http
-      .put<CountryApiResponse>(`${this.baseUrl}Country/Add`, body)
+      .put<CountryApiResponse>(`${this.baseUrl}Country/Update`, body)
       .pipe(
         map((res) => ({
           id: res.Id,
@@ -111,8 +111,9 @@ export class Apiservice {
   }
 
   getBrandByCountryId(countryId: number): Observable<Brand[]> {
-    return this.http
-      .get<Brand[]>(`${this.baseUrl}brand/GetBrandsInCountry?CountryId=${countryId}`);
+    return this.http.get<Brand[]>(
+      `${this.baseUrl}brand/GetBrandsInCountry?CountryId=${countryId}`
+    );
   }
 
   deleteBrand(id: number) {
@@ -121,7 +122,7 @@ export class Apiservice {
 
   ///cars///
 
-  getAllCars():Observable<any[]> {
+  getAllCars(): Observable<any[]> {
     return this.http.get<any[]>(`${this.baseUrl}Car/GetAll`);
   }
   getCar(id: number) {
@@ -149,13 +150,20 @@ export class Apiservice {
     return this.http.delete(`${this.baseUrl}Car/DeleteImage?ImageId=${id}`);
   }
 
-
-  getCarsInBrands(brandId:number){
-    return this.http.get(`${this.baseUrl}car/GetCarsInBrand?BrandId=${brandId}`)
+  getCarsInBrands(brandId: number) {
+    return this.http.get(
+      `${this.baseUrl}car/GetCarsInBrand?BrandId=${brandId}`
+    );
   }
 
-  filterCars(countryId:number , brandId:number , branchId:number){
-    return this.http.get(`${this.baseUrl}car/Filter?CountryId=${countryId}&BrandId=${brandId}&BranchId=${branchId}`)
+  filterCars(
+    countryId: number | null,
+    brandId: number | null,
+    branchId: number | null
+  ) {
+    return this.http.get(
+      `${this.baseUrl}car/Filter?CountryId=${countryId}&BrandId=${brandId}&BranchId=${branchId}`
+    );
   }
 
   //branch
@@ -197,7 +205,6 @@ export class Apiservice {
     return this.http.delete(`${this.baseUrl}auth/Delete?id=${id}`);
   }
 
-
   //addClient
   addClient(body: any) {
     return this.http.post(`${this.baseUrl}Client/Add`, body);
@@ -225,51 +232,75 @@ export class Apiservice {
 
   //opertaion
 
-  addOperation(body:any){
-    return this.http.post(`${this.baseUrl}Operation/Add` , body)
+  addOperation(body: any) {
+    return this.http.post(`${this.baseUrl}Operation/Add`, body);
   }
 
-  getOperation(operationId:number) {
-    return this.http.get(`${this.baseUrl}Operation/GetOperation?id=${operationId}`)
+  getOperation(operationId: number) {
+    return this.http.get(
+      `${this.baseUrl}Operation/GetOperation?id=${operationId}`
+    );
   }
 
-  updateOperation(body:any){
-    return this.http.put(`${this.baseUrl}Operation/Update` , body)
+  updateOperation(body: any) {
+    return this.http.put(`${this.baseUrl}Operation/Update`, body);
   }
 
-  deleteOperation(operationId:number){
-    this.http.delete(`${this.baseUrl}Operation/Delete?id=${operationId}`)
+  deleteOperation(operationId: number) {
+    this.http.delete(`${this.baseUrl}Operation/Delete?id=${operationId}`);
   }
 
-  getAllOperation(){
-    return this.http.get(`${this.baseUrl}Operation/GetAll`)
+  getAllOperation() {
+    return this.http.get(`${this.baseUrl}Operation/GetAll`);
   }
 
-  getOperationWithStatus(id:number){
-    return this.http.get(`${this.baseUrl}Operation/GetAllWithStatus?OperationstatusId=${id}`)
+  getOperationWithStatus(id: number) {
+    return this.http.get(
+      `${this.baseUrl}Operation/GetAllWithStatus?OperationstatusId=${id}`
+    );
   }
 
-  addCommands(body:any){
-    return this.http.post(`${this.baseUrl}Operation/AddCommand` , body)
+  addCommands(body: any) {
+    return this.http.post(`${this.baseUrl}Operation/AddCommand`, body);
+  }
 
+
+  GetAllDelivered(){
+        return this.http.get(
+      `${this.baseUrl}Operation/GetAllDelivered`
+    );
   }
 
   //notification
 
-  addReminder(body:any){
-    return this.http.post(`${this.baseUrl}SystemNotification/Add` , body)
+  addReminder(body: any) {
+    return this.http.post(`${this.baseUrl}SystemNotification/Add`, body);
   }
 
-  getNotification(){
-    return this.http.get(`${this.baseUrl}SystemNotification/GetNotifications`)
+  getNotification(noSpinner = false) {
+    let headers = new HttpHeaders();
+
+    if (noSpinner) {
+      headers = headers.set("ignore-spinner", "true");
+    }
+
+    return this.http.get(`${this.baseUrl}SystemNotification/GetNotifications`, {
+      headers,
+    });
   }
 
-  deletetNotification(id:number){
-   return this.http.delete(`${this.baseUrl}SystemNotification/Delete?id=${id}`)
+  getReminders() {
+    return this.http.get(`${this.baseUrl}SystemNotification/GetReminders`);
   }
 
-  updateSeenNotification(body:any){
-    return this.http.put(`${this.baseUrl}SystemNotification/UpdateSeen` , body)
+  deletetNotification(id: number) {
+    return this.http.delete(
+      `${this.baseUrl}SystemNotification/Delete?id=${id}`
+    );
+  }
+
+  updateSeenNotification(body: any) {
+    return this.http.put(`${this.baseUrl}SystemNotification/UpdateSeen`, body);
   }
 
   // updateNotification(){

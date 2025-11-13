@@ -7,6 +7,7 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Apiservice } from "../../services/apiservice";
 import { ClientRegister } from "../client-register/client-register";
 import { FormsModule } from "@angular/forms";
+import { PaginatorModule } from "primeng/paginator";
 
 @Component({
   selector: "app-clients",
@@ -17,6 +18,7 @@ import { FormsModule } from "@angular/forms";
     ConfirmDialogModule,
     ClientRegister,
     FormsModule,
+    PaginatorModule,
   ],
   templateUrl: "./clients.html",
   styleUrls: ["./clients.scss"],
@@ -34,6 +36,9 @@ export class Clients implements OnInit {
   searchQuery: string = "";
   filteredClients: any[] = [];
   role: number = 0;
+  page: number = 0;
+  pageSize: number = 12;
+  totalRecords: number = 0;
 
   constructor(
     private api: Apiservice,
@@ -56,12 +61,23 @@ export class Clients implements OnInit {
     this.api.getAllClients().subscribe({
       next: (res) => {
         this.clients = res as any[];
-        this.filteredClients = [...this.clients]; // نسخة مبدئية
+        this.filteredClients = [...this.clients].reverse(); // نسخة مبدئية
 
-        console.log("✅ Cars loaded:", this.filteredClients);
+        this.totalRecords = this.filteredClients.length;
         this.cdr.detectChanges();
       },
     });
+  }
+
+  get paginatedClients() {
+    const start = this.page * this.pageSize;
+    const end = start + this.pageSize;
+    return this.filteredClients.slice(start, end);
+  }
+
+  onPageChange(event: any) {
+    this.page = event.page;
+    this.pageSize = event.rows;
   }
 
   toggleRegisterForm() {
